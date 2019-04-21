@@ -1,0 +1,17 @@
+﻿@model MicroFin.Models.Loan
+
+@{
+    ViewBag.Title = "Loan";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h4> Loan Added/Updated Successfully</h4>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <table border="1" align="center">
+        <tr> <td> Loan Id </td> <td> @Model.LoanId </td> </tr>
+        <tr> <td> Member Id </td> <td> @Model.MemberId </td> </tr>
+        <tr> <td> Member Name </td> <td> @Model.MemberName </td> </tr>
+        <tr> <td> Loan Amount </td> <td> @Model.LoanAmount </td> </tr>
+    </table>
+}

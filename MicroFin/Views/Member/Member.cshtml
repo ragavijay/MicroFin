@@ -1,0 +1,42 @@
+﻿@model MicroFin.Models.Member
+@{
+    ViewBag.Title = "Member";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h4> Member Added/Updated Successfully</h4>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <center>
+        <table border="1">
+            <tr> <td> Member Id </td> <td> @Model.MemberId </td> </tr>
+            <tr> <td> Member Name </td> <td> @Model.MemberName </td> </tr>
+            <tr> <td> Group Id </td> <td> @Model.GroupId </td> </tr>
+            <tr> <td> Group Name </td> <td> @Model.GroupName </td> </tr>
+            <tr> <td> Center Name </td> <td> @Model.CenterName </td> </tr>
+            <tr> <td> Leader Name </td> <td> @Model.LeaderName </td> </tr>
+            <tr> <td> Member Name </td> <td> @Model.MemberName </td> </tr>
+            <tr> <td> Member Type </td> <td> @Model.MemberType </td> </tr>
+            <tr> <td> Father's Name </td> <td> @Model.FName </td> </tr>
+            <tr> <td> Husband's Name </td> <td> @Model.HName </td> </tr>
+            <tr> <td> DOB </td> <td> @Model.DOB </td> </tr>
+            <tr> <td rowspan="4"> Address </td> <td> @Model.AddressLine1 </td> </tr>
+            <tr> <td> @Model.AddressLine2 </td> </tr>
+            <tr> <td> @Model.AddressLine3 </td> </tr>
+            <tr> <td> @Model.AddressLine4 </td> </tr>
+            <tr> <td> City </td> <td> @Model.City </td> </tr>
+            <tr> <td> Pincode </td> <td> @Model.Pincode </td> </tr>
+            <tr> <td> DOB </td> <td> @Model.DOB </td> </tr>
+            <tr> <td> Aadhar Number </td> <td> @Model.MemberAadharNumber </td> </tr>
+            <tr> <td> PAN </td> <td> @Model.PAN </td> </tr>
+            <tr> <td> Ration Card No. </td> <td> @Model.RationCardNo </td> </tr>
+            <tr> <td> Voter ID No. </td> <td> @Model.VoterIDNo </td> </tr>
+            <tr> <td> Nominee </td> <td> @Model.NomineeName </td> </tr>
+            <tr> <td> Relationship </td> <td> @Model.Relationship </td> </tr>
+            <tr> <td> Nominee Aadhar Number </td> <td> @Model.NomineeAadharNumber</td> </tr>
+            <tr> <td> Nominee DOB </td> <td> @Model.NomineeDOB </td> </tr>
+
+        </table>
+    </center>
+}

@@ -1,0 +1,16 @@
+﻿@model MicroFin.Models.MemberGroup
+
+@{
+    ViewBag.Title = "Add/Edit Group";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h4> Group Added/Updated Successfully</h4>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <table border="1" align="center">
+        <tr> <td> Group Id </td> <td> @Model.GroupId </td> </tr>
+        <tr> <td> Group Name </td> <td> @Model.GroupName </td> </tr>
+        <tr> <td> Center Name </td> <td> @Model.CenterName </td> </tr>
+    </table>
+}
