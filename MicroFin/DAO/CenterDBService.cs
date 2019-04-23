@@ -14,30 +14,33 @@ namespace MicroFin.DAO
     {
         public static int AddGroupCenter(GroupCenter center)
         {
-            MySqlConnection con = WebApiApplication.getConnection();
             int statusCode = 0;
-            using (MySqlCommand cmd = new MySqlCommand("AddGroupCenter", con))
+            using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
             {
-                cmd.CommandType = System.Data.CommandType.StoredProcedure;
-
-                cmd.Parameters.Add("@pCenterId", MySqlDbType.Int32);
-                cmd.Parameters["@pCenterId"].Direction = ParameterDirection.Output;
-
-                cmd.Parameters.Add("@pCenterName", MySqlDbType.VarChar, 40);
-                cmd.Parameters["@pCenterName"].Value = center.CenterName;
-
-                cmd.Parameters.Add("@pBranchId", MySqlDbType.Int32);
-                cmd.Parameters["@pBranchId"].Value = center.BranchId;
-
-                cmd.Parameters.Add("@pStatusCode", MySqlDbType.Int32);
-                cmd.Parameters["@pStatusCode"].Direction = ParameterDirection.Output;
-
-                cmd.ExecuteNonQuery();
-                statusCode = Convert.ToInt32(cmd.Parameters["@pStatusCode"].Value);
-                if (statusCode == 1)
+                con.Open();
+                using (MySqlCommand cmd = new MySqlCommand("AddGroupCenter", con))
                 {
-                    int centerId = Convert.ToInt32(cmd.Parameters["@pCenterId"].Value);
-                    center.CenterId = centerId;
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    cmd.Parameters.Add("@pCenterId", MySqlDbType.Int32);
+                    cmd.Parameters["@pCenterId"].Direction = ParameterDirection.Output;
+
+                    cmd.Parameters.Add("@pCenterName", MySqlDbType.VarChar, 40);
+                    cmd.Parameters["@pCenterName"].Value = center.CenterName;
+
+                    cmd.Parameters.Add("@pBranchId", MySqlDbType.Int32);
+                    cmd.Parameters["@pBranchId"].Value = center.BranchId;
+
+                    cmd.Parameters.Add("@pStatusCode", MySqlDbType.Int32);
+                    cmd.Parameters["@pStatusCode"].Direction = ParameterDirection.Output;
+
+                    cmd.ExecuteNonQuery();
+                    statusCode = Convert.ToInt32(cmd.Parameters["@pStatusCode"].Value);
+                    if (statusCode == 1)
+                    {
+                        int centerId = Convert.ToInt32(cmd.Parameters["@pCenterId"].Value);
+                        center.CenterId = centerId;
+                    }
                 }
             }
             return statusCode;
@@ -46,20 +49,23 @@ namespace MicroFin.DAO
         public static List<GroupCenter> GetAllGroupCenters(int branchId)
         {
             List<GroupCenter> centers = new List<GroupCenter>();
-            using (MySqlConnection con = WebApiApplication.getConnection())
+            using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
             {
+                con.Open();
                 using (MySqlCommand cmd = new MySqlCommand("GetAllGroupCenters", con))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add("@pBranchId", MySqlDbType.Int32);
                     cmd.Parameters["@pBranchId"].Value = branchId;
-                    MySqlDataReader rdr = cmd.ExecuteReader();
-                    while (rdr.Read())
+                    using (MySqlDataReader rdr = cmd.ExecuteReader())
                     {
-                        GroupCenter center = new GroupCenter();
-                        center.CenterId = Convert.ToInt32(rdr["CenterId"].ToString());
-                        center.CenterName = rdr["CenterName"].ToString();
-                        centers.Add(center);
+                        while (rdr.Read())
+                        {
+                            GroupCenter center = new GroupCenter();
+                            center.CenterId = Convert.ToInt32(rdr["CenterId"].ToString());
+                            center.CenterName = rdr["CenterName"].ToString();
+                            centers.Add(center);
+                        }
                     }
                 }
             }
@@ -68,18 +74,22 @@ namespace MicroFin.DAO
         public static GroupCenter GetGroupCenter(int centerId)
         {
             GroupCenter center = null;
-            MySqlConnection con = WebApiApplication.getConnection();
-            using (MySqlCommand cmd = new MySqlCommand("GetGroupCenter", con))
+            using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
             {
-                cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                cmd.Parameters.Add("@pCenterId", MySqlDbType.Int32);
-                cmd.Parameters["@pCenterId"].Value = centerId;
-                using(MySqlDataReader rdr = cmd.ExecuteReader()) {
-                    if (rdr.Read())
+                con.Open();
+                using (MySqlCommand cmd = new MySqlCommand("GetGroupCenter", con))
+                {
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@pCenterId", MySqlDbType.Int32);
+                    cmd.Parameters["@pCenterId"].Value = centerId;
+                    using (MySqlDataReader rdr = cmd.ExecuteReader())
                     {
-                        center = new GroupCenter();
-                        center.CenterId = Convert.ToInt32(rdr["CenterId"].ToString());
-                        center.CenterName = rdr["CenterName"].ToString();
+                        if (rdr.Read())
+                        {
+                            center = new GroupCenter();
+                            center.CenterId = Convert.ToInt32(rdr["CenterId"].ToString());
+                            center.CenterName = rdr["CenterName"].ToString();
+                        }
                     }
                 }
             }
@@ -88,23 +98,27 @@ namespace MicroFin.DAO
 
         public static int EditGroupCenter(GroupCenter center)
         {
-            MySqlConnection con = WebApiApplication.getConnection();
-            int statusCode = 0 ;
-            using (MySqlCommand cmd = new MySqlCommand("EditGroupCenter", con))
+
+            int statusCode = 0;
+            using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
             {
-                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                con.Open();
+                using (MySqlCommand cmd = new MySqlCommand("EditGroupCenter", con))
+                {
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
-                cmd.Parameters.Add("@pCenterId", MySqlDbType.Int32);
-                cmd.Parameters["@pCenterId"].Value = center.CenterId;
+                    cmd.Parameters.Add("@pCenterId", MySqlDbType.Int32);
+                    cmd.Parameters["@pCenterId"].Value = center.CenterId;
 
-                cmd.Parameters.Add("@pCenterName", MySqlDbType.VarChar, 40);
-                cmd.Parameters["@pCenterName"].Value = center.CenterName;
+                    cmd.Parameters.Add("@pCenterName", MySqlDbType.VarChar, 40);
+                    cmd.Parameters["@pCenterName"].Value = center.CenterName;
 
-                cmd.Parameters.Add("@pStatusCode", MySqlDbType.Int32);
-                cmd.Parameters["@pStatusCode"].Direction = ParameterDirection.Output;
+                    cmd.Parameters.Add("@pStatusCode", MySqlDbType.Int32);
+                    cmd.Parameters["@pStatusCode"].Direction = ParameterDirection.Output;
 
-                cmd.ExecuteNonQuery();
-                statusCode = Convert.ToInt32(cmd.Parameters["@pStatusCode"].Value.ToString());
+                    cmd.ExecuteNonQuery();
+                    statusCode = Convert.ToInt32(cmd.Parameters["@pStatusCode"].Value.ToString());
+                }
             }
             return statusCode;
         }
@@ -112,20 +126,23 @@ namespace MicroFin.DAO
         public static List<GroupCenter> GetAllGroupCentersByPattern(String centerNamePattern)
         {
             List<GroupCenter> centers = new List<GroupCenter>();
-            MySqlConnection con = WebApiApplication.getConnection();
-            using (MySqlCommand cmd = new MySqlCommand("GetAllGroupCentersByPattern", con))
+            using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
             {
-                cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                cmd.Parameters.Add("@pCenterNamePattern", MySqlDbType.VarChar, 40);
-                cmd.Parameters["@pCenterNamePattern"].Value = centerNamePattern;
-                using (MySqlDataReader rdr = cmd.ExecuteReader())
+                con.Open();
+                using (MySqlCommand cmd = new MySqlCommand("GetAllGroupCentersByPattern", con))
                 {
-                    while (rdr.Read())
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@pCenterNamePattern", MySqlDbType.VarChar, 40);
+                    cmd.Parameters["@pCenterNamePattern"].Value = centerNamePattern;
+                    using (MySqlDataReader rdr = cmd.ExecuteReader())
                     {
-                        GroupCenter center = new GroupCenter();
-                        center.CenterId = Convert.ToInt32(rdr["CenterId"].ToString());
-                        center.CenterName = rdr["CenterName"].ToString();
-                        centers.Add(center);
+                        while (rdr.Read())
+                        {
+                            GroupCenter center = new GroupCenter();
+                            center.CenterId = Convert.ToInt32(rdr["CenterId"].ToString());
+                            center.CenterName = rdr["CenterName"].ToString();
+                            centers.Add(center);
+                        }
                     }
                 }
             }

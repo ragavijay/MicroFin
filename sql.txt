@@ -1,0 +1,754 @@
+CREATE TABLE AppUser (
+    UserId VARCHAR(20),
+    UserName VARCHAR(40),
+    Passwd VARCHAR(16),
+    UserType CHAR(1),
+    EMailId VARCHAR(50),
+    Phone CHAR(10),
+    UserActive CHAR(1),
+    CONSTRAINT pKey_AU_UserId PRIMARY KEY (UserId)
+);
+--Admin:UserType='A' Director='D' Manager:UserType='M' Cashier:UserType ='C'
+--UserActive = T/F
+
+INSERT INTO AppUser VALUES('admin','admin','admin','A','admin@amftn.in','123456789','T');
+INSERT INTO AppUser VALUES('director','director','director','D','admin@amftn.in','123456789','T');
+INSERT INTO AppUser VALUES('manager','manager','manager','M','admin@amftn.in','123456789','T');
+
+
+CREATE TABLE Branch (
+    BranchId INT,
+    BranchName VARCHAR(25) UNIQUE,
+    Address VARCHAR(40),
+    BranchManager VARCHAR(20),
+    CONSTRAINT pKey_B_BranchId PRIMARY KEY (BranchId),
+    CONSTRAINT fKey_B_UserId FOREIGN KEY (BranchManager)
+        REFERENCES AppUser (UserId)
+); 
+
+INSERT INTO Branch VALUES(1,'Nagamalai Pudukottai','Nagamalai Pudukottai','manager');
+
+CREATE TABLE BranchUser (
+    BranchId DECIMAL(5),
+    UserId VARCHAR(20)
+);
+
+CREATE TABLE GroupCenter (
+    CenterId INT,
+    CenterName VARCHAR(40) UNIQUE,
+    BranchId INT,
+    CONSTRAINT pKey_GC_CenterId PRIMARY KEY (CenterId),
+    CONSTRAINT fKey_GC_BranchId FOREIGN KEY (BranchId)
+        REFERENCES Branch (BranchId)
+);
+
+CREATE TABLE MemberGroup (
+    GroupId INT,
+    GroupName VARCHAR(40) UNIQUE,
+    CenterId INT,
+    CONSTRAINT pKey_MG_GroupId PRIMARY KEY (GroupId),
+    CONSTRAINT fKey_MG_CenterId FOREIGN KEY (CenterId)
+        REFERENCES GroupCenter(CenterId)
+);
+
+CREATE TABLE Member (
+    MemberId INT,
+    GroupId INT,
+    MemberType INT,
+    MemberName VARCHAR(50),
+	Gender INT,
+    DOB DATE,
+	MaritalStatus INT,
+	Religion INT,
+	FName VARCHAR(50),
+    HName VARCHAR(50),
+	Occupation INT,
+	OccupationType INT,
+    AddressLine1 VARCHAR(40),
+    AddressLine2 VARCHAR(40),
+    AddressLine3 VARCHAR(40),
+    AddressLine4 VARCHAR(40),
+    City VARCHAR(30),
+    Pincode CHAR(6),
+	NoOfYears INT,
+	HouseType INT,
+	PropertyOwnership INT,
+	Phone CHAR(10),
+    MemberAadharNumber CHAR(12) UNIQUE,
+	PAN CHAR(10),
+    RationCardNo VARCHAR(15),
+    VoterIDNo VARCHAR(15),
+	AccountNumber VARCHAR(20),
+	IFSC CHAR(11),
+    NomineeName VARCHAR(50),
+    Relationship VARCHAR(30),
+    NomineeAadharNumber CHAR(12),
+    NomineeDOB DATE,
+	CONSTRAINT pKey_M_MemberId PRIMARY KEY(MemberId),
+    CONSTRAINT fKey_M_GroupId FOREIGN KEY (GroupId)
+        REFERENCES MemberGroup(GroupId)
+);
+
+CREATE TABLE MemberImg (
+	MemberId INT,
+	Photo MEDIUMBLOB,
+	Aadhar MEDIUMBLOB,
+	CONSTRAINT pKey_M_MemberId PRIMARY KEY(MemberId)
+)
+
+CREATE TABLE Loan (
+    LoanId INT,
+    MemberId INT,
+    BranchId INT,
+    LoanAmount INT,
+    ProcessingFeeRate DECIMAL(4 , 2 ),
+    ProcessingFee INT,
+    InsuranceRate DECIMAL(4 , 2 ),
+    Insurance INT,
+    Tenure INT,
+    InterestRate DECIMAL(4 , 2 ),
+    EWI INT,
+    LoanStatus CHAR(1),
+    LoanDate DATE,
+    ApprovedBy VARCHAR(20),
+    CONSTRAINT pKey_L_LoanId PRIMARY KEY (LoanId),
+    CONSTRAINT fKey_L_MemberId FOREIGN KEY (MemberId)
+        REFERENCES Member (MemberId),
+    CONSTRAINT fKey_L_BranchId FOREIGN KEY (BranchId)
+        REFERENCES Branch (BranchId),
+    CONSTRAINT fKey_L_ApprovedBy FOREIGN KEY (ApprovedBy)
+        REFERENCES AppUser (UserId)
+);
+--LoanStatus: P=Pending, A-Approved O-Ongoing, C-Closed
+
+CREATE TABLE CashReceipt (
+    ReceiptId INT AUTO_INCREMENT,
+    LoanId INT,
+    ReceiptType CHAR(1),
+    ReceiptAmount INT,
+    ReceiptDate DATE,
+    Description VARCHAR(50),
+    UserId VARCHAR(20),
+    CONSTRAINT pKey_CR_ReceiptId PRIMARY KEY (ReceiptId),
+    CONSTRAINT fKey_CR_LoanId FOREIGN KEY (LoanId)
+        REFERENCES Loan (LoanId),
+    CONSTRAINT fKey_CR_UserId FOREIGN KEY (UserId)
+        REFERENCES AppUser (UserId)
+); 
+--ProcessingFee: ReceiptType='P'; EWI: ReceiptType='I'  
+
+--GetUserType
+DELIMITER //
+DROP FUNCTION IF EXISTS `GetUserType`//
+CREATE FUNCTION GetUserType(pUserId VARCHAR(20), pPasswd VARCHAR(16)) RETURNS CHAR(1)
+READS SQL DATA
+BEGIN
+	DECLARE vUserType CHAR(1);
+	SELECT UserType	 INTO vUserType FROM AppUser WHERE LOWER(UserId) = LOWER(pUserId) AND Passwd = pPasswd AND UserActive = 'T';
+    IF 	vUserType IS NULL THEN
+		SET vUserType := 'I';
+	END IF;
+	RETURN vUserType;
+END//
+SET GLOBAL log_bin_trust_function_creators = 1;
+--Test
+SELECT GetUserType('admin','admin');
+
+--GetBranch
+DELIMITER //
+DROP FUNCTION IF EXISTS `GetBranchName`//
+CREATE FUNCTION GetBranchName(pBranchId DECIMAL(5)) RETURNS VARCHAR(25)
+READS SQL DATA
+BEGIN
+	DECLARE vBranchName VARCHAR(25);
+	SELECT BranchName INTO vBranchName FROM Branch WHERE BranchId = pBranchId;
+	RETURN vBranchName;
+END//
+--Test
+SELECT GetBranchName(1);
+
+
+--AddGroupCenter (20-04-2019)
+DELIMITER //
+DROP PROCEDURE IF EXISTS `AddGroupCenter`//
+CREATE PROCEDURE AddGroupCenter(OUT pCenterId INT, pCenterName VARCHAR(40), pBranchId INT, OUT pStatusCode INT)
+BEGIN
+	DECLARE vCheck INT;
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION SET vCheck=0;
+	SET pStatusCode:=1;
+	SET vCheck:=1;
+	SELECT MAX(CenterId) INTO pCenterId FROM GroupCenter;
+	IF pCenterId IS NULL THEN
+		SET pCenterId := 1;
+	ELSE
+		SET pCenterId := pCenterId + 1;
+	END IF;
+	INSERT INTO GroupCenter(CenterId, CenterName,BranchId) VALUES(pCenterId, pCenterName, pBranchId);
+	IF vCheck=0 THEN
+		SELECT COUNT(*) INTO vCheck FROM GroupCenter WHERE CenterName=pCenterName;
+		IF vCheck>0 THEN
+			SET pStatusCode:=0;
+		ELSE
+			SET pStatusCode:=-1;
+		END IF;
+	END IF;
+END;//
+
+--GetAllGroupCenters
+DELIMITER //
+DROP PROCEDURE IF EXISTS `GetAllGroupCenters`//
+CREATE PROCEDURE GetAllGroupCenters(pBranchId INT)
+BEGIN
+	SELECT CenterId, CenterName FROM GroupCenter WHERE BranchId = pBranchId ORDER BY CenterName;
+END//
+--Test
+CALL GetAllCenters(1);
+
+--GetGroupCenter
+DELIMITER //
+DROP PROCEDURE IF EXISTS `GetGroupCenter`//
+CREATE PROCEDURE GetGroupCenter(pCenterId INT)
+BEGIN
+	SELECT CenterId, CenterName FROM GroupCenter WHERE CenterId = pCenterId;
+END//
+--Test
+CALL GetGroupCenter(1);
+
+--EditGroupCenter (20-04-2019)
+DELIMITER //
+DROP PROCEDURE IF EXISTS `EditGroupCenter`//
+CREATE PROCEDURE EditGroupCenter(pCenterId INT, pCenterName VARCHAR(40), OUT pStatusCode INT)
+BEGIN
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION SET pStatusCode=0;
+	UPDATE GroupCenter SET CenterName=pCenterName WHERE CenterId = pCenterId;
+	SET pStatusCode:=1;
+END;//
+
+--GetAllGroupCentersByPattern
+DELIMITER //
+DROP PROCEDURE IF EXISTS `GetAllGroupCentersByPattern`//
+CREATE PROCEDURE GetAllGroupCentersByPattern(pCenterNamePattern VARCHAR(40))
+BEGIN
+	SELECT CenterId, CenterName FROM GroupCenter WHERE LOWER(CenterName) LIKE CONCAT(LOWER(pCenterNamePattern),'%') ORDER BY CenterName;
+END//
+--Test
+CALL GetAllGroupCentersByPattern('nag');
+
+
+--AddMemberGroup (20-04-2019)
+DELIMITER //
+DROP PROCEDURE IF EXISTS `AddMemberGroup`//
+CREATE PROCEDURE AddMemberGroup(OUT pGroupId INT, pGroupName VARCHAR(40), pCenterId INT, OUT pStatusCode INT)
+BEGIN
+	DECLARE vCheck INT;
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION SET vCheck=0;
+	SET pStatusCode:=1;
+	SET vCheck:=1;
+	SELECT MAX(GroupId) INTO pGroupId FROM MemberGroup;
+	IF pGroupId IS NULL THEN
+		SET pGroupId := 1;
+	ELSE
+		SET pGroupId := pGroupId + 1;
+	END IF;
+	INSERT INTO MemberGroup(GroupId, GroupName, CenterId) VALUES(pGroupId, pGroupName, pCenterId);
+	IF vCheck=0 THEN
+		SELECT COUNT(*) INTO vCheck FROM MemberGroup WHERE GroupName=pGroupName;
+		IF vCheck>0 THEN
+			SET pStatusCode:=0;
+		ELSE
+			SET pStatusCode:=-1;
+		END IF;
+	END IF;
+END;//
+
+--GetMemberGroup
+DELIMITER //
+DROP PROCEDURE IF EXISTS `GetMemberGroup`//
+CREATE PROCEDURE GetMemberGroup(pGroupId INT)
+BEGIN
+	SELECT MG.GroupId, MG.GroupName, MG.CenterId, GC.CenterName FROM  MemberGroup MG INNER JOIN GroupCenter GC ON MG.CenterId = GC.CenterId  WHERE MG.GroupId = pGroupId;
+END//
+--Test
+CALL GetMemberGroup(1);
+
+--GetAllMemberGroups
+DELIMITER //
+DROP PROCEDURE IF EXISTS `GetAllMemberGroups`//
+CREATE PROCEDURE GetAllMemberGroups(pBranchId INT)
+BEGIN
+	SELECT MG.GroupId, MG.GroupName, MG.CenterId, GC.CenterName FROM  MemberGroup MG INNER JOIN GroupCenter GC ON MG.CenterId = GC.CenterId  WHERE GC.BranchId = pBranchId;
+END//
+--Test
+CALL GetAllMemberGroups(1);
+
+--EditMemberGroup (20-04-2019)
+DELIMITER //
+DROP PROCEDURE IF EXISTS `EditMemberGroup`//
+CREATE PROCEDURE EditMemberGroup(pGroupId INT, pGroupName VARCHAR(40), pCenterId INT, OUT pStatusCode INT)
+BEGIN
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION SET pStatusCode=0;
+	UPDATE MemberGroup SET GroupName=pGroupName, CenterId=pCenterId WHERE GroupId = pGroupId;
+	SET pStatusCode:=1;
+END;//
+
+--GetAllMemberGroupsByPattern
+DELIMITER //
+DROP PROCEDURE IF EXISTS `GetAllMemberGroupsByPattern`//
+CREATE PROCEDURE GetAllMemberGroupsByPattern(pGroupNamePattern VARCHAR(40))
+BEGIN
+	SELECT MG.GroupId, MG.GroupName, GC.CenterName, IFNULL((SELECT MemberName FROM Member M WHERE M.GroupID=MG.GroupId AND M.MemberType=1),'NA') AS LeaderName FROM 
+		MemberGroup MG INNER JOIN GroupCenter GC 
+		ON MG.CenterId = GC.CenterId WHERE LOWER(GroupName) LIKE CONCAT(LOWER(pGroupNamePattern),'%') ORDER BY GroupName;
+END//
+--Test
+CALL GetAllMemberGroupsByPattern('mah');
+
+
+--AddMember (21-04-2019)
+DELIMITER //
+DROP PROCEDURE IF EXISTS `AddMember`//
+CREATE PROCEDURE AddMember(OUT pMemberId INT, 
+							pGroupId INT, 
+							pMemberType INT, 
+							pMemberName VARCHAR(50),
+							pGender INT,
+							pDOB DATE,
+							pMaritalStatus INT,
+							pReligion INT,
+							pFName VARCHAR(50), 
+							pHName VARCHAR(50),
+							pOccupation INT,
+							pOccupationType INT,
+							pAddressLine1 VARCHAR(40), 
+							pAddressLine2 VARCHAR(40), 
+							pAddressLine3 VARCHAR(40), 
+							pAddressLine4 VARCHAR(40), 
+							pCity VARCHAR(30), 
+							pPincode CHAR(6), 
+							pNoOfYears INT,
+							pHouseType INT,
+							pPhone CHAR(10), 
+							pMemberAadharNumber CHAR(12), 
+							pPAN CHAR(10), 
+							pRationCardNo VARCHAR(15), 
+							pVoterIDNo VARCHAR(15),
+							pAccountNumber VARCHAR(20),
+							pIFSC CHAR(11),
+							pNomineeName VARCHAR(50), 
+							pRelationship VARCHAR(30), 
+							pNomineeAadharNumber CHAR(12), 
+							pNomineeDOB DATE, 
+							OUT pStatusCode INT)
+AddMember: BEGIN
+	DECLARE vCheck INT;
+    DECLARE CONTINUE HANDLER FOR SQLEXCEPTION SET vCheck=0;
+	SET pStatusCode := 1;
+	IF pMemberType=1 THEN
+		SELECT COUNT(*) INTO vCheck FROM Member WHERE MemberType=1 AND GroupId=pGroupId;
+		IF vCheck>0 THEN
+			SET pStatusCode := -2;
+			LEAVE AddMember;
+		END IF;
+	END IF;
+	SET vCheck := 1;
+	SELECT MAX(MemberId) INTO pMemberId FROM Member;
+	IF pMemberId IS NULL THEN
+		SET pMemberId := 1;
+	ELSE
+		SET pMemberId := pMemberId + 1;
+	END IF;
+	INSERT INTO Member(MemberId, GroupId, MemberType, MemberName,Gender, DOB, MaritalStatus, Religion, 
+					   FName, HName, Occupation, OccupationType, AddressLine1, AddressLine2, AddressLine3, AddressLine4, 
+					   City, Pincode, NoOfYears, HouseType, Phone, MemberAadharNumber, PAN, RationCardNo, VoterIDNo, 
+					   AccountNumber, IFSC, NomineeName, Relationship, NomineeAadharNumber, NomineeDOB) 
+					   VALUES
+					   (pMemberId, pGroupId, pMemberType, pMemberName,pGender, pDOB, pMaritalStatus, pReligion, 
+					   pFName, pHName, pOccupation, pOccupationType, pAddressLine1, pAddressLine2, pAddressLine3, 
+					   pAddressLine4, pCity, pPincode, pNoOfYears, pHouseType, pPhone, pMemberAadharNumber, pPAN, 
+					   pRationCardNo, pVoterIDNo, pAccountNumber, pIFSC, pNomineeName, pRelationship, 
+					   pNomineeAadharNumber, pNomineeDOB);
+	IF vCheck=0 THEN
+		SELECT COUNT(*) INTO vCheck FROM Member WHERE MemberAadharNumber = pMemberAadharNumber;
+		IF vCheck>0 THEN
+			SET pStatusCode := -1;
+		ELSE
+			SET pStatusCode := -3;
+		END IF;
+	END IF;
+END//
+
+
+--GetAllMembers
+DELIMITER //
+DROP PROCEDURE IF EXISTS `GetAllMembers`//
+CREATE PROCEDURE GetAllMembers(pBranchId INT)
+BEGIN
+	SELECT M.MemberId, M.MemberName, MG.GroupName, GC.CenterName, 
+		IFNULL((SELECT MemberName FROM Member InnerM WHERE InnerM.GroupID=MG.GroupId AND InnerM.MemberType=1),'NA') AS LeaderName  
+		FROM  Member M INNER JOIN MemberGroup MG ON M.GroupId=MG.GroupId INNER JOIN GroupCenter GC ON MG.CenterId = GC.CenterId  
+		WHERE GC.BranchId = pBranchId;
+END//
+--Test
+CALL GetAllMembers(1)
+
+--GetMember (21-04-2019)
+DELIMITER //
+DROP PROCEDURE IF EXISTS `GetMember`//
+CREATE PROCEDURE GetMember(pMemberId INT)
+BEGIN
+	SELECT M.MemberId, M.GroupId, MG.GroupName, GC.CenterName,   
+		IFNULL((SELECT MemberName FROM Member InnerM WHERE InnerM.GroupID=MG.GroupId AND InnerM.MemberType=1),'NA') AS LeaderName,
+		M.MemberName, M.MemberType, M.Gender, M.DOB, M.MaritalStatus, M.Religion, M.FName, M.HName, M.Occupation, M.OccupationType, 
+		M.AddressLine1, M.AddressLine2, M.AddressLine3, M.AddressLine4, M.City, M.Pincode, 
+		M.NoOfYears, M.HouseType, M.PropertyOwnership, M.Phone, 
+		M.MemberAadharNumber, M.PAN, M.RationCardNo, M.VoterIDNo, M.AccountNumber, M.IFSC, 
+		M.NomineeName, M.Relationship, M.NomineeAadharNumber, M.NomineeDOB
+		FROM  Member M INNER JOIN MemberGroup MG ON M.GroupId=MG.GroupId INNER JOIN GroupCenter GC ON MG.CenterId = GC.CenterId  
+		WHERE M.MemberId = pMemberId;
+END//
+--Test
+CALL GetMember(1)
+
+
+--EditMember (21-04-2019)
+DELIMITER //
+DROP PROCEDURE IF EXISTS `EditMember`//
+CREATE PROCEDURE EditMember(pMemberId INT, 
+							pGroupId INT, 
+							pMemberType INT, 
+							pMemberName VARCHAR(50),
+							pGender INT,
+							pDOB DATE,
+							pMaritalStatus INT,
+							pReligion INT,
+							pFName VARCHAR(50), 
+							pHName VARCHAR(50),
+							pOccupation INT,
+							pOccupationType INT,							
+							pAddressLine1 VARCHAR(40), 
+							pAddressLine2 VARCHAR(40), 
+							pAddressLine3 VARCHAR(40), 
+							pAddressLine4 VARCHAR(40), 
+							pCity VARCHAR(30), 
+							pPincode CHAR(6), 
+							pNoOfYears INT,
+							pHouseType INT,
+							pPhone CHAR(10), 
+							pMemberAadharNumber CHAR(12), 
+							pPAN CHAR(10), 
+							pRationCardNo VARCHAR(15), 
+							pVoterIDNo VARCHAR(15),
+							pAccountNumber VARCHAR(20),
+							pIFSC CHAR(11),
+							pNomineeName VARCHAR(50), 
+							pRelationship VARCHAR(30), 
+							pNomineeAadharNumber CHAR(12), 
+							pNomineeDOB DATE, 
+							OUT pStatusCode INT)
+EditMember:BEGIN
+	DECLARE vCheck INT;
+    DECLARE CONTINUE HANDLER FOR SQLEXCEPTION SET vCheck=0;
+	IF pMemberType=1 THEN
+		SELECT COUNT(*) INTO vCheck FROM Member WHERE MemberType=1 AND GroupId=pGroupId AND MemberId<>pMemberId;
+		IF vCheck>0 THEN
+			SET pStatusCode := -2;
+			LEAVE EditMember;
+		END IF;
+	END IF;
+	SET vCheck := 1;
+	SET pStatusCode := 1;
+	UPDATE Member SET GroupId=pGroupId, MemberType=pMemberType, MemberName=pMemberName, Gender=pGender, DOB=pDOB,
+						MaritalStatus=pMaritalStatus, Religion=pReligion, FName=pFName, HName=pHName,
+						Occupation=pOccupation, OccupationType = pOccupationType,
+						AddressLine1=pAddressLine1, AddressLine2=pAddressLine2, AddressLine3=pAddressLine3, 
+						AddressLine4=pAddressLine4, City=pCity, Pincode=pPincode, NoOfYears=pNoOfYears, HouseType=pHouseType,
+						Phone=pPhone, MemberAadharNumber=pMemberAadharNumber, PAN=pPAN, RationCardNo=pRationCardNo,
+						VoterIDNo=pVoterIDNo, AccountNumber=pAccountNumber, IFSC = pIFSC,
+						NomineeName=pNomineeName, Relationship=pRelationship,
+						NomineeAadharNumber=pNomineeAadharNumber, NomineeDOB=pNomineeDOB 
+		WHERE MemberId=pMemberId;
+	IF vCheck=0 THEN
+		SELECT COUNT(*) INTO vCheck FROM Member WHERE MemberAadharNumber = pMemberAadharNumber AND MemberId<>pMemberId;
+		IF vCheck>0 THEN
+			SET pStatusCode := -1;
+		ELSE
+			SET pStatusCode := -3;
+		END IF;
+	END IF;
+END;//
+
+--CheckMember
+DELIMITER //
+DROP FUNCTION IF EXISTS `CheckMember`//
+CREATE FUNCTION CheckMember(pMemberId INT) RETURNS CHAR(50)
+READS SQL DATA
+BEGIN
+	DECLARE vCheck INT;
+	DECLARE vMemberName CHAR(50);
+	SELECT COUNT(*) INTO vCheck FROM Loan WHERE MemberId = pMemberId AND LoanStatus<>'C';
+	IF vCheck>0 THEN
+		SET vMemberName := 'Loan exists';	
+	ELSE
+		SELECT MemberName INTO vMemberName FROM Member WHERE MemberId = pMemberId;
+	END IF;
+	IF vMemberName IS NULL THEN
+		SET vMemberName := 'Not found';
+	END IF;
+	RETURN vMemberName;
+END//
+--Test
+SELECT CheckMember(1);
+
+
+
+--AddLoan
+DELIMITER //
+DROP PROCEDURE IF EXISTS `AddLoan`//
+CREATE PROCEDURE AddLoan(OUT pLoanId INT, pMemberId INT, pBranchId INT, pLoanAmount INT, pProcessingFeeRate INT, pProcessingFee INT, pInsuranceRate INT, pInsurance INT, pTenure INT, pInterestRate INT, pEWI INT, OUT pStatus INT)
+AddLoan:BEGIN
+	DECLARE vCheck VARCHAR(50);
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION SET pStatus=-1;
+	SET vCheck:=CheckMember(pMemberId);
+	IF vCheck='Not found' || vCheck='Loan exists' THEN
+		SET pStatus:=0;
+		SET pLoanId:=0;
+		Leave AddLoan;
+	ELSE
+		SET pStatus:=1;
+	END IF;
+	SELECT MAX(LoanId) INTO pLoanId FROM LOAN;
+	IF pLoanId IS NULL THEN
+		SET pLoanId := 1;
+	ELSE
+		SET pLoanId := pLoanId + 1;
+	END IF;
+	INSERT INTO Loan VALUES(pLoanId, pMemberId, pBranchId, pLoanAmount, pProcessingFeeRate, pProcessingFee, pInsuranceRate, pInsurance, pTenure, pInterestRate, pEWI, 'P',NULL,NULL);
+END;//
+
+
+--GetAllLoans
+DELIMITER //
+DROP PROCEDURE IF EXISTS `GetAllLoans`//
+CREATE PROCEDURE GetAllLoans(pBranchId INT)
+BEGIN
+	SELECT L.LoanId, L.MemberId, M.MemberName, L.BranchId, L.LoanAmount, L.ProcessingFeeRate, L.ProcessingFee, 
+		   L.InsuranceRate, L.Insurance, L.Tenure, L.InterestRate, L.EWI, L.LoanStatus 
+		   FROM Loan L INNER JOIN Member M ON L.MemberId = M.MemberId WHERE BranchId=pBranchId;
+END//
+--Test
+CALL GetAllLoans(1)
+
+--GetLoan
+DELIMITER //
+DROP PROCEDURE IF EXISTS `GetLoan`//
+CREATE PROCEDURE GetLoan(pLoanId INT)
+BEGIN
+	SELECT L.LoanId, L.MemberId, M.MemberName, L.BranchId, L.LoanAmount, L.ProcessingFeeRate, L.ProcessingFee, 
+		   L.InsuranceRate, L.Insurance, L.Tenure, L.InterestRate, L.EWI, L.LoanStatus 
+		   FROM Loan L INNER JOIN Member M ON L.MemberId = M.MemberId WHERE LoanId=pLoanId;
+END//
+--Test
+CALL GetLoan(1)
+
+
+--EditLoan
+DELIMITER //
+DROP PROCEDURE IF EXISTS `EditLoan`//
+CREATE PROCEDURE EditLoan(pLoanId INT, pMemberId INT, pBranchId INT, pLoanAmount INT, pProcessingFeeRate INT, pProcessingFee INT, pInsuranceRate INT, pInsurance INT, pTenure INT, pInterestRate INT, pEWI INT, OUT pStatusCode INT)
+BEGIN
+    DECLARE CONTINUE HANDLER FOR SQLEXCEPTION SET pStatusCode=0;
+	SET pStatusCode := 1;
+	UPDATE Loan SET MemberId=pMemberId, BranchId=pBranchId, LoanAmount=pLoanAmount,
+						ProcessingFeeRate=pProcessingFeeRate, ProcessingFee=pProcessingFee,
+						InsuranceRate=pInsuranceRate, Insurance=pInsurance, Tenure=pTenure, 
+						InterestRate=pInterestRate, EWI=pEwi, LoanStatus='P' WHERE LoanId = pLoanId;
+END;//
+
+--GetAllPendingLoans
+DELIMITER //
+DROP PROCEDURE IF EXISTS `GetAllPendingLoans`//
+CREATE PROCEDURE GetAllPendingLoans(pBranchId INT)
+BEGIN
+	SELECT L.LoanId, L.MemberId, M.MemberName, L.BranchId, L.LoanAmount, L.ProcessingFeeRate, L.ProcessingFee, 
+		   L.InsuranceRate, L.Insurance, L.Tenure, L.InterestRate, L.EWI, L.LoanStatus 
+		   FROM Loan L INNER JOIN Member M ON L.MemberId = M.MemberId WHERE BranchId=pBranchId AND LoanStatus='P';
+END//
+--Test
+CALL GetAllPendingLoans(1)
+
+--ApproveLoan
+DELIMITER //
+DROP PROCEDURE IF EXISTS `ApproveLoan`//
+CREATE PROCEDURE ApproveLoan(pLoanId INT)
+BEGIN
+	UPDATE Loan SET LoanStatus='A' WHERE LoanId=pLoanId;
+END//
+
+
+--GetLoanStatus
+DELIMITER //
+DROP PROCEDURE IF EXISTS `GetLoanStatus`//
+CREATE PROCEDURE GetLoanStatus(pLoanId INT, OUT pLoanStatus VARCHAR(1), OUT pMemberId INT, OUT pMemberName VARCHAR(50)
+							, OUT pProcessingFee INT, OUT pInsurance INT, OUT pEwi INT, OUT pNoOfInstalments INT
+							, OUT pFromDate DATE, OUT pToDate DATE)
+GetLoanStatus:BEGIN
+	DECLARE vTenure INT;
+	DECLARE vLoanDate DATE;
+	DECLARE vWeeksCompleted INT;
+	DECLARE vWeeksPaid INT;
+	DECLARE vAmountPaid INT;
+	SET pLoanStatus := 'N';
+	SET pNoOfInstalments := 0;
+	SET pFromDate := SYSDATE();
+	SET pToDate := SYSDATE();
+	SELECT MemberId, ProcessingFee,Insurance, Tenure, LoanDate,EWI, LoanStatus INTO pMemberId, pProcessingFee, pInsurance,  vTenure, vLoanDate, pEwi, pLoanStatus FROM Loan WHERE LoanId = pLoanId;
+	IF pMemberId IS NULL THEN
+		SET pLoanStatus:='I';
+		LEAVE GetLoanStatus;
+	END IF;
+	SELECT MemberName INTO pMemberName FROM Member WHERE MemberId = pMemberId;
+	IF pLoanStatus = 'O' THEN
+		SET vWeeksCompleted := FLOOR(DATEDIFF(SYSDATE(),vLoanDate)/7);
+		IF vWeeksCompleted > vTenure THEN
+			SET vWeeksCompleted := vTenure;
+		END IF;
+		SELECT SUM(ReceiptAmount) INTO vAmountPaid FROM CashReceipt WHERE LoanId = pLoanId AND ReceiptType='I';
+		IF vAmountPaid IS NULL THEN
+			SET vAmountPaid := 0;
+		END IF;
+		SET vWeeksPaid := vAmountPaid/pEwi;
+		SET pNoOfInstalments := vWeeksCompleted - vWeeksPaid;
+		IF pNoOfInstalments >= 1 THEN
+			SET pFromDate := DATE_ADD(vLoanDate, INTERVAL (vWeeksPaid + 1)*7 DAY);
+			SET pToDate := DATE_ADD(vLoanDate, INTERVAL (vWeeksPaid + pNoOfInstalments)*7 DAY);
+		END IF;
+	ELSE
+		SET pEwi := 0;
+	END IF;
+END//
+
+
+--GeneratePFReceipt
+DELIMITER //
+DROP PROCEDURE IF EXISTS `GeneratePFReceipt`//
+CREATE PROCEDURE GeneratePFReceipt(pLoanId INT,  pUserId VARCHAR(20), OUT pReceiptId INT)
+BEGIN
+	DECLARE vAmount INT;
+	SELECT ProcessingFee + Insurance INTO vAmount FROM Loan WHERE LoanId = pLoanId;
+	SAVEPOINT Trans;
+	INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId) 
+		VALUES(pLoanId, 'P', vAmount, SYSDATE(), 'Processing fee', pUserId);
+	UPDATE Loan SET LoanStatus='O', LoanDate=SYSDATE() WHERE LoanId = pLoanId;
+	SET pReceiptId:= LAST_INSERT_ID();
+	COMMIT;
+END//
+
+--GenerateInstalmentReceipt
+DELIMITER //
+DROP PROCEDURE IF EXISTS `GenerateInstalmentReceipt`//
+CREATE PROCEDURE GenerateInstalmentReceipt(pLoanId INT, pNoOfInstalments INT, pUserId VARCHAR(20), OUT pReceiptId INT)
+BEGIN
+	DECLARE vAmount INT;
+	DECLARE vDescription VARCHAR(50);
+	DECLARE vTenure INT;
+	DECLARE vLoanDate DATE;
+	DECLARE vEWI INT;
+	DECLARE vWeeksCompleted INT;
+	DECLARE vWeeksPaid INT;
+	DECLARE vAmountPaid INT;
+	SELECT EWI INTO vAmount FROM Loan WHERE LoanId = pLoanId;
+	SELECT Tenure, LoanDate,EWI INTO vTenure, vLoanDate, vEWI FROM Loan WHERE LoanId = pLoanId;
+	SET vAmount := vEWI * pNoOfInstalments;
+	SELECT SUM(ReceiptAmount) INTO vAmountPaid FROM CashReceipt WHERE LoanId = pLoanId AND ReceiptType='I';
+	IF vAmountPaid IS NULL THEN
+		SET vAmountPaid := 0;
+	END IF;
+	SET vWeeksPaid := vAmountPaid/vEWI;
+	IF pNoOfInstalments = 1 THEN
+		SET vDescription := CONCAT('Due:', 
+									CAST(vWeeksPaid+1 AS CHAR)
+									, '/'
+									, CAST(vTenure AS CHAR), 
+									' (' 
+									, DATE_FORMAT(DATE_ADD(vLoanDate, INTERVAL (vWeeksPaid + 1)*7 DAY), '%d-%m-%Y')
+									, ')');
+	ELSE
+		SET vDescription := CONCAT('Due:'
+								, CAST(vWeeksPaid+1 AS CHAR)
+								, ' to '
+								, CAST(vWeeksPaid+pNoOfInstalments AS CHAR)
+								, '/'
+								, CAST(vTenure AS CHAR)
+								, '('
+								, DATE_FORMAT(DATE_ADD(vLoanDate, INTERVAL (vWeeksPaid + 1)*7 DAY),'%d-%m-%Y')
+								, ' to '
+								, DATE_FORMAT(DATE_ADD(vLoanDate, INTERVAL (vWeeksPaid + pNoOfInstalments)*7 DAY),'%d-%m-%Y')
+								, ')');
+	END IF;
+	SAVEPOINT Trans;
+	INSERT INTO CashReceipt VALUES(pReceiptId, pLoanId, 'I', vAmount, SYSDATE(), vDescription,pUserId);
+	IF vWeeksPaid + pNoOfInstalments = vTenure THEN
+		UPDATE Loan SET LoanStatus='C' WHERE LoanId = pLoanId;
+	END IF;
+    SET pReceiptId:= LAST_INSERT_ID();
+	COMMIT;
+END//
+
+
+--GetEWIDue
+DELIMITER //
+DROP PROCEDURE IF EXISTS `GetEWIDue`//
+CREATE PROCEDURE GetEWIDue(pBranchId INT) 
+BEGIN
+	DECLARE vLoanId INT;
+	DECLARE vBranchId INT;
+	DECLARE vMemberId INT;
+	DECLARE vMemberName VARCHAR(50);
+	DECLARE vPhone VARCHAR(10);
+	DECLARE vLoanAmount INT;
+	DECLARE vTenure INT;
+	DECLARE vEwi INT;
+	DECLARE vLoanDate DATE;
+	DECLARE vWeeksCompleted INT;
+	DECLARE vWeeksPaid INT;
+	DECLARE vAmountPaid INT;
+	DECLARE vNoOfInstalments INT;
+	DECLARE vFromDate DATE;
+	DECLARE vToDate DATE;
+	DECLARE vDueDate VARCHAR(25);
+	DECLARE vCompleted INT;
+	DECLARE EWIDueCursor CURSOR FOR SELECT L.LoanId, L.BranchId, L.MemberId, M.MemberName, M.Phone, L.LoanAmount, L.Tenure, L.EWI, L.LoanDate FROM Loan L INNER JOIN Member M ON L.MemberId = M.MemberId WHERE L.LoanStatus='O' AND BranchId = pBranchId;
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET vCompleted=0;
+	CREATE TEMPORARY TABLE EwiDueRows(LoanId INT, BranchId INT, MemberId INT, MemberName VARCHAR(50), Phone VARCHAR(10), NoOfInstalments INT, EWI INT, DueDate VARCHAR(25));
+	OPEN EWIDueCursor;
+	SET vCompleted:=1;
+	CursorLoop:LOOP
+		FETCH EWIDueCursor INTO vLoanId, vBranchId, vMemberId, vMemberName, vPhone, vLoanAmount, vTenure, vEwi, vLoanDate;
+		IF vCompleted=0 THEN
+			LEAVE CursorLoop;
+		END IF;
+		SET vWeeksCompleted := FLOOR(DATEDIFF(SYSDATE(), vLoanDate)/7);
+		IF vWeeksCompleted > vTenure THEN
+			SET vWeeksCompleted := vTenure;
+		END IF;
+		SELECT SUM(ReceiptAmount) INTO vAmountPaid FROM CashReceipt WHERE LoanId = vLoanId AND ReceiptType='I';
+		IF vAmountPaid IS NULL THEN
+			SET vAmountPaid := 0;
+		END IF;
+		SET vWeeksPaid := vAmountPaid/vEWI;
+		SET vNoOfInstalments := vWeeksCompleted - vWeeksPaid;
+		IF vNoOfInstalments >= 1 THEN
+			SET vFromDate := DATE_ADD(vLoanDate, INTERVAL (vWeeksPaid + 1)*7 DAY);
+			SET vDueDate := DATE_FORMAT(vFromDate,'%d-%m-%Y');
+		END IF;
+		IF vNoOfInstalments > 1 THEN
+			SET vToDate := DATE_ADD(vLoanDate, INTERVAL (vWeeksPaid + vNoOfInstalments)*7 DAY);
+			SET vDueDate := CONCAT(DATE_FORMAT(vFromDate,'%d-%m-%Y'), ' to ', DATE_FORMAT(vToDate,'%d-%m-%Y'));
+		END IF;
+		IF vNoOfInstalments >= 1 THEN
+			INSERT INTO EwiDueRows VALUES(vLoanId, vBranchId, vMemberId, vMemberName, vPhone,vNoOfInstalments, vEWI, vDueDate);
+		END IF;
+	END LOOP;
+	SELECT * FROM EwiDueRows;
+	DROP TABLE EwiDueRows;
+END;//

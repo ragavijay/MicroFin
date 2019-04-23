@@ -1,0 +1,11 @@
+--prvent two leaders for a group (at db level)
+table formatting
+configure tab in all forms
+
+
+
+show photo/aadhar
+
+Updates:
+
+

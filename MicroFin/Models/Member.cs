@@ -57,5 +57,27 @@ namespace MicroFin.Models
 
             return age;
         }
+        public int GetMemberAge()
+        {
+            int age = 0;
+            age = DateTime.Now.Year - DOB.Year;
+            if (DateTime.Now.DayOfYear < DOB.DayOfYear)
+                age = age - 1;
+
+            return age;
+        }
+        public int GetNomineeAge()
+        {
+            int age = 0;
+            age = DateTime.Now.Year - NomineeDOB.Year;
+            if (DateTime.Now.DayOfYear < NomineeDOB.DayOfYear)
+                age = age - 1;
+
+            return age;
+        }
+        public string GetPhotoPath()
+        {
+            return @"http://fileuploads.amftn.in/Img/Member/" + MemberId + ".jpg";
+        }
     }
 }

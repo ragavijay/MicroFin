@@ -79,7 +79,7 @@ namespace MicroFin.Controllers
                     fileName = member.MemberId + ".jpg";
                     member.Aadhar.SaveAs(Path.Combine(directory, fileName));
                 }
-                return View(member);
+                return View("ViewMember", member);
             }
         }
 
@@ -95,11 +95,6 @@ namespace MicroFin.Controllers
         public ActionResult ViewMember(string id)
         {
             Member member = MemberDBService.GetMember(Convert.ToInt32(id));
-            String path = Server.MapPath("~");
-            path = @"http://fileuploads.amftn.in/Img/Member/" + id + ".jpg";
-            @ViewBag.Photo = path;
-            @ViewBag.Age = MicroFin.Models.Member.GetAge(member.DOB);
-            @ViewBag.NomineeAge = MicroFin.Models.Member.GetAge(member.NomineeDOB);
             return View(member);
         }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Globalization;
 using MicroFin.Models;
 using MicroFin.DAO;
 namespace MicroFin.Controllers
@@ -51,10 +52,10 @@ namespace MicroFin.Controllers
         public ActionResult CashReceiptStatement()
         {
 
-            string userId = Session["UserId"].ToString();
-            string userType = Session["UserType"].ToString();
-            DateTime fromDate = DateTime.Parse(Request["FromDate"]);
-            DateTime toDate = DateTime.Parse(Request["ToDate"]);
+            string userId = Session["userId"].ToString();
+            string userType = Session["userType"].ToString();
+            DateTime fromDate = DateTime.ParseExact(Request["FromDate"],"dd/MM/yyyy",CultureInfo.InvariantCulture);
+            DateTime toDate = DateTime.ParseExact(Request["ToDate"], "dd/MM/yyyy", CultureInfo.InvariantCulture);
             List<CashReceiptStatement> statement = ReceiptDBService.GetCashReceiptStatement(userId, userType, fromDate, toDate);
             return View(statement);
         }

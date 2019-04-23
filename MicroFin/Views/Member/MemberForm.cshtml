@@ -1,5 +1,6 @@
 ﻿@model MicroFin.Models.Member
 @using MicroFin.Models;
+@using System.Globalization;
 @{
     ViewBag.Title = "Add/Edit Member";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -101,7 +102,7 @@
                                 </div>
                                 <div class="col-2">
                                     <div class="input-group-desc">
-                                        @Html.TextBoxFor(m => m.DOB, new { @class = "input--style-5 js-datepicker", @required = "true", @Value = (Model == null || Model.DOB == null) ? "" : Model.DOB.ToString("dd/MM/yyyy"), @autocomplete = "off", @tabindex = "5",
+                                        @Html.TextBoxFor(m => m.DOB, new { @class = "input--style-5 js-datepicker", @required = "true", @Value = (Model == null || Model.DOB == null) ? "" : Model.DOB.ToString("dd/MM/yyyy",CultureInfo.InvariantCulture), @autocomplete = "off", @tabindex = "5",
                                                          @pattern = @"^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[13-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$" })
                                         <p id="errDob"style='color:red;'> </p>
                                     </div>
@@ -368,8 +369,8 @@
                                 </div>
                                 <div class="col-2">
                                     <div class="input-group-desc">
-                                        @Html.TextBoxFor(m => m.NomineeDOB, new { @class = "input--style-5 js-datepicker", @required = "true", @Value = (Model == null|| Model.NomineeDOB==null) ? "" : Model.NomineeDOB.ToString("dd/MM/yyyy"), @autocomplete = "off", @tabindex = "31",
-                                                         @pattern = @"^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[13-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$"})
+                                        @Html.TextBoxFor(m => m.NomineeDOB, new { @class = "input--style-5 js-datepicker", @required = "true", @Value = (Model == null|| Model.NomineeDOB==null) ? "" : Model.NomineeDOB.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture), @autocomplete = "off", @tabindex = "31",
+                                       @pattern = @"^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[13-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$"})
                                         <label class="label--desc">DOB</label>
                                         <p id="errNomineeDob" style='color:red;'> </p>
                                     </div>
@@ -410,32 +411,23 @@
 </div>
 <script>
     createAutoComplete3('http://' + window.location.host + '/api/GetGroupList', 'GroupId', 'CenterName', 'LeaderName', 'GroupName');
+    getBank();
     function validateForm() {
         document.getElementById("PAN").value = document.getElementById("PAN").value.toUpperCase();
+        document.getElementById("IFSC").value = document.getElementById("IFSC").value.toUpperCase();
         document.getElementById("MemberName").value = document.getElementById("MemberName").value.toUpperCase();
         document.getElementById("FName").value = document.getElementById("FName").value.toUpperCase();
         document.getElementById("HName").value = document.getElementById("HName").value.toUpperCase();
         document.getElementById("NomineeName").value = document.getElementById("NomineeName").value.toUpperCase();
-        
-        //var dob = document.getElementById("DOB");
-        //var errDob = document.getElementById("errDob");
-        //var nomineeDob = document.getElementById("NomineeDOB");
-        //var errNomineeDob = document.getElementById("errNomineeDob");
-        //return validateDate(dob,errDob) && validateDate(nomineeDob,errNomineeDob);
         return true;
-    }
-    function validateDate(txtDate, spanErr) {
-        if (txtDate.value.length() != 10) {
-            spanErr.innerHTML = "Invalid Date";
-        }
     }
     function getBank() {
         var ifsc = document.getElementById("IFSC").value
         var bankName = document.getElementById("BankName");
         var bankBranch = document.getElementById("BankBranch");
         if (ifsc == '') {
-            bankName = 'NA';
-            bankBranch = 'NA';
+            bankName.value = '';
+            bankBranch.value = '';
             return;
         }
         var ajaxReq = new XMLHttpRequest();

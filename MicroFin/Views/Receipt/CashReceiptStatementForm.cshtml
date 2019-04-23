@@ -2,6 +2,7 @@
     ViewBag.Title = "CashReceiptStatementForm";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+@using System.Globalization;
 <div class="page-wrapper bg-gra-03 p-t-45 p-b-50">
     <div class="wrapper wrapper--w790">
         <div class="card card-5">
@@ -18,13 +19,13 @@
                             <div class="row row-space">
                                 <div class="col-2">
                                     <div class="input-group-desc">
-                                        @Html.TextBox("FromDate", DateTime.Now.ToString("dd/MM/yyyy"), new { @class = "input--style-5 js-datepicker", @required = "true"})
+                                        @Html.TextBox("FromDate", DateTime.Now.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture), new { @class = "input--style-5 js-datepicker", @required = "true"})
                                         <label class="label--desc">From</label>
                                     </div>
                                 </div>
                                 <div class="col-2">
                                     <div class="input-group-desc">
-                                        @Html.TextBox("ToDate", DateTime.Now.ToString("dd/MM/yyyy"), new { @class = "input--style-5 js-datepicker", @required = "true" })
+                                        @Html.TextBox("ToDate", DateTime.Now.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture), new { @class = "input--style-5 js-datepicker", @required = "true" })
                                         <label class="label--desc">To</label>
                                     </div>
                                 </div>

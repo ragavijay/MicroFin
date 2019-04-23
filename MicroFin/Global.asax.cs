@@ -13,7 +13,7 @@ namespace MicroFin
 {
     public class WebApiApplication : System.Web.HttpApplication
     {
-        static MySqlConnection con;
+        public static string conStr;
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
@@ -21,17 +21,7 @@ namespace MicroFin
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-            string conStr = ConfigurationManager.ConnectionStrings["MySqlConnectionString"].ConnectionString;
-            con = new MySqlConnection(conStr);
-            con.Open();
-        }
-        public static MySqlConnection getConnection()
-        {
-            if (con.State == System.Data.ConnectionState.Closed)
-            {
-                con.Open();
-            }
-            return con;
+            conStr = ConfigurationManager.ConnectionStrings["MySqlConnectionString"].ConnectionString;
         }
     }
 }

@@ -1,0 +1,23 @@
+hosting.india.to
+Pandi2018@
+Host address : amftn.in
+Folder: /app.amftn.in
+Username : amftnin
+Password : 1P9leYd69l
+Port : 21
+
+
+Database:
+instance: amftnin_db
+Server: localhost:3306
+user name: dbadmin
+password: admin@123
+
+
+Local
+mysql 8	
+Root: root/dbadmin
+User: dbadmin/admin_1234
+
+production server
+<add name="MySqlConnectionString" connectionString="server=localhost;port=3306;uid=dbadmin;pwd=admin_1234;database=amftnin_db" providerName="MySql.Data.MySqlClient" />

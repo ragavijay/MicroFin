@@ -14,20 +14,24 @@ namespace MicroFin.DAO
     {
         public static string GetUserType(Login login)
         {
-            MySqlConnection con = WebApiApplication.getConnection();
-            String userType="";
-            using (MySqlCommand cmd = new MySqlCommand("GetUserType", con))
+            String userType = "";
+            using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
             {
-                cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                cmd.Parameters.Add("@pUserId", MySqlDbType.VarChar, 20);
-                cmd.Parameters["@pUserId"].Value = login.UserId;
-                cmd.Parameters.Add("@pPasswd", MySqlDbType.VarChar, 16);
-                cmd.Parameters["@pPasswd"].Value = login.Passwd;
-                cmd.Parameters.Add("@ireturnvalue", MySqlDbType.VarChar, 1);
-                cmd.Parameters["@ireturnvalue"].Direction = ParameterDirection.ReturnValue;
-                using (MySqlDataReader rdr = cmd.ExecuteReader()) { 
-                    rdr.Read();
-                    userType = rdr[0].ToString();
+                con.Open();
+                using (MySqlCommand cmd = new MySqlCommand("GetUserType", con))
+                {
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@pUserId", MySqlDbType.VarChar, 20);
+                    cmd.Parameters["@pUserId"].Value = login.UserId;
+                    cmd.Parameters.Add("@pPasswd", MySqlDbType.VarChar, 16);
+                    cmd.Parameters["@pPasswd"].Value = login.Passwd;
+                    cmd.Parameters.Add("@ireturnvalue", MySqlDbType.VarChar, 1);
+                    cmd.Parameters["@ireturnvalue"].Direction = ParameterDirection.ReturnValue;
+                    using (MySqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                        rdr.Read();
+                        userType = rdr[0].ToString();
+                    }
                 }
             }
             return userType;
@@ -35,19 +39,23 @@ namespace MicroFin.DAO
 
         public static string GetBranchName(int branchId)
         {
-            MySqlConnection con = WebApiApplication.getConnection();
+
             String branchName = "";
-            using (MySqlCommand cmd = new MySqlCommand("GetBranchName", con))
+            using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
             {
-                cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                cmd.Parameters.Add("@pBranchId", MySqlDbType.Decimal, 5);
-                cmd.Parameters["@pBranchId"].Value = branchId;
-                cmd.Parameters.Add("@ireturnvalue", MySqlDbType.VarChar, 25);
-                cmd.Parameters["@ireturnvalue"].Direction = ParameterDirection.ReturnValue;
-                using (MySqlDataReader rdr = cmd.ExecuteReader())
+                con.Open();
+                using (MySqlCommand cmd = new MySqlCommand("GetBranchName", con))
                 {
-                    rdr.Read();
-                    branchName = rdr[0].ToString();
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@pBranchId", MySqlDbType.Decimal, 5);
+                    cmd.Parameters["@pBranchId"].Value = branchId;
+                    cmd.Parameters.Add("@ireturnvalue", MySqlDbType.VarChar, 25);
+                    cmd.Parameters["@ireturnvalue"].Direction = ParameterDirection.ReturnValue;
+                    using (MySqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                        rdr.Read();
+                        branchName = rdr[0].ToString();
+                    }
                 }
             }
             return branchName;
