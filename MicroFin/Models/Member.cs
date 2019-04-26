@@ -29,6 +29,8 @@ namespace MicroFin.Models
         public string AddressLine2 { get; set; }
         public string AddressLine3 { get; set; }
         public string AddressLine4 { get; set; }
+        public string Taluk { get; set; }
+        public string Panchayat { get; set; }
         public string City{ get; set; }
         public string Pincode { get; set; }
         public int NoOfYears { get; set; }

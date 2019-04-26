@@ -68,6 +68,8 @@ CREATE TABLE Member (
     AddressLine2 VARCHAR(40),
     AddressLine3 VARCHAR(40),
     AddressLine4 VARCHAR(40),
+	Taluk VARCHAR(40),
+	Panchayat VARCHAR(40),
     City VARCHAR(30),
     Pincode CHAR(6),
 	NoOfYears INT,
@@ -323,6 +325,8 @@ CREATE PROCEDURE AddMember(OUT pMemberId INT,
 							pAddressLine2 VARCHAR(40), 
 							pAddressLine3 VARCHAR(40), 
 							pAddressLine4 VARCHAR(40), 
+							pTaluk VARCHAR(40),
+							pPanchayat VARCHAR(40),
 							pCity VARCHAR(30), 
 							pPincode CHAR(6), 
 							pNoOfYears INT,
@@ -358,15 +362,16 @@ AddMember: BEGIN
 		SET pMemberId := pMemberId + 1;
 	END IF;
 	INSERT INTO Member(MemberId, GroupId, MemberType, MemberName,Gender, DOB, MaritalStatus, Religion, 
-					   FName, HName, Occupation, OccupationType, AddressLine1, AddressLine2, AddressLine3, AddressLine4, 
+					   FName, HName, Occupation, OccupationType, AddressLine1, AddressLine2, AddressLine3, AddressLine4,
+					   Taluk, Panchayat,
 					   City, Pincode, NoOfYears, HouseType, Phone, MemberAadharNumber, PAN, RationCardNo, VoterIDNo, 
 					   AccountNumber, IFSC, NomineeName, Relationship, NomineeAadharNumber, NomineeDOB) 
 					   VALUES
 					   (pMemberId, pGroupId, pMemberType, pMemberName,pGender, pDOB, pMaritalStatus, pReligion, 
 					   pFName, pHName, pOccupation, pOccupationType, pAddressLine1, pAddressLine2, pAddressLine3, 
-					   pAddressLine4, pCity, pPincode, pNoOfYears, pHouseType, pPhone, pMemberAadharNumber, pPAN, 
-					   pRationCardNo, pVoterIDNo, pAccountNumber, pIFSC, pNomineeName, pRelationship, 
-					   pNomineeAadharNumber, pNomineeDOB);
+					   pAddressLine4, pTaluk, pPanchayat, pCity, pPincode, pNoOfYears, pHouseType, pPhone, 
+					   pMemberAadharNumber, pPAN,pRationCardNo, pVoterIDNo, pAccountNumber, pIFSC, pNomineeName, 
+					   pRelationship, pNomineeAadharNumber, pNomineeDOB);
 	IF vCheck=0 THEN
 		SELECT COUNT(*) INTO vCheck FROM Member WHERE MemberAadharNumber = pMemberAadharNumber;
 		IF vCheck>0 THEN
@@ -399,7 +404,7 @@ BEGIN
 	SELECT M.MemberId, M.GroupId, MG.GroupName, GC.CenterName,   
 		IFNULL((SELECT MemberName FROM Member InnerM WHERE InnerM.GroupID=MG.GroupId AND InnerM.MemberType=1),'NA') AS LeaderName,
 		M.MemberName, M.MemberType, M.Gender, M.DOB, M.MaritalStatus, M.Religion, M.FName, M.HName, M.Occupation, M.OccupationType, 
-		M.AddressLine1, M.AddressLine2, M.AddressLine3, M.AddressLine4, M.City, M.Pincode, 
+		M.AddressLine1, M.AddressLine2, M.AddressLine3, M.AddressLine4, M.Taluk, M.Panchayat, M.City, M.Pincode, 
 		M.NoOfYears, M.HouseType, M.PropertyOwnership, M.Phone, 
 		M.MemberAadharNumber, M.PAN, M.RationCardNo, M.VoterIDNo, M.AccountNumber, M.IFSC, 
 		M.NomineeName, M.Relationship, M.NomineeAadharNumber, M.NomineeDOB
@@ -429,6 +434,8 @@ CREATE PROCEDURE EditMember(pMemberId INT,
 							pAddressLine2 VARCHAR(40), 
 							pAddressLine3 VARCHAR(40), 
 							pAddressLine4 VARCHAR(40), 
+							pTaluk VARCHAR(40),
+							pPanchayat VARCHAR(40),
 							pCity VARCHAR(30), 
 							pPincode CHAR(6), 
 							pNoOfYears INT,
@@ -461,7 +468,8 @@ EditMember:BEGIN
 						MaritalStatus=pMaritalStatus, Religion=pReligion, FName=pFName, HName=pHName,
 						Occupation=pOccupation, OccupationType = pOccupationType,
 						AddressLine1=pAddressLine1, AddressLine2=pAddressLine2, AddressLine3=pAddressLine3, 
-						AddressLine4=pAddressLine4, City=pCity, Pincode=pPincode, NoOfYears=pNoOfYears, HouseType=pHouseType,
+						AddressLine4=pAddressLine4, Taluk=pTaluk, Panchayat=pPanchayat,
+						City=pCity, Pincode=pPincode, NoOfYears=pNoOfYears, HouseType=pHouseType,
 						Phone=pPhone, MemberAadharNumber=pMemberAadharNumber, PAN=pPAN, RationCardNo=pRationCardNo,
 						VoterIDNo=pVoterIDNo, AccountNumber=pAccountNumber, IFSC = pIFSC,
 						NomineeName=pNomineeName, Relationship=pRelationship,

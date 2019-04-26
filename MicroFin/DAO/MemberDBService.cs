@@ -71,6 +71,12 @@ namespace MicroFin.DAO
                     cmd.Parameters.Add("@pAddressLine4", MySqlDbType.VarChar, 40);
                     cmd.Parameters["@pAddressLine4"].Value = member.AddressLine4;
 
+                    cmd.Parameters.Add("@pTaluk", MySqlDbType.VarChar, 40);
+                    cmd.Parameters["@pTaluk"].Value = member.Taluk;
+
+                    cmd.Parameters.Add("@pPanchayat", MySqlDbType.VarChar, 40);
+                    cmd.Parameters["@pPanchayat"].Value = member.Panchayat;
+
                     cmd.Parameters.Add("@pCity", MySqlDbType.VarChar, 30);
                     cmd.Parameters["@pCity"].Value = member.City;
 
@@ -196,6 +202,8 @@ namespace MicroFin.DAO
                             member.AddressLine2 = rdr["AddressLine2"].ToString();
                             member.AddressLine3 = rdr["AddressLine3"].ToString();
                             member.AddressLine4 = rdr["AddressLine4"].ToString();
+                            member.Taluk = rdr["Taluk"].ToString();
+                            member.Panchayat = rdr["Panchayat"].ToString();
                             member.City = rdr["City"].ToString();
                             member.Pincode = rdr["Pincode"].ToString();
                             member.NoOfYears = Convert.ToInt32(rdr["NoOfYears"].ToString());
@@ -275,6 +283,12 @@ namespace MicroFin.DAO
 
                     cmd.Parameters.Add("@pAddressLine4", MySqlDbType.VarChar, 40);
                     cmd.Parameters["@pAddressLine4"].Value = member.AddressLine4;
+
+                    cmd.Parameters.Add("@pTaluk", MySqlDbType.VarChar, 40);
+                    cmd.Parameters["@pTaluk"].Value = member.Taluk;
+
+                    cmd.Parameters.Add("@pPanchayat", MySqlDbType.VarChar, 40);
+                    cmd.Parameters["@pPanchayat"].Value = member.Panchayat;
 
                     cmd.Parameters.Add("@pCity", MySqlDbType.VarChar, 30);
                     cmd.Parameters["@pCity"].Value = member.City;
