@@ -1,9 +1,6 @@
 var ajaxPageReq;
 var ajaxListReq;
-history.pushState(null, null, location.href);
-window.onpopstate = function() {
-	history.go(1);
-};
+
 function createAutoComplete(service, keyAttribute, valueAttribute) {
 	textBox = document.getElementById(valueAttribute);
 	idTextBox = document.getElementById(keyAttribute);

@@ -137,7 +137,7 @@ namespace MicroFin.DAO
             return statusCode;
         }
 
-        public static List<Member> GetAllMembers(int branchId)
+        public static List<Member> GetAllMembers(int groupId)
         {
             Member member;
             List<Member> members = new List<Member>();
@@ -147,8 +147,8 @@ namespace MicroFin.DAO
                 using (MySqlCommand cmd = new MySqlCommand("GetAllMembers", con))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@pBranchId", MySqlDbType.Int32);
-                    cmd.Parameters["@pBranchId"].Value = branchId;
+                    cmd.Parameters.Add("@pGroupId", MySqlDbType.Int32);
+                    cmd.Parameters["@pGroupId"].Value = groupId;
                     using (MySqlDataReader rdr = cmd.ExecuteReader())
                     {
                         while (rdr.Read())
@@ -343,6 +343,163 @@ namespace MicroFin.DAO
                 }
             }
             return statusCode;
+        }
+
+        //GetFamilyMembers
+        public static List<FamilyMember> GetFamilyMembers(int memberId)
+        {
+            FamilyMember familyMember;
+            List<FamilyMember> familyMembers = new List<FamilyMember>();
+            using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
+            {
+                con.Open();
+                using (MySqlCommand cmd = new MySqlCommand("GetFamilyMembers", con))
+                {
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@pMemberId", MySqlDbType.Int32);
+                    cmd.Parameters["@pMemberId"].Value = memberId;
+                    using (MySqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                        while (rdr.Read())
+                        {
+                            familyMember = new FamilyMember();
+                            familyMember.MemberId = memberId;
+                            familyMember.SNo = Convert.ToInt32(rdr["SNo"].ToString());
+                            familyMember.FamilyMemberName = rdr["FamilyMemberName"].ToString();
+                            familyMember.Relationship = rdr["Relationship"].ToString();
+                            familyMember.OccupationType = (EOccupationType)Convert.ToInt32(rdr["OccupationType"].ToString());
+                            familyMember.MonthlyIncome = Convert.ToInt32(rdr["MonthlyIncome"].ToString());
+                            familyMember.Qualification = rdr["Qualification"].ToString();
+                            familyMembers.Add(familyMember);
+                        }
+                    }
+                }
+            }
+            return familyMembers;
+        }
+
+        public static int AddFamilyMember(FamilyMember familyMember)
+        {
+            int statusCode = 0;
+            using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
+            {
+                con.Open();
+                using (MySqlCommand cmd = new MySqlCommand("AddFamilyMember", con))
+                {
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    cmd.Parameters.Add("@pMemberId", MySqlDbType.Int32);
+                    cmd.Parameters["@pMemberId"].Value = familyMember.MemberId;
+
+                    cmd.Parameters.Add("@pSNo", MySqlDbType.Int32);
+                    cmd.Parameters["@pSNo"].Direction = ParameterDirection.Output;
+
+                    cmd.Parameters.Add("@pFamilyMemberName", MySqlDbType.VarChar, 50);
+                    cmd.Parameters["@pFamilyMemberName"].Value = familyMember.FamilyMemberName;
+
+                    cmd.Parameters.Add("@pRelationship", MySqlDbType.VarChar, 30);
+                    cmd.Parameters["@pRelationship"].Value = familyMember.Relationship;
+
+                    cmd.Parameters.Add("@pOccupationType", MySqlDbType.Int32);
+                    cmd.Parameters["@pOccupationType"].Value = familyMember.OccupationType;
+
+                    cmd.Parameters.Add("@pMonthlyIncome", MySqlDbType.Int32);
+                    cmd.Parameters["@pMonthlyIncome"].Value = familyMember.MonthlyIncome;
+
+                    cmd.Parameters.Add("@pQualification", MySqlDbType.VarChar, 20);
+                    cmd.Parameters["@pQualification"].Value = familyMember.Qualification;
+
+                    cmd.Parameters.Add("@pStatusCode", MySqlDbType.Int32);
+                    cmd.Parameters["@pStatusCode"].Direction = ParameterDirection.Output;
+
+                    cmd.ExecuteNonQuery();
+                    statusCode = Convert.ToInt32(cmd.Parameters["@pStatusCode"].Value);
+                    if (statusCode == 1)
+                    {
+                        int sNo = Convert.ToInt32(cmd.Parameters["@pMemberId"].Value);
+                        familyMember.SNo = sNo;
+                    }
+                }
+            }
+            return statusCode;
+        }
+
+        public static int EditFamilyMember(FamilyMember familyMember)
+        {
+            int statusCode = 0;
+            using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
+            {
+                con.Open();
+                using (MySqlCommand cmd = new MySqlCommand("EditFamilyMember", con))
+                {
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    cmd.Parameters.Add("@pMemberId", MySqlDbType.Int32);
+                    cmd.Parameters["@pMemberId"].Value = familyMember.MemberId;
+
+                    cmd.Parameters.Add("@pSNo", MySqlDbType.Int32);
+                    cmd.Parameters["@pSNo"].Value = familyMember.SNo;
+
+                    cmd.Parameters.Add("@pFamilyMemberName", MySqlDbType.VarChar, 50);
+                    cmd.Parameters["@pFamilyMemberName"].Value = familyMember.FamilyMemberName;
+
+                    cmd.Parameters.Add("@pRelationship", MySqlDbType.VarChar, 30);
+                    cmd.Parameters["@pRelationship"].Value = familyMember.Relationship;
+
+                    cmd.Parameters.Add("@pOccupationType", MySqlDbType.Int32);
+                    cmd.Parameters["@pOccupationType"].Value = familyMember.OccupationType;
+
+                    cmd.Parameters.Add("@pMonthlyIncome", MySqlDbType.Int32);
+                    cmd.Parameters["@pMonthlyIncome"].Value = familyMember.MonthlyIncome;
+
+                    cmd.Parameters.Add("@pQualification", MySqlDbType.VarChar, 20);
+                    cmd.Parameters["@pQualification"].Value = familyMember.Qualification;
+
+                    cmd.Parameters.Add("@pStatusCode", MySqlDbType.Int32);
+                    cmd.Parameters["@pStatusCode"].Direction = ParameterDirection.Output;
+
+                    cmd.ExecuteNonQuery();
+                    statusCode = Convert.ToInt32(cmd.Parameters["@pStatusCode"].Value);
+                    if (statusCode == 1)
+                    {
+                        int sNo = Convert.ToInt32(cmd.Parameters["@pMemberId"].Value);
+                        familyMember.SNo = sNo;
+                    }
+                }
+            }
+            return statusCode;
+        }
+
+        public static FamilyMember GetFamilyMember(int memberId,int sNo)
+        {
+            FamilyMember familyMember=null;
+            using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
+            {
+                con.Open();
+                using (MySqlCommand cmd = new MySqlCommand("GetFamilyMember", con))
+                {
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@pMemberId", MySqlDbType.Int32);
+                    cmd.Parameters["@pMemberId"].Value = memberId;
+                    cmd.Parameters.Add("@pSNo", MySqlDbType.Int32);
+                    cmd.Parameters["@pSNo"].Value = sNo;
+                    using (MySqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                        while (rdr.Read())
+                        {
+                            familyMember = new FamilyMember();
+                            familyMember.MemberId = memberId;
+                            familyMember.SNo = Convert.ToInt32(rdr["SNo"].ToString());
+                            familyMember.FamilyMemberName = rdr["FamilyMemberName"].ToString();
+                            familyMember.Relationship = rdr["Relationship"].ToString();
+                            familyMember.OccupationType = (EOccupationType)Convert.ToInt32(rdr["OccupationType"].ToString());
+                            familyMember.MonthlyIncome = Convert.ToInt32(rdr["MonthlyIncome"].ToString());
+                            familyMember.Qualification = rdr["Qualification"].ToString();
+                        }
+                    }
+                }
+            }
+            return familyMember;
         }
     }
 }

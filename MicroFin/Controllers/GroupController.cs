@@ -46,7 +46,7 @@ namespace MicroFin.Controllers
                 }
                 else
                 {
-                    return View(group);
+                    return ViewMemberGroups();
                 }
             }
             else
@@ -59,7 +59,7 @@ namespace MicroFin.Controllers
                 }
                 else
                 {
-                    return View(group);
+                    return ViewMemberGroups();
                 }
             }
         }
@@ -67,7 +67,7 @@ namespace MicroFin.Controllers
         public ActionResult ViewMemberGroups()
         {
             List<MemberGroup> groups = GroupDBService.GetAllMemberGroups(Convert.ToInt32(Session["BranchId"]));
-            return View(groups);
+            return View("ViewMemberGroups",groups);
         }
     }
 }

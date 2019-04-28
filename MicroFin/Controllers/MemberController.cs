@@ -79,15 +79,17 @@ namespace MicroFin.Controllers
                     fileName = member.MemberId + ".jpg";
                     member.Aadhar.SaveAs(Path.Combine(directory, fileName));
                 }
-                return View("ViewMember", member);
+                return ViewMembers(member.GroupId.ToString());
             }
         }
 
         [HttpGet]
-        public ActionResult ViewMembers()
+        [Route("ViewMembers/{id?}")]
+        public ActionResult ViewMembers(string id)
         {
-            List<Member> members = MemberDBService.GetAllMembers(Convert.ToInt32(Session["BranchId"]));
-            return View(members);
+            int groupId = Convert.ToInt32(id);
+            List<Member> members = MemberDBService.GetAllMembers(groupId);
+            return View("ViewMembers", members);
         }
 
         [HttpGet]
@@ -95,8 +97,65 @@ namespace MicroFin.Controllers
         public ActionResult ViewMember(string id)
         {
             Member member = MemberDBService.GetMember(Convert.ToInt32(id));
+            member.FamilyMembers = MemberDBService.GetFamilyMembers(Convert.ToInt32(id));
             return View(member);
         }
 
+        [HttpGet]
+        [Route("ViewFamilyMembers/{id?}")]
+        public ActionResult ViewFamilyMembers(string id)
+        {
+            List<FamilyMember> familyMembers = MemberDBService.GetFamilyMembers(Convert.ToInt32(id));
+            @ViewBag.MemberName = MemberDBService.GetMember(Convert.ToInt32(id)).MemberName;
+            @ViewBag.MemberId= id;
+            return View("ViewFamilyMembers",familyMembers);
+        }
+
+        [HttpGet]
+        [Route("FamilyMemberForm/{id?}")]
+        public ActionResult FamilyMemberForm(string id)
+        {
+            string[] input= id.Split(' ');
+            if (input.Length == 1)
+            {
+                Member member = MemberDBService.GetMember(Convert.ToInt32(id));
+                FamilyMember familyMember = new FamilyMember();
+                familyMember.MemberId = member.MemberId;
+                familyMember.OccupationType = EOccupationType.None;
+                return View(familyMember);
+            } else
+            {
+                int memberId = Convert.ToInt32(input[0]);
+                int sNo = Convert.ToInt32(input[1]);
+                FamilyMember familyMember = MemberDBService.GetFamilyMember(memberId, sNo);
+                return View(familyMember);
+            }
+
+        }
+
+        [HttpPost]
+        public ActionResult FamilyMember(FamilyMember familyMember)
+        {
+            int statusCode;
+            if (familyMember.SNo == 0)
+            {
+                statusCode = MemberDBService.AddFamilyMember(familyMember);
+
+            }
+            else
+            {
+                statusCode = MemberDBService.EditFamilyMember(familyMember);
+            }
+            if (statusCode == 0)
+            {
+                @ViewBag.ErrTryAgain = "Try again";
+                return View("FamilyMemberForm", familyMember);
+
+            }
+            else
+            {
+               return ViewFamilyMembers(familyMember.MemberId.ToString());
+            }
+        }
     }
 }

@@ -27,12 +27,35 @@
                 <tr> <td> <b>Ration Card No.</b> </td> <td> @Model.RationCardNo </td><td colspan="2"> </td>  </tr>
                 <tr> <td> <b>Account No.</b> </td> <td> @Model.AccountNumber </td> <td> <b>IFSC</b> </td> <td> @Model.IFSC </td></tr>
                 <tr> <td> <b>Bank</b> </td> <td> <span id="bankName"> </span> </td> <td> <b>Branch</b> </td> <td> <span id="bankBranch"> </span></td></tr>
-                <tr> <td> <b>Address</b> </td> <td colspan="3"> @Model.AddressLine1 <br /> @Model.AddressLine2 <br /> @Model.AddressLine3 <br /> @Model.AddressLine4 <br />  @Model.City, PIN- @Model.Pincode  </tr>
-                <tr> <td> <b>Taluk</b> </td> <td> @Model.Taluk </td> <td> <b>Property Ownership</b> </td> <td> @Model.Panchayat </td></tr>
+                <tr> <td> <b>Bank Address</b> </td> <td colspan="3"> <span id="bankAddress"> </span> </tr>
+                <tr> <td> <b>Address</b> </td> <td colspan="3"> @Model.AddressLine1 <br /> @Model.AddressLine2 <br /> @Model.AddressLine3 <br /> @Model.AddressLine4 <br />  @Model.City, PIN- @Model.Pincode </td>  </tr>
+                <tr> <td> <b>Taluk</b> </td> <td> @Model.Taluk </td> <td> <b>Panchayat</b> </td> <td> @Model.Panchayat </td></tr>
                 <tr> <td> <b>Mobile No.</b> </td> <td> @Model.Phone </td><td colspan="2"> </td>  </tr>
                 <tr> <td> <b>No of Years in household</b> </td> <td> @Model.NoOfYears </td><td colspan="2"> </td>  </tr>
                 <tr> <td> <b>House Type</b> </td> <td> @Model.HouseType </td> <td> <b>Property Ownership</b> </td> <td> @Model.PropertyOwnership </td></tr>
                 <tr> <td> <b>Occupation</b> </td> <td> @Model.Occupation </td> <td> <b>Occupation Type</b> </td> <td> @Model.OccupationType </td></tr>
+                <tr> 
+                        <td> <b>Family Members</b> </td> 
+                        <td colspan="3"> 
+                            @if(Model.FamilyMembers.Count>0)
+                            {
+                                <table class="tg">
+                                    <tr> <th> S. No </th> <th> Name </th> <th> Relationship </th><th> Occupation </th> <th> Monthly Income </th> <th> Qualification </th> </tr>
+                                    @foreach (var familyMember in @Model.FamilyMembers)
+                                    {
+                                        <tr>
+                                            <td> @familyMember.SNo </td>
+                                            <td> @familyMember.FamilyMemberName </td>
+                                            <td> @familyMember.Relationship </td>
+                                            <td> @familyMember.OccupationType </td>
+                                            <td> @familyMember.MonthlyIncome</td>
+                                            <td> @familyMember.Qualification</td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                        </td>
+                </tr>
         </table>
     </div>
         <input type="button" value="print" onclick="printMember()"/>
@@ -58,6 +81,7 @@
         if (ifsc == '') {
             bankName.innerHTML = '';
             bankBranch.innerHTML = '';
+            bankAddress.innerHTML = '';
             return;
         }
         var ajaxReq = new XMLHttpRequest();
@@ -65,14 +89,17 @@
             if (this.readyState == 1) {
                 bankName.innerHTML = "Loading....";
                 bankBranch.innerHTML = "Loading....";
+                bankAddress.innerHTML = "Loading....";
             } else if (this.readyState == 4) {
                 if (this.status == 200) {
                     var bankInfo = JSON.parse(this.responseText);
                     bankName.innerHTML = bankInfo.BANK;
                     bankBranch.innerHTML = bankInfo.BRANCH;
+                    bankAddress.innerHTML = bankInfo.ADDRESS;
                 } else {
-                    bankName.innerHTML = "NA";
-                    bankBranch.innerHTML = "NA";
+                    bankName.innerHTML = "";
+                    bankBranch.innerHTML = "";
+                    bankAddress.innerHTML = "";
                 }
             }
         };

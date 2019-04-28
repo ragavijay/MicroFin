@@ -24,6 +24,9 @@
         <th>
             @Html.DisplayNameFor(model => model.LeaderName)
         </th>
+        <th>
+            Family Member
+        </th>
         <th></th>
         <th></th>
     </tr>
@@ -44,6 +47,9 @@
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.LeaderName)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "ViewFamilyMembers", new { id = item.MemberId })
         </td>
         <td>
             @Html.ActionLink("View", "ViewMember", new { id = item.MemberId })

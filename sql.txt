@@ -91,12 +91,18 @@ CREATE TABLE Member (
         REFERENCES MemberGroup(GroupId)
 );
 
-CREATE TABLE MemberImg (
+CREATE TABLE FamilyMember (
 	MemberId INT,
-	Photo MEDIUMBLOB,
-	Aadhar MEDIUMBLOB,
-	CONSTRAINT pKey_M_MemberId PRIMARY KEY(MemberId)
-)
+	SNo INT,
+	FamilyMemberName VARCHAR(50),
+	Relationship VARCHAR(30),
+	OccupationType INT,
+	MonthlyIncome INT,
+	Qualification VARCHAR(20),
+	CONSTRAINT pKey_FM_MemberId_SNo PRIMARY KEY(MemberId, SNo),
+	CONSTRAINT fKey_FM_MemberId FOREIGN KEY (MemberId)
+        REFERENCES Member(MemberId)
+);
 
 CREATE TABLE Loan (
     LoanId INT,
@@ -383,15 +389,15 @@ AddMember: BEGIN
 END//
 
 
---GetAllMembers
+--GetAllMembers (28-04-2019)
 DELIMITER //
 DROP PROCEDURE IF EXISTS `GetAllMembers`//
-CREATE PROCEDURE GetAllMembers(pBranchId INT)
+CREATE PROCEDURE GetAllMembers(pGroupId INT)
 BEGIN
 	SELECT M.MemberId, M.MemberName, MG.GroupName, GC.CenterName, 
 		IFNULL((SELECT MemberName FROM Member InnerM WHERE InnerM.GroupID=MG.GroupId AND InnerM.MemberType=1),'NA') AS LeaderName  
 		FROM  Member M INNER JOIN MemberGroup MG ON M.GroupId=MG.GroupId INNER JOIN GroupCenter GC ON MG.CenterId = GC.CenterId  
-		WHERE GC.BranchId = pBranchId;
+		WHERE M.GroupID = pGroupId;
 END//
 --Test
 CALL GetAllMembers(1)
@@ -760,3 +766,70 @@ BEGIN
 	SELECT * FROM EwiDueRows;
 	DROP TABLE EwiDueRows;
 END;//
+
+
+--GetFamilyMembers (28-04-2019)
+DELIMITER //
+DROP PROCEDURE IF EXISTS `GetFamilyMembers`//
+CREATE PROCEDURE GetFamilyMembers(pMemberId INT)
+BEGIN
+	SELECT SNo, FamilyMemberName, Relationship, OccupationType, MonthlyIncome, Qualification 
+		FROM FamilyMember WHERE MemberId = pMemberId ORDER BY SNo;
+END//
+--Test
+CALL GetFamilyMembers(1)
+
+--GetFamilyMember (28-04-2019)
+DELIMITER //
+DROP PROCEDURE IF EXISTS `GetFamilyMember`//
+CREATE PROCEDURE GetFamilyMember(pMemberId INT,pSNo INT)
+BEGIN
+	SELECT SNo, FamilyMemberName, Relationship, OccupationType, MonthlyIncome, Qualification 
+		FROM FamilyMember WHERE MemberId = pMemberId AND SNo=pSNo;
+END//
+--Test
+CALL GetFamilyMember(1,1)
+
+--AddFamilyMember (28-04-2019)
+DELIMITER //
+DROP PROCEDURE IF EXISTS `AddFamilyMember`//
+CREATE PROCEDURE AddFamilyMember(pMemberId INT, 
+							OUT pSNo INT, 
+							pFamilyMemberName VARCHAR(50),
+							pRelationship VARCHAR(30),
+							pOccupationType INT,
+							pMonthlyIncome INT,
+							pQualification VARCHAR(20),
+							OUT pStatusCode INT)
+BEGIN
+    DECLARE CONTINUE HANDLER FOR SQLEXCEPTION SET pStatusCode=0;
+	SET pStatusCode := 1;
+	SELECT MAX(SNo) INTO pSNo FROM FamilyMember WHERE MemberId=pMemberId;
+	IF pSNo IS NULL THEN
+		SET pSNo := 1;
+	ELSE
+		SET pSNo := pSNo + 1;
+	END IF;
+	INSERT INTO FamilyMember(MemberId, SNo, FamilyMemberName, Relationship, OccupationType, MonthlyIncome, Qualification) 
+					   VALUES
+					   (pMemberId, pSNo, pFamilyMemberName, pRelationship, pOccupationType, pMonthlyIncome, pQualification );
+END//
+
+--EditFamilyMember (28-04-2019)
+DELIMITER //
+DROP PROCEDURE IF EXISTS `EditFamilyMember`//
+CREATE PROCEDURE EditFamilyMember(pMemberId INT, 
+							pSNo INT, 
+							pFamilyMemberName VARCHAR(50),
+							pRelationship VARCHAR(30),
+							pOccupationType INT,
+							pMonthlyIncome INT,
+							pQualification VARCHAR(20),
+							OUT pStatusCode INT)
+BEGIN
+    DECLARE CONTINUE HANDLER FOR SQLEXCEPTION SET pStatusCode=0;
+	SET pStatusCode := 1;
+	UPDATE FamilyMember SET FamilyMemberName=pFamilyMemberName, Relationship=pRelationship, 
+						OccupationType=pOccupationType, MonthlyIncome=pMonthlyIncome, Qualification=pQualification
+						WHERE MemberId=pMemberId AND SNo=pSNo;
+END//

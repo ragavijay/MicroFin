@@ -206,6 +206,7 @@
     <Compile Include="Models\CashReceiptStatement.cs" />
     <Compile Include="Models\Enums.cs" />
     <Compile Include="Models\EwiDue.cs" />
+    <Compile Include="Models\FamilyMember.cs" />
     <Compile Include="Models\GroupCenter.cs" />
     <Compile Include="Models\InstalmentReceipt.cs" />
     <Compile Include="Models\Loan.cs" />
@@ -299,17 +300,14 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\App\Home.cshtml" />
     <Content Include="Views\App\Login.cshtml" />
-    <Content Include="Views\Center\GroupCenter.cshtml" />
     <Content Include="Views\Center\GroupCenterForm.cshtml" />
     <Content Include="Views\Center\ViewGroupCenters.cshtml" />
-    <Content Include="Views\Group\MemberGroup.cshtml" />
     <Content Include="Views\Group\MemberGroupForm.cshtml" />
     <Content Include="Views\Group\ViewMemberGroups.cshtml" />
     <Content Include="Views\Loan\Loan.cshtml" />
     <Content Include="Views\Loan\LoanForm.cshtml" />
     <Content Include="Views\Loan\ViewLoans.cshtml" />
     <Content Include="Views\Loan\ViewPendingLoans.cshtml" />
-    <Content Include="Views\Member\Member.cshtml" />
     <Content Include="Views\Member\MemberForm.cshtml" />
     <Content Include="Views\Member\ViewMembers.cshtml" />
     <Content Include="Views\Receipt\CashReceiptStatement.cshtml" />
@@ -320,6 +318,8 @@
     <Content Include="Views\Receipt\PFReceiptForm.cshtml" />
     <Content Include="Views\Receipt\ViewEwiDueList.cshtml" />
     <Content Include="Views\Member\ViewMember.cshtml" />
+    <Content Include="Views\Member\ViewFamilyMembers.cshtml" />
+    <Content Include="Views\Member\FamilyMemberForm.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

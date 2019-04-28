@@ -47,7 +47,7 @@ namespace MicroFin.Controllers
                     return View("GroupCenterForm", center);
                 }
                 {
-                    return View(center);
+                    return ViewGroupCenters();
                 }
             }
             else
@@ -61,7 +61,7 @@ namespace MicroFin.Controllers
                 }
                 else
                 {
-                    return View(center);
+                    return ViewGroupCenters();
                 }
             }
         }
@@ -70,7 +70,7 @@ namespace MicroFin.Controllers
         public ActionResult ViewGroupCenters()
         {
             List<GroupCenter> centers = CenterDBService.GetAllGroupCenters(Convert.ToInt32(Session["BranchId"]));
-            return View(centers);
+            return View("ViewGroupCenters",centers);
         }
     }
 }

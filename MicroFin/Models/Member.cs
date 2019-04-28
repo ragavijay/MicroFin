@@ -6,8 +6,6 @@ using System.Web;
 
 namespace MicroFin.Models
 {
-
-    
     public class Member
     {
         public int MemberId { get; set; }
@@ -37,7 +35,7 @@ namespace MicroFin.Models
         public EHouseType HouseType { get; set; }
         public EPropertyOwnership PropertyOwnership { get; set; }
         public string Phone { get; set; }
-
+        public List<FamilyMember> FamilyMembers;
         public string MemberAadharNumber { get; set; }
         public string PAN { get; set; }
         public string RationCardNo { get; set; }

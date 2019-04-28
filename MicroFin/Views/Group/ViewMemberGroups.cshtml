@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<MicroFin.Models.MemberGroup>
 
 @{
-    ViewBag.Title = "ViewCenters";
+    ViewBag.Title = "View Groups";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -22,6 +22,7 @@
             @Html.DisplayNameFor(model => model.CenterName)
         </th>
         <th></th>
+        <th></th>
     </tr>
 
 @foreach (var item in Model) {
@@ -37,6 +38,9 @@
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.CenterName)
+        </td>
+        <td>
+            @Html.ActionLink("Members", "ViewMembers", "Member", new { id = item.GroupId },null)
         </td>
         <td>
             @Html.ActionLink("Edit", "MemberGroupForm", new { id=item.GroupId })
