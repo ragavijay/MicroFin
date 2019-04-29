@@ -213,6 +213,7 @@
     <Compile Include="Models\Login.cs" />
     <Compile Include="Models\Member.cs" />
     <Compile Include="Models\MemberGroup.cs" />
+    <Compile Include="Models\MemberLoan.cs" />
     <Compile Include="Models\PFReceipt.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -304,7 +305,6 @@
     <Content Include="Views\Center\ViewGroupCenters.cshtml" />
     <Content Include="Views\Group\MemberGroupForm.cshtml" />
     <Content Include="Views\Group\ViewMemberGroups.cshtml" />
-    <Content Include="Views\Loan\Loan.cshtml" />
     <Content Include="Views\Loan\LoanForm.cshtml" />
     <Content Include="Views\Loan\ViewLoans.cshtml" />
     <Content Include="Views\Loan\ViewPendingLoans.cshtml" />
@@ -320,6 +320,7 @@
     <Content Include="Views\Member\ViewMember.cshtml" />
     <Content Include="Views\Member\ViewFamilyMembers.cshtml" />
     <Content Include="Views\Member\FamilyMemberForm.cshtml" />
+    <Content Include="Views\Loan\ViewLoan.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

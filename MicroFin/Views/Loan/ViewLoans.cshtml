@@ -22,6 +22,7 @@
             @Html.DisplayNameFor(model => model.LoanAmount)
         </th>
         <th></th>
+        <th></th>
     </tr>
 
 @foreach (var item in Model) {
@@ -37,6 +38,9 @@
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.LoanAmount)
+        </td>
+        <td>
+            @Html.ActionLink("View", "ViewLoan", new { id = item.LoanId })
         </td>
         <td>
             @if(item.LoanStatus=="P" || item.LoanStatus=="A")

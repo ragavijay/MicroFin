@@ -11,7 +11,8 @@ namespace MicroFin.Models
         public int MemberId{ get; set; }
         public string MemberName{ get; set; }
         public int BranchId{ get; set; }
-        public int LoanAmount{ get; set; }
+        public string LoanPurpose{ get; set; }
+        public int LoanAmount { get; set; }
         public float ProcessingFeeRate{ get; set; }
         public int ProcessingFee{ get; set; }
         public float InsuranceRate{ get; set; }

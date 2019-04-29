@@ -53,6 +53,9 @@ namespace MicroFin.DAO
                     cmd.Parameters.Add("@pBranchId", MySqlDbType.Int32);
                     cmd.Parameters["@pBranchId"].Value = loan.BranchId;
 
+                    cmd.Parameters.Add("@pLoanPurpose", MySqlDbType.VarChar,40);
+                    cmd.Parameters["@pLoanPurpose"].Value = loan.LoanPurpose;
+
                     cmd.Parameters.Add("@pLoanAmount", MySqlDbType.Int32);
                     cmd.Parameters["@pLoanAmount"].Value = loan.LoanAmount;
 
@@ -111,6 +114,7 @@ namespace MicroFin.DAO
                             loan.LoanId = Convert.ToInt32(rdr["LoanId"].ToString());
                             loan.MemberId = Convert.ToInt32(rdr["MemberId"].ToString());
                             loan.MemberName = rdr["MemberName"].ToString();
+                            loan.LoanPurpose = rdr["LoanPurpose"].ToString();
                             loan.LoanAmount = Convert.ToInt32(rdr["LoanAmount"].ToString());
                             loan.ProcessingFeeRate = Convert.ToSingle(rdr["ProcessingFeeRate"].ToString());
                             loan.ProcessingFee = Convert.ToInt32(rdr["ProcessingFee"].ToString());
@@ -149,6 +153,7 @@ namespace MicroFin.DAO
                             loan.LoanId = Convert.ToInt32(rdr["LoanId"].ToString());
                             loan.MemberId = Convert.ToInt32(rdr["MemberId"].ToString());
                             loan.MemberName = rdr["MemberName"].ToString();
+                            loan.LoanPurpose = rdr["LoanPurpose"].ToString();
                             loan.LoanAmount = Convert.ToInt32(rdr["LoanAmount"].ToString());
                             loan.ProcessingFeeRate = Convert.ToSingle(rdr["ProcessingFeeRate"].ToString());
                             loan.ProcessingFee = Convert.ToInt32(rdr["ProcessingFee"].ToString());
@@ -185,6 +190,7 @@ namespace MicroFin.DAO
                             loan.LoanId = Convert.ToInt32(rdr["LoanId"].ToString());
                             loan.MemberId = Convert.ToInt32(rdr["MemberId"].ToString());
                             loan.MemberName = rdr["MemberName"].ToString();
+                            loan.LoanPurpose = rdr["LoanPurpose"].ToString();
                             loan.LoanAmount = Convert.ToInt32(rdr["LoanAmount"].ToString());
                             loan.ProcessingFeeRate = Convert.ToSingle(rdr["ProcessingFeeRate"].ToString());
                             loan.ProcessingFee = Convert.ToInt32(rdr["ProcessingFee"].ToString());
@@ -222,6 +228,9 @@ namespace MicroFin.DAO
 
                     cmd.Parameters.Add("@pBranchId", MySqlDbType.Int32);
                     cmd.Parameters["@pBranchId"].Value = loan.BranchId;
+
+                    cmd.Parameters.Add("@pLoanPurpose", MySqlDbType.VarChar, 40);
+                    cmd.Parameters["@pLoanPurpose"].Value = loan.LoanPurpose;
 
                     cmd.Parameters.Add("@pLoanAmount", MySqlDbType.Int32);
                     cmd.Parameters["@pLoanAmount"].Value = loan.LoanAmount;

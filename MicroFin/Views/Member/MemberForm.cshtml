@@ -433,6 +433,7 @@
 <script>
     createAutoComplete3('http://' + window.location.host + '/api/GetGroupList', 'GroupId', 'CenterName', 'LeaderName', 'GroupName');
     getBank();
+    setDefaultDate();
     function validateForm() {
         document.getElementById("PAN").value = document.getElementById("PAN").value.toUpperCase();
         document.getElementById("IFSC").value = document.getElementById("IFSC").value.toUpperCase();
@@ -469,5 +470,15 @@
         };
         ajaxReq.open("GET", "https://ifsc.razorpay.com/" + ifsc, true);
         ajaxReq.send();
+    }
+    function setDefaultDate() {
+        var DOB = document.getElementById("DOB");
+        var NomineeDOB = document.getElementById("NomineeDOB");
+        if (DOB.value == '') {
+            DOB.value='01/01/1980'
+        }
+        if (NomineeDOB.value == '') {
+            NomineeDOB.value = '01/01/1980'
+        }
     }
 </script>

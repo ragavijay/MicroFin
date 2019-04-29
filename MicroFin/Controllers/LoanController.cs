@@ -49,7 +49,7 @@ namespace MicroFin.Controllers
                 }
                 else
                 {
-                    return View(loan);
+                    return ViewLoans();
                 }
             }
             else
@@ -62,7 +62,7 @@ namespace MicroFin.Controllers
                 }
                 else
                 {
-                    return View(loan);
+                    return ViewLoans();
                 }
             }
         }
@@ -71,7 +71,7 @@ namespace MicroFin.Controllers
         public ActionResult ViewLoans()
         {
             List<Loan> loans = LoanDBService.GetAllLoans(Convert.ToInt32(Session["BranchId"]));
-            return View(loans);
+            return View("ViewLoans",loans);
         }
         [HttpGet]
         public ActionResult ViewPendingLoans()
@@ -79,6 +79,17 @@ namespace MicroFin.Controllers
             List<Loan> loans = LoanDBService.GetAllPendingLoans(Convert.ToInt32(Session["BranchId"]));
             return View(loans);
         }
-        
+
+
+        [Route("ViewLoan/{id?}")]
+        public ActionResult ViewLoan(string id)
+        {
+            int loanId = Convert.ToInt32(id);
+            MemberLoan memberLoan = new MemberLoan();
+            memberLoan.loan = LoanDBService.GetLoan(loanId);
+            memberLoan.member = MemberDBService.GetMember(memberLoan.loan.MemberId);
+            memberLoan.member.FamilyMembers = MemberDBService.GetFamilyMembers(memberLoan.loan.MemberId);
+            return View(memberLoan);
+        }
     }
 }
