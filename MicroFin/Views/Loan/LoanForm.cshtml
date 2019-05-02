@@ -13,7 +13,7 @@
     <center>
         <table id="scheduleTable" border="1">
             <thead>
-                <tr> <td> Week</td> <td> Principal</td> <td> Interest </td> <td> Balance </td> </tr>
+                <tr> <td> Week</td> <td> Opening Balance </td> <td> Principal</td> <td> Interest </td> <td> Balance </td> </tr>
             </thead>
             <tbody>
 
@@ -39,7 +39,7 @@
                         <div class="name">Loan Id</div>
                         <div class="value">
                             <div class="input-group">
-                                @Html.TextBoxFor(m => m.LoanId, new { @class = "input--style-5", @placeholder = "auto-generated", @readonly = "true", @autocomplete="off" })
+                                @Html.TextBoxFor(m => m.LoanId, new { @id="LoanId", @class = "input--style-5", @placeholder = "auto-generated", @readonly = "true", @autocomplete="off" })
                             </div>
                         </div>
                     </div>
@@ -51,13 +51,27 @@
                             <div class="row row-space">
                                 <div class="col-2">
                                     <div class="input-group-desc">
-                                        @Html.TextBoxFor(m => m.MemberId, new { id = "MemberId", @class = "input--style-5", @autocomplete = "off", @placeholder = "enter member id", @required = "true", @tabindex="1"})
+                                        @if(@Model==null)
+                                        {
+                                            @Html.TextBoxFor(m => m.MemberId, new { id = "MemberId", @class = "input--style-5", @autocomplete = "off", @placeholder = "enter member id", @required = "true", @tabindex = "1" })
+                                        }
+                                        else
+                                        {
+                                            @Html.TextBoxFor(m => m.MemberId, new { id = "MemberId", @class = "input--style-5", @autocomplete = "off", @onkeydown = "event.preventDefault()", @tabindex = "1" })
+                                        }
                                         <p id="errMemberId" style='color:red;'> </p>
                                     </div>
                                 </div>
                                 <div class="col-2">
                                     <div class="input-group-desc">
-                                        <button class="btn btn--blue" type="button" onclick="checkMember();" tabindex="2">Get</button>
+                                        @if (@Model == null)
+                                        {
+                                            <button class="btn btn--blue" type="button" onclick="checkMember();" tabindex="2">Get</button>
+                                        }
+                                        else
+                                        {
+
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -138,7 +152,7 @@
 
                         <!--Tenure -->
                         <div class="form-row">
-                            <div class="name">Tenure(Months)</div>
+                            <div class="name">Tenure(Weeks)</div>
                             <div class="value">
                                 <div class="input-group">
                                     @Html.TextBoxFor(m => m.Tenure, new { id = "Tenure", @class = "input--style-5", @autocomplete = "off", @required = "true", @tabindex = "7" })
@@ -201,6 +215,7 @@
                         <!--Save-->
                         <div>
                             <button class="btn btn--radius-2 btn--red" type="submit" tabindex="10">Save</button>
+                            <p style='color:red;'> @ViewBag.ErrTryAgain </p>
                         </div>
                     </div>
                 }
@@ -210,7 +225,9 @@
 </div>
 <script>
     document.getElementById("MemberId").addEventListener("keydown", function (e) {
-        document.getElementById("loanInfo").style.display = 'none';
+        if (document.getElementById("LoanId").value == "") {
+            document.getElementById("loanInfo").style.display = 'none';
+        }
     });
 
     document.getElementById("LoanAmount").addEventListener("keyup", function (e) {
@@ -237,6 +254,7 @@
 	    }
 	
 	    var xhttp = new XMLHttpRequest();
+	    document.getElementById("errMemberId").innerHTML=""
 	    xhttp.onreadystatechange = function() {
 	        if (this.readyState == 4 && this.status == 200) {
 	            var memberName = this.responseText;
@@ -333,13 +351,19 @@
             scheduleTable.deleteRow(i);
         }
         for (i = 1; i <= tenure; i++) {
-            interest = balance * interestRate / 100 / 52;
-            principal = ewi - interest;
-            balance = balance - ewi + interest;
+           
             currentRow = scheduleTable.insertRow(-1);
             //Week
             currentCell = currentRow.insertCell(-1);
             currentCell.innerHTML = i;
+            //Balance
+            currentCell = currentRow.insertCell(-1);
+            currentCell.innerHTML = balance.toFixed(2);
+
+            interest = balance * interestRate / 100 / 52;
+            principal = ewi - interest;
+            balance = balance - ewi + interest;
+
             //Principal
             currentCell = currentRow.insertCell(-1);
             currentCell.innerHTML = principal.toFixed(2);
@@ -349,7 +373,7 @@
         
             //Balance
             currentCell = currentRow.insertCell(-1);
-            currentCell.innerHTML = balance.toFixed(2);
+            currentCell.innerHTML = Math.abs(balance).toFixed(2);
         }
         document.getElementById("LoanForm").style.display = "none";
         document.getElementById("schedule").style.display = "block";

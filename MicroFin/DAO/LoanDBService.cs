@@ -221,7 +221,7 @@ namespace MicroFin.DAO
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
                     cmd.Parameters.Add("@pLoanId", MySqlDbType.Int32);
-                    cmd.Parameters["@pLoanId"].Direction = ParameterDirection.Output;
+                    cmd.Parameters["@pLoanId"].Value = loan.LoanId;
 
                     cmd.Parameters.Add("@pMemberId", MySqlDbType.Int32);
                     cmd.Parameters["@pMemberId"].Value = loan.MemberId;

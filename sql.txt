@@ -120,6 +120,7 @@ CREATE TABLE Loan (
     LoanStatus CHAR(1),
     LoanDate DATE,
     ApprovedBy VARCHAR(20),
+	StatusRemarks VARCHAR(50),
     CONSTRAINT pKey_L_LoanId PRIMARY KEY (LoanId),
     CONSTRAINT fKey_L_MemberId FOREIGN KEY (MemberId)
         REFERENCES Member (MemberId),
@@ -537,7 +538,7 @@ AddLoan:BEGIN
 	ELSE
 		SET pLoanId := pLoanId + 1;
 	END IF;
-	INSERT INTO Loan VALUES(pLoanId, pMemberId, pBranchId, pLoanPurpose, pLoanAmount, pProcessingFeeRate, pProcessingFee, pInsuranceRate, pInsurance, pTenure, pInterestRate, pEWI, 'P',NULL,NULL);
+	INSERT INTO Loan VALUES(pLoanId, pMemberId, pBranchId, pLoanPurpose, pLoanAmount, pProcessingFeeRate, pProcessingFee, pInsuranceRate, pInsurance, pTenure, pInterestRate, pEWI, 'P',NULL,NULL,NULL);
 END;//
 
 
@@ -573,7 +574,7 @@ CREATE PROCEDURE EditLoan(pLoanId INT, pMemberId INT, pBranchId INT, pLoanPurpos
 BEGIN
     DECLARE CONTINUE HANDLER FOR SQLEXCEPTION SET pStatusCode=0;
 	SET pStatusCode := 1;
-	UPDATE Loan SET MemberId=pMemberId, BranchId=pBranchId, LoanPurpose=pLoanPurpose, LoanAmount=pLoanAmount,
+	UPDATE Loan SET LoanPurpose=pLoanPurpose, LoanAmount=pLoanAmount,
 						ProcessingFeeRate=pProcessingFeeRate, ProcessingFee=pProcessingFee,
 						InsuranceRate=pInsuranceRate, Insurance=pInsurance, Tenure=pTenure, 
 						InterestRate=pInterestRate, EWI=pEwi, LoanStatus='P' WHERE LoanId = pLoanId;
