@@ -23,5 +23,6 @@ namespace MicroFin.Models
         public int Ewi{ get; set; }
         public string LoanStatus{ get; set; }
         public DateTime LoanDate{ get; set; }
+        public string StatusRemarks { get; set; }
     }
 }

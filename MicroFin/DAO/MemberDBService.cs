@@ -98,10 +98,10 @@ namespace MicroFin.DAO
                     cmd.Parameters.Add("@pPAN", MySqlDbType.VarChar, 10);
                     cmd.Parameters["@pPAN"].Value = member.PAN;
 
-                    cmd.Parameters.Add("@pRationCardNo", MySqlDbType.VarChar, 15);
+                    cmd.Parameters.Add("@pRationCardNo", MySqlDbType.VarChar, 30);
                     cmd.Parameters["@pRationCardNo"].Value = member.RationCardNo;
 
-                    cmd.Parameters.Add("@pVoterIDNo", MySqlDbType.VarChar, 15);
+                    cmd.Parameters.Add("@pVoterIDNo", MySqlDbType.VarChar, 30);
                     cmd.Parameters["@pVoterIDNo"].Value = member.VoterIDNo;
 
                     cmd.Parameters.Add("@pAccountNumber", MySqlDbType.VarChar, 20);
@@ -311,10 +311,10 @@ namespace MicroFin.DAO
                     cmd.Parameters.Add("@pPAN", MySqlDbType.VarChar, 10);
                     cmd.Parameters["@pPAN"].Value = member.PAN;
 
-                    cmd.Parameters.Add("@pRationCardNo", MySqlDbType.VarChar, 15);
+                    cmd.Parameters.Add("@pRationCardNo", MySqlDbType.VarChar, 30);
                     cmd.Parameters["@pRationCardNo"].Value = member.RationCardNo;
 
-                    cmd.Parameters.Add("@pVoterIDNo", MySqlDbType.VarChar, 15);
+                    cmd.Parameters.Add("@pVoterIDNo", MySqlDbType.VarChar, 30);
                     cmd.Parameters["@pVoterIDNo"].Value = member.VoterIDNo;
 
                     cmd.Parameters.Add("@pAccountNumber", MySqlDbType.VarChar, 20);

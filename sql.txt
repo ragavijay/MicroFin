@@ -78,8 +78,8 @@ CREATE TABLE Member (
 	Phone CHAR(10),
     MemberAadharNumber CHAR(12) UNIQUE,
 	PAN CHAR(10),
-    RationCardNo VARCHAR(15),
-    VoterIDNo VARCHAR(15),
+    RationCardNo VARCHAR(30),
+    VoterIDNo VARCHAR(30),
 	AccountNumber VARCHAR(20),
 	IFSC CHAR(11),
     NomineeName VARCHAR(50),
@@ -342,8 +342,8 @@ CREATE PROCEDURE AddMember(OUT pMemberId INT,
 							pPhone CHAR(10), 
 							pMemberAadharNumber CHAR(12), 
 							pPAN CHAR(10), 
-							pRationCardNo VARCHAR(15), 
-							pVoterIDNo VARCHAR(15),
+							pRationCardNo VARCHAR(30), 
+							pVoterIDNo VARCHAR(30),
 							pAccountNumber VARCHAR(20),
 							pIFSC CHAR(11),
 							pNomineeName VARCHAR(50), 
@@ -451,8 +451,8 @@ CREATE PROCEDURE EditMember(pMemberId INT,
 							pPhone CHAR(10), 
 							pMemberAadharNumber CHAR(12), 
 							pPAN CHAR(10), 
-							pRationCardNo VARCHAR(15), 
-							pVoterIDNo VARCHAR(15),
+							pRationCardNo VARCHAR(30), 
+							pVoterIDNo VARCHAR(30),
 							pAccountNumber VARCHAR(20),
 							pIFSC CHAR(11),
 							pNomineeName VARCHAR(50), 
@@ -548,7 +548,7 @@ DROP PROCEDURE IF EXISTS `GetAllLoans`//
 CREATE PROCEDURE GetAllLoans(pBranchId INT)
 BEGIN
 	SELECT L.LoanId, L.MemberId, M.MemberName, L.BranchId, L.LoanPurpose, L.LoanAmount, L.ProcessingFeeRate, L.ProcessingFee, 
-		   L.InsuranceRate, L.Insurance, L.Tenure, L.InterestRate, L.EWI, L.LoanStatus 
+		   L.InsuranceRate, L.Insurance, L.Tenure, L.InterestRate, L.EWI, L.LoanStatus, L.StatusRemarks
 		   FROM Loan L INNER JOIN Member M ON L.MemberId = M.MemberId WHERE BranchId=pBranchId;
 END//
 --Test
@@ -560,7 +560,7 @@ DROP PROCEDURE IF EXISTS `GetLoan`//
 CREATE PROCEDURE GetLoan(pLoanId INT)
 BEGIN
 	SELECT L.LoanId, L.MemberId, M.MemberName, L.BranchId, L.LoanPurpose, L.LoanAmount, L.ProcessingFeeRate, L.ProcessingFee, 
-		   L.InsuranceRate, L.Insurance, L.Tenure, L.InterestRate, L.EWI, L.LoanStatus 
+		   L.InsuranceRate, L.Insurance, L.Tenure, L.InterestRate, L.EWI, L.LoanStatus, L.StatusRemarks
 		   FROM Loan L INNER JOIN Member M ON L.MemberId = M.MemberId WHERE LoanId=pLoanId;
 END//
 --Test
@@ -586,7 +586,7 @@ DROP PROCEDURE IF EXISTS `GetAllPendingLoans`//
 CREATE PROCEDURE GetAllPendingLoans(pBranchId INT)
 BEGIN
 	SELECT L.LoanId, L.MemberId, M.MemberName, L.BranchId, L.LoanPurpose, L.LoanAmount, L.ProcessingFeeRate, L.ProcessingFee, 
-		   L.InsuranceRate, L.Insurance, L.Tenure, L.InterestRate, L.EWI, L.LoanStatus 
+		   L.InsuranceRate, L.Insurance, L.Tenure, L.InterestRate, L.EWI, L.LoanStatus, L.StatusRemarks
 		   FROM Loan L INNER JOIN Member M ON L.MemberId = M.MemberId WHERE BranchId=pBranchId AND LoanStatus='P';
 END//
 --Test
@@ -600,6 +600,14 @@ BEGIN
 	UPDATE Loan SET LoanStatus='A' WHERE LoanId=pLoanId;
 END//
 
+
+--UpdateLoanStatus
+DELIMITER //
+DROP PROCEDURE IF EXISTS `UpdateLoanStatus`//
+CREATE PROCEDURE UpdateLoanStatus(pLoanId INT, pLoanStatus CHAR(1), pStatusRemarks VARCHAR(50))
+BEGIN
+	UPDATE Loan SET LoanStatus=pLoanStatus, StatusRemarks=pStatusRemarks WHERE LoanId=pLoanId;
+END//
 
 --GetLoanStatus
 DELIMITER //

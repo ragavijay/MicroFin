@@ -9,11 +9,7 @@
 {
     @Html.AntiForgeryToken()
     <center>
-        @if (Model.loan.LoanStatus == "P" || Model.loan.LoanStatus == "A")
-        {
-            
-        }
-        <div id="print">
+       <div id="print">
             <table class="tg">
                 <tr> <td colspan="2"> <img src="/Content/Images/logo.jpg" /> <h3>Athirstam Microfinance Pvt. Ltd.</h3> </td> <td colspan="2"> <img width="150" src="@Model.member.GetPhotoPath()" alt="NA" /> </td> </tr>
 

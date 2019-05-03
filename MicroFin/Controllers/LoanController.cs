@@ -55,9 +55,9 @@ namespace MicroFin.Controllers
             else
             {
                 int statusCode = LoanDBService.EditLoan(loan);
-                if(statusCode == 0)
+                if (statusCode == 0)
                 {
-                    @ViewBag.ErrTryAgain= "Try Again";
+                    @ViewBag.ErrTryAgain = "Try Again";
                     return View("LoanForm", loan);
                 }
                 else
@@ -71,7 +71,7 @@ namespace MicroFin.Controllers
         public ActionResult ViewLoans()
         {
             List<Loan> loans = LoanDBService.GetAllLoans(Convert.ToInt32(Session["BranchId"]));
-            return View("ViewLoans",loans);
+            return View("ViewLoans", loans);
         }
         [HttpGet]
         public ActionResult ViewPendingLoans()
@@ -90,6 +90,27 @@ namespace MicroFin.Controllers
             memberLoan.member = MemberDBService.GetMember(memberLoan.loan.MemberId);
             memberLoan.member.FamilyMembers = MemberDBService.GetFamilyMembers(memberLoan.loan.MemberId);
             return View(memberLoan);
+        }
+
+        [Route("LoanStatusForm/{id?}")]
+        public ActionResult LoanStatusForm(string id)
+        {
+            int loanId = Convert.ToInt32(id);
+            MemberLoan memberLoan = new MemberLoan();
+            memberLoan.loan = LoanDBService.GetLoan(loanId);
+            memberLoan.member = MemberDBService.GetMember(memberLoan.loan.MemberId);
+            memberLoan.member.FamilyMembers = MemberDBService.GetFamilyMembers(memberLoan.loan.MemberId);
+            return View(memberLoan);
+        }
+
+        [HttpPost]
+        public ActionResult LoanStatus(FormCollection form)
+        {
+            int loanId = Convert.ToInt32(form["LoanId"]);
+            string loanStatus = form["LoanStatus"];
+            string statusRemarks = form["StatusRemarks"];
+            LoanDBService.UpdateLoanStatus(loanId, loanStatus, statusRemarks);
+            return ViewLoans();
         }
     }
 }

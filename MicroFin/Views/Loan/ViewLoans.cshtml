@@ -23,6 +23,7 @@
         </th>
         <th></th>
         <th></th>
+        <th></th>
     </tr>
 
 @foreach (var item in Model) {
@@ -46,6 +47,12 @@
             @if(item.LoanStatus=="P" || item.LoanStatus=="A")
             {
                 @Html.ActionLink("Edit", "LoanForm", new { id=item.LoanId })
+            }
+        </td>
+        <td>
+            @if (item.LoanStatus == "P" || item.LoanStatus == "A")
+            {
+                @Html.ActionLink("Approve", "LoanStatusForm", new { id = item.LoanId })
             }
         </td>
     </tr>

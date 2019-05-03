@@ -125,6 +125,7 @@ namespace MicroFin.DAO
                             loan.Ewi = Convert.ToInt32(rdr["Ewi"].ToString());
                             loan.LoanStatus = rdr["LoanStatus"].ToString();
                             loan.RepaymentAmount = loan.Tenure * loan.Ewi + loan.ProcessingFee + loan.Insurance;
+                            loan.StatusRemarks = rdr["StatusRemarks"].ToString();
                             loans.Add(loan);
                         }
                     }
@@ -164,6 +165,7 @@ namespace MicroFin.DAO
                             loan.Ewi = Convert.ToInt32(rdr["Ewi"].ToString());
                             loan.LoanStatus = rdr["LoanStatus"].ToString();
                             loan.RepaymentAmount = loan.Tenure * loan.Ewi + loan.ProcessingFee + loan.Insurance;
+                            loan.StatusRemarks = rdr["StatusRemarks"].ToString();
                             loans.Add(loan);
                         }
                     }
@@ -201,6 +203,7 @@ namespace MicroFin.DAO
                             loan.Ewi = Convert.ToInt32(rdr["Ewi"].ToString());
                             loan.LoanStatus = rdr["LoanStatus"].ToString();
                             loan.RepaymentAmount = loan.Tenure * loan.Ewi + loan.ProcessingFee + loan.Insurance;
+                            loan.StatusRemarks = rdr["StatusRemarks"].ToString();
                         }
                     }
                 }
@@ -275,6 +278,25 @@ namespace MicroFin.DAO
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add("@pLoanId", MySqlDbType.Int32);
                     cmd.Parameters["@pLoanId"].Value = loanId;
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public static void UpdateLoanStatus(int loanId, string loanStatus, string statusRemarks)
+        {
+            using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
+            {
+                con.Open();
+                using (MySqlCommand cmd = new MySqlCommand("UpdateLoanStatus", con))
+                {
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@pLoanId", MySqlDbType.Int32);
+                    cmd.Parameters["@pLoanId"].Value = loanId;
+                    cmd.Parameters.Add("@pLoanStatus", MySqlDbType.VarChar,1);
+                    cmd.Parameters["@pLoanStatus"].Value = loanStatus;
+                    cmd.Parameters.Add("@pStatusRemarks", MySqlDbType.VarChar, 50);
+                    cmd.Parameters["@pStatusRemarks"].Value = statusRemarks;
                     cmd.ExecuteNonQuery();
                 }
             }

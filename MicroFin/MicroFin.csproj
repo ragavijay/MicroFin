@@ -321,6 +321,7 @@
     <Content Include="Views\Member\ViewFamilyMembers.cshtml" />
     <Content Include="Views\Member\FamilyMemberForm.cshtml" />
     <Content Include="Views\Loan\ViewLoan.cshtml" />
+    <Content Include="Views\Loan\LoanStatusForm.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

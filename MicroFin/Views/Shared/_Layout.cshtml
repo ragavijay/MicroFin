@@ -64,10 +64,7 @@
                     <ul class="sub-menu" style="display: block">
                         <li><a id="loanForm" href=""> New Loan</a></li>
                         <li><a id="viewLoans" href=""> View Loans</a></li>
-                        @if (Session["userType"] != null && Session["userType"].ToString() == "M" || Session["userType"].ToString() == "D")
-                        {
-                            <li><a id="processLoans" href=""> Process Loan</a></li>
-                        }
+                        
                     </ul>
                 </li>
                 @if (Session["userType"] != null && (Session["userType"].ToString() == "M" || Session["userType"].ToString() == "D" || Session["userType"].ToString() == "C"))
@@ -127,7 +124,6 @@
         document.getElementById("viewMembers").href = "http://" + window.location.host + "/Group/ViewMemberGroups";
         document.getElementById("loanForm").href = "http://" + window.location.host + "/Loan/LoanForm";
         document.getElementById("viewLoans").href = "http://" + window.location.host + "/Loan/ViewLoans";
-        document.getElementById("processLoans").href = "http://" + window.location.host + "/Loan/ViewPendingLoans";
         document.getElementById("pfReceiptForm").href = "http://" + window.location.host + "/Receipt/PFReceiptForm";
         document.getElementById("instalmentReceiptForm").href = "http://" + window.location.host + "/Receipt/InstalmentReceiptForm";
         document.getElementById("viewEwiDueList").href = "http://" + window.location.host + "/Receipt/ViewEwiDueList";
