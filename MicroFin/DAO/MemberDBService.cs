@@ -214,6 +214,7 @@ namespace MicroFin.DAO
                             member.RationCardNo = rdr["RationCardNo"].ToString();
                             member.VoterIDNo = rdr["VoterIdNo"].ToString();
                             member.AccountNumber = rdr["AccountNumber"].ToString();
+                            member.RAccountNumber = member.AccountNumber;
                             member.IFSC = rdr["IFSC"].ToString();
                             member.NomineeName = rdr["NomineeName"].ToString();
                             member.Relationship = rdr["Relationship"].ToString();

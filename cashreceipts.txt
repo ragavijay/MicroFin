@@ -1,0 +1,249 @@
+CREATE TABLE CashReceipt (
+    ReceiptId INT AUTO_INCREMENT,
+    LoanId INT,
+    ReceiptType CHAR(1),
+    ReceiptAmount INT,
+    ReceiptDate DATE,
+    Description VARCHAR(50),
+    UserId VARCHAR(20),
+    CONSTRAINT pKey_CR_ReceiptId PRIMARY KEY (ReceiptId),
+    CONSTRAINT fKey_CR_LoanId FOREIGN KEY (LoanId)
+        REFERENCES Loan (LoanId),
+    CONSTRAINT fKey_CR_UserId FOREIGN KEY (UserId)
+        REFERENCES AppUser (UserId)
+); 
+--ProcessingFee: ReceiptType='P'; EWI: ReceiptType='I'  
+
+
+--Group1 PF (2019-04-01)
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(1, 'P', 800, '2019-04-01', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(2, 'P', 800, '2019-04-01', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(3, 'P', 800, '2019-04-01', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(4, 'P', 800, '2019-04-01', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(5, 'P', 800, '2019-04-01', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(6, 'P', 800, '2019-04-01', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(7, 'P', 800, '2019-04-01', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(8, 'P', 800, '2019-04-01', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(9, 'P', 800, '2019-04-01', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(10, 'P', 800, '2019-04-01', 'Processing fee', 'manager');
+
+--Group1 Ins1 (2019-04-08)
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(1, 'I', 650, '2019-04-08', 'Due: 1/30 (08-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(2, 'I', 650, '2019-04-08', 'Due: 1/30 (08-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(3, 'I', 650, '2019-04-08', 'Due: 1/30 (08-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(4, 'I', 650, '2019-04-08', 'Due: 1/30 (08-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(5, 'I', 650, '2019-04-08', 'Due: 1/30 (08-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(6, 'I', 650, '2019-04-08', 'Due: 1/30 (08-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(7, 'I', 650, '2019-04-08', 'Due: 1/30 (08-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(8, 'I', 650, '2019-04-08', 'Due: 1/30 (08-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(9, 'I', 650, '2019-04-08', 'Due: 1/30 (08-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(10, 'I', 650, '2019-04-08', 'Due: 1/30 (08-04-2019)', 'manager');
+
+--Group1 Ins2 (2019-04-15)
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(1, 'I', 650, '2019-04-15', 'Due: 2/30 (15-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(2, 'I', 650, '2019-04-15', 'Due: 2/30 (15-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(3, 'I', 650, '2019-04-15', 'Due: 2/30 (15-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(4, 'I', 650, '2019-04-15', 'Due: 2/30 (15-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(5, 'I', 650, '2019-04-15', 'Due: 2/30 (15-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(6, 'I', 650, '2019-04-15', 'Due: 2/30 (15-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(7, 'I', 650, '2019-04-15', 'Due: 2/30 (15-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(8, 'I', 650, '2019-04-15', 'Due: 2/30 (15-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(9, 'I', 650, '2019-04-15', 'Due: 2/30 (15-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(10, 'I', 650, '2019-04-15', 'Due: 2/30 (15-04-2019)', 'manager');
+
+--Group1 Ins3 (2019-04-22)
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(1, 'I', 650, '2019-04-22', 'Due: 3/30 (22-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(2, 'I', 650, '2019-04-22', 'Due: 3/30 (22-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(3, 'I', 650, '2019-04-22', 'Due: 3/30 (22-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(4, 'I', 650, '2019-04-22', 'Due: 3/30 (22-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(5, 'I', 650, '2019-04-22', 'Due: 3/30 (22-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(6, 'I', 650, '2019-04-22', 'Due: 3/30 (22-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(7, 'I', 650, '2019-04-22', 'Due: 3/30 (22-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(8, 'I', 650, '2019-04-22', 'Due: 3/30 (22-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(9, 'I', 650, '2019-04-22', 'Due: 3/30 (22-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(10, 'I', 650, '2019-04-22', 'Due: 3/30 (22-04-2019)', 'manager');
+
+
+--Group2 PF (2019-04-22)
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(11, 'P', 800, '2019-04-22', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(12, 'P', 800, '2019-04-22', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(13, 'P', 800, '2019-04-22', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(14, 'P', 800, '2019-04-22', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(15, 'P', 800, '2019-04-22', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(16, 'P', 800, '2019-04-22', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(17, 'P', 800, '2019-04-22', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(18, 'P', 800, '2019-04-22', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(19, 'P', 800, '2019-04-22', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(20, 'P', 800, '2019-04-22', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(21, 'P', 800, '2019-04-22', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(22, 'P', 800, '2019-04-22', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(23, 'P', 800, '2019-04-22', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(24, 'P', 800, '2019-04-22', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(25, 'P', 800, '2019-04-22', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(26, 'P', 800, '2019-04-22', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(27, 'P', 800, '2019-04-22', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(28, 'P', 800, '2019-04-22', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(29, 'P', 800, '2019-04-22', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(30, 'P', 800, '2019-04-22', 'Processing fee', 'manager');
+
+
+
+--Group3 PF (2019-04-27)
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(31, 'P', 800, '2019-04-27', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(32, 'P', 800, '2019-04-27', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(33, 'P', 800, '2019-04-27', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(34, 'P', 800, '2019-04-27', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(35, 'P', 800, '2019-04-27', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(36, 'P', 800, '2019-04-27', 'Processing fee', 'manager');
+
+--Group1 Ins4 (2019-04-29)
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(1, 'I', 650, '2019-04-29', 'Due: 4/30 (29-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(2, 'I', 650, '2019-04-29', 'Due: 4/30 (29-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(3, 'I', 650, '2019-04-29', 'Due: 4/30 (29-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(4, 'I', 650, '2019-04-29', 'Due: 4/30 (29-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(5, 'I', 650, '2019-04-29', 'Due: 4/30 (29-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(6, 'I', 650, '2019-04-29', 'Due: 4/30 (29-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(7, 'I', 650, '2019-04-29', 'Due: 4/30 (29-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(8, 'I', 650, '2019-04-29', 'Due: 4/30 (29-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(9, 'I', 650, '2019-04-29', 'Due: 4/30 (29-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(10, 'I', 650, '2019-04-29', 'Due: 4/30 (29-04-2019)', 'manager');
+
+--Group2 Ins1 (2019-04-29)
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(11, 'I', 650, '2019-04-29', 'Due: 1/30 (29-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(12, 'I', 650, '2019-04-29', 'Due: 1/30 (29-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(13, 'I', 650, '2019-04-29', 'Due: 1/30 (29-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(14, 'I', 650, '2019-04-29', 'Due: 1/30 (29-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(15, 'I', 650, '2019-04-29', 'Due: 1/30 (29-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(16, 'I', 650, '2019-04-29', 'Due: 1/30 (29-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(17, 'I', 650, '2019-04-29', 'Due: 1/30 (29-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(18, 'I', 650, '2019-04-29', 'Due: 1/30 (29-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(19, 'I', 650, '2019-04-29', 'Due: 1/30 (29-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(20, 'I', 650, '2019-04-29', 'Due: 1/30 (29-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(21, 'I', 650, '2019-04-29', 'Due: 1/30 (29-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(22, 'I', 650, '2019-04-29', 'Due: 1/30 (29-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(23, 'I', 650, '2019-04-29', 'Due: 1/30 (29-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(24, 'I', 650, '2019-04-29', 'Due: 1/30 (29-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(25, 'I', 650, '2019-04-29', 'Due: 1/30 (29-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(26, 'I', 650, '2019-04-29', 'Due: 1/30 (29-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(27, 'I', 650, '2019-04-29', 'Due: 1/30 (29-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(28, 'I', 650, '2019-04-29', 'Due: 1/30 (29-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(29, 'I', 650, '2019-04-29', 'Due: 1/30 (29-04-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(30, 'I', 650, '2019-04-29', 'Due: 1/30 (29-04-2019)', 'manager');
+
+
+--Group3 Ins1 (2019-05-04)
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(31, 'I', 650, '2019-05-04', 'Due: 1/30 (04-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(32, 'I', 650, '2019-05-04', 'Due: 1/30 (04-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(33, 'I', 650, '2019-05-04', 'Due: 1/30 (04-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(34, 'I', 650, '2019-05-04', 'Due: 1/30 (04-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(35, 'I', 650, '2019-05-04', 'Due: 1/30 (04-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(36, 'I', 650, '2019-05-04', 'Due: 1/30 (04-05-2019)', 'manager');
+
+--Group4 PF (2019-05-04)
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(37, 'P', 800, '2019-05-04', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(38, 'P', 800, '2019-05-04', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(39, 'P', 800, '2019-05-04', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(40, 'P', 800, '2019-05-04', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(41, 'P', 800, '2019-05-04', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(42, 'P', 800, '2019-05-04', 'Processing fee', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(43, 'P', 800, '2019-05-04', 'Processing fee', 'manager');
+
+
+--Group1 Ins5 (2019-05-06)
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(1, 'I', 650, '2019-05-06', 'Due: 5/30 (06-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(2, 'I', 650, '2019-05-06', 'Due: 5/30 (06-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(3, 'I', 650, '2019-05-06', 'Due: 5/30 (06-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(4, 'I', 650, '2019-05-06', 'Due: 5/30 (06-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(5, 'I', 650, '2019-05-06', 'Due: 5/30 (06-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(6, 'I', 650, '2019-05-06', 'Due: 5/30 (06-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(7, 'I', 650, '2019-05-06', 'Due: 5/30 (06-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(8, 'I', 650, '2019-05-06', 'Due: 5/30 (06-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(9, 'I', 650, '2019-05-06', 'Due: 5/30 (06-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(10, 'I', 650, '2019-05-06', 'Due: 5/30 (06-05-2019)', 'manager');
+
+
+--Group2 Ins2 (2019-05-06)
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(11, 'I', 650, '2019-05-06', 'Due: 2/30 (06-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(12, 'I', 650, '2019-05-06', 'Due: 2/30 (06-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(13, 'I', 650, '2019-05-06', 'Due: 2/30 (06-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(14, 'I', 650, '2019-05-06', 'Due: 2/30 (06-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(15, 'I', 650, '2019-05-06', 'Due: 2/30 (06-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(16, 'I', 650, '2019-05-06', 'Due: 2/30 (06-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(17, 'I', 650, '2019-05-06', 'Due: 2/30 (06-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(18, 'I', 650, '2019-05-06', 'Due: 2/30 (06-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(19, 'I', 650, '2019-05-06', 'Due: 2/30 (06-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(20, 'I', 650, '2019-05-06', 'Due: 2/30 (06-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(21, 'I', 650, '2019-05-06', 'Due: 2/30 (06-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(22, 'I', 650, '2019-05-06', 'Due: 2/30 (06-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(23, 'I', 650, '2019-05-06', 'Due: 2/30 (06-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(24, 'I', 650, '2019-05-06', 'Due: 2/30 (06-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(25, 'I', 650, '2019-05-06', 'Due: 2/30 (06-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(26, 'I', 650, '2019-05-06', 'Due: 2/30 (06-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(27, 'I', 650, '2019-05-06', 'Due: 2/30 (06-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(28, 'I', 650, '2019-05-06', 'Due: 2/30 (06-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(29, 'I', 650, '2019-05-06', 'Due: 2/30 (06-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(30, 'I', 650, '2019-05-06', 'Due: 2/30 (06-05-2019)', 'manager');
+
+
+--Group3 Ins2 (2019-05-11)
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(31, 'I', 650, '2019-05-11', 'Due: 2/30 (11-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(32, 'I', 650, '2019-05-11', 'Due: 2/30 (11-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(33, 'I', 650, '2019-05-11', 'Due: 2/30 (11-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(34, 'I', 650, '2019-05-11', 'Due: 2/30 (11-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(35, 'I', 650, '2019-05-11', 'Due: 2/30 (11-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(36, 'I', 650, '2019-05-11', 'Due: 2/30 (11-05-2019)', 'manager');
+
+
+--Group4 Ins1 (2019-05-11)
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(37, 'I', 650, '2019-05-11', 'Due: 1/30 (11-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(38, 'I', 650, '2019-05-11', 'Due: 1/30 (11-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(39, 'I', 650, '2019-05-11', 'Due: 1/30 (11-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(40, 'I', 650, '2019-05-11', 'Due: 1/30 (11-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(41, 'I', 650, '2019-05-11', 'Due: 1/30 (11-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(42, 'I', 650, '2019-05-11', 'Due: 1/30 (11-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(43, 'I', 650, '2019-05-11', 'Due: 1/30 (11-05-2019)', 'manager');
+
+
+--Group1 Ins6 (2019-05-13)
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(1, 'I', 650, '2019-05-13', 'Due: 6/30 (13-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(2, 'I', 650, '2019-05-13', 'Due: 6/30 (13-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(3, 'I', 650, '2019-05-13', 'Due: 6/30 (13-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(4, 'I', 650, '2019-05-13', 'Due: 6/30 (13-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(5, 'I', 650, '2019-05-13', 'Due: 6/30 (13-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(6, 'I', 650, '2019-05-13', 'Due: 6/30 (13-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(7, 'I', 650, '2019-05-13', 'Due: 6/30 (13-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(8, 'I', 650, '2019-05-13', 'Due: 6/30 (13-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(9, 'I', 650, '2019-05-13', 'Due: 6/30 (13-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(10, 'I', 650, '2019-05-13', 'Due: 6/30 (13-05-2019)', 'manager');
+
+--Group2 Ins3 (2019-05-13)
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(11, 'I', 650, '2019-05-13', 'Due: 3/30 (13-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(12, 'I', 650, '2019-05-13', 'Due: 3/30 (13-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(13, 'I', 650, '2019-05-13', 'Due: 3/30 (13-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(14, 'I', 650, '2019-05-13', 'Due: 3/30 (13-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(15, 'I', 650, '2019-05-13', 'Due: 3/30 (13-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(16, 'I', 650, '2019-05-13', 'Due: 3/30 (13-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(17, 'I', 650, '2019-05-13', 'Due: 3/30 (13-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(18, 'I', 650, '2019-05-13', 'Due: 3/30 (13-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(19, 'I', 650, '2019-05-13', 'Due: 3/30 (13-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(20, 'I', 650, '2019-05-13', 'Due: 3/30 (13-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(21, 'I', 650, '2019-05-13', 'Due: 3/30 (13-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(22, 'I', 650, '2019-05-13', 'Due: 3/30 (13-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(23, 'I', 650, '2019-05-13', 'Due: 3/30 (13-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(24, 'I', 650, '2019-05-13', 'Due: 3/30 (13-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(25, 'I', 650, '2019-05-13', 'Due: 3/30 (13-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(26, 'I', 650, '2019-05-13', 'Due: 3/30 (13-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(27, 'I', 650, '2019-05-13', 'Due: 3/30 (13-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(28, 'I', 650, '2019-05-13', 'Due: 3/30 (13-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(29, 'I', 650, '2019-05-13', 'Due: 3/30 (13-05-2019)', 'manager');
+INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(30, 'I', 650, '2019-05-13', 'Due: 3/30 (13-05-2019)', 'manager');
+
+
+
+
+
+
+
+
+
+

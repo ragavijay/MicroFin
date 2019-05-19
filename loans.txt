@@ -1,0 +1,80 @@
+CREATE TABLE Loan (
+    LoanId INT,
+    MemberId INT,
+    BranchId INT,
+	LoanPurpose VARCHAR(40),
+    LoanAmount INT,
+    ProcessingFeeRate DECIMAL(4 , 2 ),
+    ProcessingFee INT,
+    InsuranceRate DECIMAL(4 , 2 ),
+    Insurance INT,
+    Tenure INT,
+    InterestRate DECIMAL(4 , 2 ),
+    EWI INT,
+    LoanStatus CHAR(1),
+    LoanDate DATE,
+    ApprovedBy VARCHAR(20),
+	StatusRemarks VARCHAR(50),
+    CONSTRAINT pKey_L_LoanId PRIMARY KEY (LoanId),
+    CONSTRAINT fKey_L_MemberId FOREIGN KEY (MemberId)
+        REFERENCES Member (MemberId),
+    CONSTRAINT fKey_L_BranchId FOREIGN KEY (BranchId)
+        REFERENCES Branch (BranchId),
+    CONSTRAINT fKey_L_ApprovedBy FOREIGN KEY (ApprovedBy)
+        REFERENCES AppUser (UserId)
+);
+--LoanStatus: P=Pending, A-Approved O-Ongoing, C-Closed
+
+--Group1
+INSERT INTO LOAN VALUES(1, 2, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-04-01', 'director', 'Approved');
+INSERT INTO LOAN VALUES(2, 3, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-04-01', 'director', 'Approved');
+INSERT INTO LOAN VALUES(3, 4, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-04-01', 'director', 'Approved');
+INSERT INTO LOAN VALUES(4, 5, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-04-01', 'director', 'Approved');
+INSERT INTO LOAN VALUES(5, 6, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-04-01', 'director', 'Approved');
+INSERT INTO LOAN VALUES(6, 7, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-04-01', 'director', 'Approved');
+INSERT INTO LOAN VALUES(7, 8, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-04-01', 'director', 'Approved');
+INSERT INTO LOAN VALUES(8, 9, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-04-01', 'director', 'Approved');
+INSERT INTO LOAN VALUES(9, 10, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-04-01', 'director', 'Approved');
+INSERT INTO LOAN VALUES(10, 11, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-04-01', 'director', 'Approved');
+
+
+--Group2
+INSERT INTO LOAN VALUES(11, 12, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-04-22', 'director', 'Approved');
+INSERT INTO LOAN VALUES(12, 13, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-04-22', 'director', 'Approved');
+INSERT INTO LOAN VALUES(13, 14, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-04-22', 'director', 'Approved');
+INSERT INTO LOAN VALUES(14, 15, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-04-22', 'director', 'Approved');
+INSERT INTO LOAN VALUES(15, 16, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-04-22', 'director', 'Approved');
+INSERT INTO LOAN VALUES(16, 17, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-04-22', 'director', 'Approved');
+INSERT INTO LOAN VALUES(17, 18, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-04-22', 'director', 'Approved');
+INSERT INTO LOAN VALUES(18, 19, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-04-22', 'director', 'Approved');
+INSERT INTO LOAN VALUES(19, 20, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-04-22', 'director', 'Approved');
+INSERT INTO LOAN VALUES(20, 21, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-04-22', 'director', 'Approved');
+INSERT INTO LOAN VALUES(21, 22, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-04-22', 'director', 'Approved');
+INSERT INTO LOAN VALUES(22, 23, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-04-22', 'director', 'Approved');
+INSERT INTO LOAN VALUES(23, 24, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-04-22', 'director', 'Approved');
+INSERT INTO LOAN VALUES(24, 25, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-04-22', 'director', 'Approved');
+INSERT INTO LOAN VALUES(25, 26, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-04-22', 'director', 'Approved');
+INSERT INTO LOAN VALUES(26, 27, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-04-22', 'director', 'Approved');
+INSERT INTO LOAN VALUES(27, 28, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-04-22', 'director', 'Approved');
+INSERT INTO LOAN VALUES(28, 29, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-04-22', 'director', 'Approved');
+INSERT INTO LOAN VALUES(29, 30, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-04-22', 'director', 'Approved');
+INSERT INTO LOAN VALUES(30, 31, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-04-22', 'director', 'Approved');
+
+
+--Group3
+INSERT INTO LOAN VALUES(31, 32, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-04-27', 'director', 'Approved');
+INSERT INTO LOAN VALUES(32, 33, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-04-27', 'director', 'Approved');
+INSERT INTO LOAN VALUES(33, 34, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-04-27', 'director', 'Approved');
+INSERT INTO LOAN VALUES(34, 35, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-04-27', 'director', 'Approved');
+INSERT INTO LOAN VALUES(35, 36, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-04-27', 'director', 'Approved');
+INSERT INTO LOAN VALUES(36, 37, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-04-27', 'director', 'Approved');
+
+
+--Group4
+INSERT INTO LOAN VALUES(37, 38, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-05-04', 'director', 'Approved');
+INSERT INTO LOAN VALUES(38, 39, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-05-04', 'director', 'Approved');
+INSERT INTO LOAN VALUES(39, 40, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-05-04', 'director', 'Approved');
+INSERT INTO LOAN VALUES(40, 41, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-05-04', 'director', 'Approved');
+INSERT INTO LOAN VALUES(41, 42, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-05-04', 'director', 'Approved');
+INSERT INTO LOAN VALUES(42, 43, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-05-04', 'director', 'Approved');
+INSERT INTO LOAN VALUES(43, 44, 1, 'Others', 16000, 5, 800, 0, 0, 30, 69, 650, 'O', '2019-05-04', 'director', 'Approved');

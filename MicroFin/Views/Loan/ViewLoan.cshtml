@@ -11,7 +11,7 @@
     <center>
        <div id="print">
             <table class="tg">
-                <tr> <td colspan="2"> <img src="/Content/Images/logo.jpg" /> <h3>Athirstam Microfinance Pvt. Ltd.</h3> </td> <td colspan="2"> <img width="150" src="@Model.member.GetPhotoPath()" alt="NA" /> </td> </tr>
+                <tr> <td colspan="2"> <img src="/Content/Images/logo.jpg" /> <h3>Athirstam Microfinance Pvt. Ltd.</h3> </td> <td colspan="2"> <center><img width="150" src="@Model.member.GetPhotoPath()" alt="NA" /></center> </td> </tr>
 
                 <tr> <td> <b>Center Name</b> </td> <td> @Model.member.CenterName </td> <td> <b>Loan Id</b> </td><td> @Model.loan.LoanId </td> </tr>
                 <tr> <td> <b>Group Name</b> </td> <td> @Model.member.GroupName </td> <td> <b>Leader Name</b> </td> <td> @Model.member.LeaderName </td> </tr>
@@ -65,9 +65,9 @@
                 <tr> <td> <b>Weekly Due (Rs.)</b> </td> <td> @Model.loan.Ewi</td> <td> <b>Repayment Amount(Rs.)</b> </td> <td> @Model.loan.RepaymentAmount</td></tr>
         </table>
         <b> Amortization Schedule <br/> </b> 
-        <table id="scheduleTable" border="1">
+        <table width="70%" id="scheduleTable" border="1">
             <thead>
-                <tr> <td> Week</td> <td> Opening Balance </td> <td> Principal</td> <td> Interest </td> <td> Balance </td> </tr>
+                <tr> <td> <b>Week</b></td> <td> <b> Opening Balance </b></td> <td> <b>Principal</b></td> <td> <b>Interest</b> </td> <td> <b>Total</b> </td> <td> <b>Balance</b> </td> </tr>
             </thead>
             <tbody></tbody>
         </table>
@@ -127,7 +127,7 @@
         var interestRate = @Model.loan.InterestRate;
         var balance = @Model.loan.LoanAmount;
         var factor = Math.pow(1 + interestRate / 5200, tenure);
-        var ewi = balance * interestRate * factor / (factor - 1) / 5200;
+        var ewi = Math.round(balance * interestRate * factor / (factor - 1) / 5200);
 
         var principal, interest;
 
@@ -148,14 +148,21 @@
 
             interest = balance * interestRate / 100 / 52;
             principal = ewi - interest;
-            balance = balance - ewi + interest;
-
+            if(i==tenure) {
+                balance = 0;
+            } else {
+                balance = balance - ewi + interest;
+            }
             //Principal
             currentCell = currentRow.insertCell(-1);
             currentCell.innerHTML = principal.toFixed(2);
             //Interest
             currentCell = currentRow.insertCell(-1);
             currentCell.innerHTML = interest.toFixed(2);
+
+            //Total
+            currentCell = currentRow.insertCell(-1);
+            currentCell.innerHTML = ewi.toFixed(2);
 
             //Balance
             currentCell = currentRow.insertCell(-1);

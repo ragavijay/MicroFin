@@ -1,0 +1,137 @@
+﻿@model MicroFin.Models.PFReceipt
+@{
+    ViewBag.Title = "PFReceiptForm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="page-wrapper bg-gra-03 p-t-45 p-b-50">
+    <div class="wrapper wrapper--w790">
+        <div class="card card-5">
+            <div class="card-heading">
+                <h2 class="title">Processing Fee Receipt</h2>
+            </div>
+            <div class="card-body">
+                @using (Html.BeginForm("PFReceipt", "Receipt", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <!--LoanId -->
+                    <div class="form-row m-b-55">
+                        <div class="name">Loan Id</div>
+                        <div class="value">
+                            <div class="row row-space">
+                                <div class="col-2">
+                                    <div class="input-group-desc">
+                                        @Html.TextBoxFor(m => m.LoanId, new { id = "LoanId", @class = "input--style-5", @placeholder = "enter loan id", @required = "true", @tabindex="1"})
+                                        <p id="errLoanId" style='color:red;'> </p>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="input-group-desc">
+                                        <button class="btn btn--blue" type="button" onclick="getLoanStatus();" tabindex="2">Get</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="pfReceiptFormData" style="display:none">
+                        <!--MemberId and MemberName -->
+                        <div class="form-row m-b-55">
+                            <div class="name">Member</div>
+                            <div class="value">
+                                <div class="row row-space">
+                                    <div class="col-2">
+                                        <div class="input-group-desc">
+                                            @Html.TextBoxFor(m => m.MemberId, new { id = "MemberId", @class = "input--style-5", @onkeydown = "event.preventDefault()", @required = "true" })
+                                            <label class="label--desc">Id</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="input-group-desc">
+                                            @Html.TextBoxFor(m => m.MemberName, new { id = "MemberName", @class = "input--style-5", @onkeydown = "event.preventDefault()", @required = "true" })
+                                            <label class="label--desc">Name</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--ProcessingFee and Insurance-->
+                        <div class="form-row m-b-55">
+                            <div class="name">Fee</div>
+                            <div class="value">
+                                <div class="row row-space">
+                                    <div class="col-2">
+                                        <div class="input-group-desc">
+                                            @Html.TextBoxFor(m => m.ProcessingFee, new { id = "ProcessingFee", @class = "input--style-5", @onkeydown = "event.preventDefault()", @required = "true" })
+                                            <label class="label--desc">Processing Fee</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="input-group-desc">
+                                            @Html.TextBoxFor(m => m.Insurance, new { id = "Insurance", @class = "input--style-5", @onkeydown = "event.preventDefault()", @required = "true" })
+                                            <label class="label--desc">Insurance</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!--TotalFee-->
+                        <div class="form-row">
+                            <div class="name">Total Fee(Rs.)</div>
+                            <div class="value">
+                                <div class="input-group">
+                                    @Html.TextBoxFor(m => m.TotalFee, new { id = "TotalFee", @class = "input--style-5", @onkeydown = "event.preventDefault()", @required = "true"})
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--Save-->
+                        <div>
+                            <button class="btn btn--radius-2 btn--red" type="submit" tabindex="3">Save</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function getLoanStatus() {
+        var loanId = document.getElementById('LoanId').value;
+        if (loanId == '')
+            return;
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                var pfReceipt = JSON.parse(this.responseText);
+                if (pfReceipt.LoanStatus == 'A') {
+                    document.getElementById("MemberId").value = pfReceipt.MemberId;
+                    document.getElementById("MemberName").value = pfReceipt.MemberName;
+                    document.getElementById("ProcessingFee").value = pfReceipt.ProcessingFee;
+                    document.getElementById("Insurance").value = pfReceipt.Insurance;
+                    document.getElementById("TotalFee").value = pfReceipt.TotalFee;
+                    document.getElementById("errLoanId").innerHTML = "";
+                    document.getElementById("pfReceiptFormData").style.display = 'block';
+                } else if (pfReceipt.LoanStatus == 'P' ) {
+                    document.getElementById("errLoanId").innerHTML = "Loan not approved";
+                    document.getElementById("pfReceiptFormData").style.display = 'none';
+                } else if (pfReceipt.LoanStatus == 'O') {
+                    document.getElementById("errLoanId").innerHTML = "Fee already paid";
+                    document.getElementById("pfReceiptFormData").style.display = 'none';
+                } else if (pfReceipt.LoanStatus == 'C') {
+                    document.getElementById("errLoanId").innerHTML = "Loan closed";
+                    document.getElementById("pfReceiptFormData").style.display = 'none';
+                } else {
+                    document.getElementById("errLoanId").innerHTML = "Invalid Loan Id";
+                    document.getElementById("pfReceiptFormData").style.display = 'none';
+                }
+
+            }
+        };
+        xhttp.open("GET", "../api/GetPFReceipt/" + loanId, true);
+        xhttp.send();
+    }
+    document.getElementById("LoanId").addEventListener("keydown", function (e) {
+        document.getElementById("pfReceiptFormData").style.display = 'none';
+    });
+</script>

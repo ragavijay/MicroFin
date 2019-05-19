@@ -49,7 +49,7 @@ namespace MicroFin.Controllers
                 }
                 else
                 {
-                    return ViewLoans();
+                    return ViewLoan(loan.LoanId.ToString());
                 }
             }
             else
@@ -62,15 +62,17 @@ namespace MicroFin.Controllers
                 }
                 else
                 {
-                    return ViewLoans();
+                    return ViewLoan(loan.LoanId.ToString());
                 }
             }
         }
 
         [HttpGet]
-        public ActionResult ViewLoans()
+        [Route("ViewLoans/{id?}")]
+        public ActionResult ViewLoans(string id)
         {
-            List<Loan> loans = LoanDBService.GetAllLoans(Convert.ToInt32(Session["BranchId"]));
+            int groupId = Convert.ToInt32(id);
+            List<Loan> loans = LoanDBService.GetAllLoans(Convert.ToInt32(Session["BranchId"]), groupId);
             return View("ViewLoans", loans);
         }
         [HttpGet]
@@ -89,7 +91,7 @@ namespace MicroFin.Controllers
             memberLoan.loan = LoanDBService.GetLoan(loanId);
             memberLoan.member = MemberDBService.GetMember(memberLoan.loan.MemberId);
             memberLoan.member.FamilyMembers = MemberDBService.GetFamilyMembers(memberLoan.loan.MemberId);
-            return View(memberLoan);
+            return View("ViewLoan",memberLoan);
         }
 
         [Route("LoanStatusForm/{id?}")]
@@ -110,7 +112,7 @@ namespace MicroFin.Controllers
             string loanStatus = form["LoanStatus"];
             string statusRemarks = form["StatusRemarks"];
             LoanDBService.UpdateLoanStatus(loanId, loanStatus, statusRemarks);
-            return ViewLoans();
+            return ViewLoan(loanId.ToString());
         }
     }
 }

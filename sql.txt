@@ -115,7 +115,7 @@ CREATE TABLE Loan (
     InsuranceRate DECIMAL(4 , 2 ),
     Insurance INT,
     Tenure INT,
-    InterestRate DECIMAL(4 , 2 ),
+    InterestRate DECIMAL(5 , 2 ),
     EWI INT,
     LoanStatus CHAR(1),
     LoanDate DATE,
@@ -542,17 +542,17 @@ AddLoan:BEGIN
 END;//
 
 
---GetAllLoans (29-04-2019)
+--GetAllLoans (19-05-2019)
 DELIMITER // 
 DROP PROCEDURE IF EXISTS `GetAllLoans`//
-CREATE PROCEDURE GetAllLoans(pBranchId INT)
+CREATE PROCEDURE GetAllLoans(pBranchId INT, pGroupId INT)
 BEGIN
 	SELECT L.LoanId, L.MemberId, M.MemberName, L.BranchId, L.LoanPurpose, L.LoanAmount, L.ProcessingFeeRate, L.ProcessingFee, 
 		   L.InsuranceRate, L.Insurance, L.Tenure, L.InterestRate, L.EWI, L.LoanStatus, L.StatusRemarks
-		   FROM Loan L INNER JOIN Member M ON L.MemberId = M.MemberId WHERE BranchId=pBranchId;
+		   FROM Loan L INNER JOIN Member M ON L.MemberId = M.MemberId WHERE BranchId=pBranchId AND M.GroupID=pGroupId;
 END//
 --Test
-CALL GetAllLoans(1)
+CALL GetAllLoans(1,1)
 
 --GetLoan (29-04-2019)
 DELIMITER //

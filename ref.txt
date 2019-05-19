@@ -1,0 +1,45 @@
+
+ATHIRSHTAM MICRO FINANCE PRIVATE LTD
+
+dob 1/1/1 after update
+
+autocorrect disable
+
+topup loan
+
+tenure new page
+
+*** photo alignment
+
+manual due
+
+*** repayment exclude processing fee
+
+*** total paid in schedule
+
+*** account number retype
+
+account number error issues
+
+loan for a group with varying amount
+
+time out 45 mts
+
+search by aadhar
+
+loan transfer report (NAME, ACC NO, IFSC, AMOUNT)
+
+BOTTOM OF LOAN FORM
+CIN U67200TN2018PTC126199 
+ATHIRSHTAM MICRO FINANCE PRIVATE LTD
+PLOT NO 162, DOOR NO 103/2, RAJ PALACE,
+KOCHI DANUSHKODI ROAD, NAGAMALAI PUDUKOTTAI,
+MADURAI- 625019
+
+running loan data
+
+repayment - group wise vs individual
+
+loan obligation with declaration
+
+delete option

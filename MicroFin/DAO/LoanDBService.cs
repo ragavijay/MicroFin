@@ -94,7 +94,7 @@ namespace MicroFin.DAO
             }
             return status;
         }
-        public static List<Loan> GetAllLoans(int branchId)
+        public static List<Loan> GetAllLoans(int branchId, int groupId)
         {
             Loan loan;
             List<Loan> loans = new List<Loan>();
@@ -106,6 +106,8 @@ namespace MicroFin.DAO
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add("@pBranchId", MySqlDbType.Int32);
                     cmd.Parameters["@pBranchId"].Value = branchId;
+                    cmd.Parameters.Add("@pGroupId", MySqlDbType.Int32);
+                    cmd.Parameters["@pGroupId"].Value = groupId;
                     using (MySqlDataReader rdr = cmd.ExecuteReader())
                     {
                         while (rdr.Read())
@@ -124,7 +126,8 @@ namespace MicroFin.DAO
                             loan.InterestRate = Convert.ToSingle(rdr["InterestRate"].ToString());
                             loan.Ewi = Convert.ToInt32(rdr["Ewi"].ToString());
                             loan.LoanStatus = rdr["LoanStatus"].ToString();
-                            loan.RepaymentAmount = loan.Tenure * loan.Ewi + loan.ProcessingFee + loan.Insurance;
+                            //loan.RepaymentAmount = loan.Tenure * loan.Ewi + loan.ProcessingFee + loan.Insurance;
+                            loan.RepaymentAmount = loan.Tenure * loan.Ewi;
                             loan.StatusRemarks = rdr["StatusRemarks"].ToString();
                             loans.Add(loan);
                         }
@@ -164,7 +167,8 @@ namespace MicroFin.DAO
                             loan.InterestRate = Convert.ToSingle(rdr["InterestRate"].ToString());
                             loan.Ewi = Convert.ToInt32(rdr["Ewi"].ToString());
                             loan.LoanStatus = rdr["LoanStatus"].ToString();
-                            loan.RepaymentAmount = loan.Tenure * loan.Ewi + loan.ProcessingFee + loan.Insurance;
+                            //loan.RepaymentAmount = loan.Tenure * loan.Ewi + loan.ProcessingFee + loan.Insurance;
+                            loan.RepaymentAmount = loan.Tenure * loan.Ewi;
                             loan.StatusRemarks = rdr["StatusRemarks"].ToString();
                             loans.Add(loan);
                         }
@@ -202,7 +206,8 @@ namespace MicroFin.DAO
                             loan.InterestRate = Convert.ToSingle(rdr["InterestRate"].ToString());
                             loan.Ewi = Convert.ToInt32(rdr["Ewi"].ToString());
                             loan.LoanStatus = rdr["LoanStatus"].ToString();
-                            loan.RepaymentAmount = loan.Tenure * loan.Ewi + loan.ProcessingFee + loan.Insurance;
+                            //loan.RepaymentAmount = loan.Tenure * loan.Ewi + loan.ProcessingFee + loan.Insurance;
+                            loan.RepaymentAmount = loan.Tenure * loan.Ewi;
                             loan.StatusRemarks = rdr["StatusRemarks"].ToString();
                         }
                     }

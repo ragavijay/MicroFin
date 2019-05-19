@@ -41,6 +41,7 @@ namespace MicroFin.Models
         public string RationCardNo { get; set; }
         public string VoterIDNo { get; set; }
         public string AccountNumber { get; set; }
+        public string RAccountNumber { get; set; }
         public string IFSC { get; set; }
         public string NomineeName { get; set; }
         public string Relationship { get; set; }

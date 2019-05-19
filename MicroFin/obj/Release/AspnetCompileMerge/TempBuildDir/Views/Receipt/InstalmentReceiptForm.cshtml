@@ -1,0 +1,158 @@
+﻿@model MicroFin.Models.InstalmentReceipt
+@{
+    ViewBag.Title = "InstalmentReceiptForm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="page-wrapper bg-gra-03 p-t-45 p-b-50">
+    <div class="wrapper wrapper--w790">
+        <div class="card card-5">
+            <div class="card-heading">
+                <h2 class="title">Instalment Receipt</h2>
+            </div>
+            <div class="card-body">
+                @using (Html.BeginForm("InstalmentReceipt", "Receipt", FormMethod.Post, new { @onsubmit = "return (validateOnSubmit());"}))
+                {
+                    @Html.AntiForgeryToken()
+                    <!--LoanId -->
+                    <div class="form-row m-b-55">
+                        <div class="name">Loan Id</div>
+                        <div class="value">
+                            <div class="row row-space">
+                                <div class="col-2">
+                                    <div class="input-group-desc">
+                                        @Html.TextBoxFor(m => m.LoanId, new { id = "LoanId", @class = "input--style-5", @placeholder = "enter loan id", @required = "true", @tabindex="1"})
+                                        <p id="errLoanId" style='color:red;'> </p>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="input-group-desc">
+                                        <button class="btn btn--blue" type="button" onclick="getLoanStatus();" tabindex="2">Get</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="instalmentReceiptFormData" style="display:none">
+                        <!--MemberId and MemberName -->
+                        <div class="form-row m-b-55">
+                            <div class="name">Member</div>
+                            <div class="value">
+                                <div class="row row-space">
+                                    <div class="col-2">
+                                        <div class="input-group-desc">
+                                            @Html.TextBoxFor(m => m.MemberId, new { id = "MemberId", @class = "input--style-5", @onkeydown = "event.preventDefault()", @required = "true" })
+                                            <label class="label--desc">Id</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="input-group-desc">
+                                            @Html.TextBoxFor(m => m.MemberName, new { id = "MemberName", @class = "input--style-5", @onkeydown = "event.preventDefault()", @required = "true" })
+                                            <label class="label--desc">Name</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--NoOfInstalments and Ewi-->
+                        <div class="form-row m-b-55">
+                            <div class="name">Instalments</div>
+                            <div class="value">
+                                <div class="row row-space">
+                                    <div class="col-2">
+                                        <div class="input-group-desc">
+                                            @Html.TextBoxFor(m => m.NoOfInstalments, new { id = "NoOfInstalments", @class = "input--style-5", @required = "true" })
+                                            <label class="label--desc">Pending Instalments</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="input-group-desc">
+                                            @Html.TextBoxFor(m => m.Ewi, new { id = "Ewi", @class = "input--style-5", @onkeydown = "event.preventDefault()", @required = "true" })
+                                            <label class="label--desc">Weekly Due(Rs.)</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!--Total Due-->
+                        <div class="form-row">
+                            <div class="name">Total Amount(Rs.)</div>
+                            <div class="value">
+                                <div class="input-group">
+                                    @Html.TextBoxFor(m => m.TotalDue, new { id = "TotalDue", @class = "input--style-5", @onkeydown = "event.preventDefault()", @required = "true"})
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--Save-->
+                        <div>
+                            <button class="btn btn--radius-2 btn--red" type="submit" tabindex="3">Save</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var NoOfInstalments;
+    function getLoanStatus() {
+        var loanId = document.getElementById('LoanId').value;
+        if (loanId == '')
+            return;
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                var instalmentReceipt = JSON.parse(this.responseText);
+                if (instalmentReceipt.LoanStatus == 'O') {
+                    document.getElementById("MemberId").value = instalmentReceipt.MemberId;
+                    document.getElementById("MemberName").value = instalmentReceipt.MemberName;
+                    document.getElementById("NoOfInstalments").value = instalmentReceipt.NoOfInstalments;
+                    NoOfInstalments = instalmentReceipt.NoOfInstalments;
+                    document.getElementById("Ewi").value = instalmentReceipt.Ewi;
+                    document.getElementById("TotalDue").value = instalmentReceipt.TotalDue;
+                    document.getElementById("errLoanId").innerHTML = "";
+                    document.getElementById("instalmentReceiptFormData").style.display = 'block';
+                } else if (instalmentReceipt.LoanStatus == 'P') {
+                    document.getElementById("errLoanId").innerHTML = "Loan not approved";
+                    document.getElementById("instalmentReceiptFormData").style.display = 'none';
+                } else if (instalmentReceipt.LoanStatus == 'A') {
+                    document.getElementById("errLoanId").innerHTML = "Loan Fee not paid";
+                    document.getElementById("instalmentReceiptFormData").style.display = 'none';
+                } else if (instalmentReceipt.LoanStatus == 'C') {
+                    document.getElementById("errLoanId").innerHTML = "Loan closed";
+                    document.getElementById("instalmentReceiptFormData").style.display = 'none';
+                } else {
+                    document.getElementById("errLoanId").innerHTML = "Invalid Loan Id";
+                    document.getElementById("instalmentReceiptFormData").style.display = 'none';
+                }
+
+            }
+        };
+        xhttp.open("GET", "../api/GetInstalmentReceipt/" + loanId, true);
+        xhttp.send();
+    }
+    document.getElementById("LoanId").addEventListener("keydown", function (e) {
+        document.getElementById("instalmentReceiptFormData").style.display = 'none';
+    });
+    document.getElementById("NoOfInstalments").addEventListener("keyup", function (e) {
+        if (Number(document.getElementById("NoOfInstalments").value <= NoOfInstalments)) {
+            document.getElementById("TotalDue").value = Number(document.getElementById("NoOfInstalments").value) * Number(document.getElementById("Ewi").value);
+        } else {
+            document.getElementById("TotalDue").value = "Max Instalments:" + NoOfInstalments;
+        }
+    });
+
+    function validateOnSubmit() {
+        if (isNaN(document.getElementById("TotalDue").value)) {
+            document.getElementById("errLoanId").innerHTML = 'Due amount error';
+            return false;
+        } else if (Number(document.getElementById("TotalDue").value)<=0) {
+            document.getElementById("errLoanId").innerHTML = 'Due is zero';
+            return false;
+        } else {
+            return true;
+        }
+    }
+</script>
