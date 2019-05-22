@@ -54,6 +54,17 @@ namespace MicroFin.Controllers
             return response;
         }
 
+
+        [HttpGet]
+        [Route("api/CheckGroup/{groupId}")]
+        public HttpResponseMessage CheckGroup(int groupId)
+        {
+            HttpResponseMessage response = new HttpResponseMessage();
+            response.Content = new StringContent(LoanDBService.CheckGroup(groupId));
+            response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/plain");
+            return response;
+        }
+
         [HttpGet]
         [Route("api/ApproveLoan/{loanId}")]
         public HttpResponseMessage ApproveLoan(int loanId)

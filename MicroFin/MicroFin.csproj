@@ -209,6 +209,7 @@
     <Compile Include="Models\FamilyMember.cs" />
     <Compile Include="Models\GroupCenter.cs" />
     <Compile Include="Models\InstalmentReceipt.cs" />
+    <Compile Include="Models\GroupLoan.cs" />
     <Compile Include="Models\Loan.cs" />
     <Compile Include="Models\Login.cs" />
     <Compile Include="Models\Member.cs" />
@@ -322,6 +323,7 @@
     <Content Include="Views\Member\FamilyMemberForm.cshtml" />
     <Content Include="Views\Loan\ViewLoan.cshtml" />
     <Content Include="Views\Loan\LoanStatusForm.cshtml" />
+    <Content Include="Views\Loan\GroupLoanForm.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

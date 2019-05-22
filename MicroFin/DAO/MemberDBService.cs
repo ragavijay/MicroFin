@@ -502,5 +502,28 @@ namespace MicroFin.DAO
             }
             return familyMember;
         }
+
+        public static int GetGroupId(int memberId)
+        {
+            int groupId;
+            using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
+            {
+                con.Open();
+                using (MySqlCommand cmd = new MySqlCommand("GetGroupId", con))
+                {
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@pMemberId", MySqlDbType.Decimal, 5);
+                    cmd.Parameters["@pMemberId"].Value = memberId;
+                    cmd.Parameters.Add("@ireturnvalue", MySqlDbType.VarChar, 50);
+                    cmd.Parameters["@ireturnvalue"].Direction = ParameterDirection.ReturnValue;
+                    using (MySqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                        rdr.Read();
+                        groupId = Convert.ToInt32(rdr[0].ToString());
+                    }
+                }
+            }
+            return groupId;
+        }
     }
 }

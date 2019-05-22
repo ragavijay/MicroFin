@@ -516,6 +516,43 @@ END//
 SELECT CheckMember(1);
 
 
+--CheckGroup (updated)
+DELIMITER //
+DROP FUNCTION IF EXISTS `CheckGroup`//
+CREATE FUNCTION CheckGroup(pGroupId INT) RETURNS CHAR(50)
+READS SQL DATA
+BEGIN
+	DECLARE vCheck INT;
+	DECLARE vResponse CHAR(50);
+	SELECT COUNT(*) INTO vCheck FROM MemberGroup WHERE GroupId = pGroupId;
+	IF vCheck=0 THEN
+		RETURN 'Not found';
+	END IF;
+	SELECT COUNT(*) INTO vCheck FROM Loan L INNER JOIN Member M ON L.MemberId = M.MemberId 
+		INNER JOIN MemberGroup MG ON M.GroupID=MG.GroupID WHERE MG.GroupId=pGroupId AND L.LoanStatus <> 'C';
+	IF vCheck>0 THEN
+		SET vResponse := 'Loan exists';	
+	ELSE
+		SET vResponse := 'Success';	
+	END IF;
+	RETURN vResponse;
+END//
+--Test
+SELECT CheckGroup(1);
+
+
+--GetGroupId (updated)
+DELIMITER //
+DROP FUNCTION IF EXISTS `GetGroupId`//
+CREATE FUNCTION GetGroupId(pMemberId INT) RETURNS INT
+READS SQL DATA
+BEGIN
+	DECLARE vGroupId INT;
+	SELECT GroupId INTO vGroupId FROM Member WHERE MemberId = pMemberId;
+	RETURN vGroupId;
+END//
+--Test
+SELECT GetGroupId(15);
 
 --AddLoan (29-04-2019)
 DELIMITER //
@@ -542,17 +579,67 @@ AddLoan:BEGIN
 END;//
 
 
---GetAllLoans (19-05-2019)
+--AddGroupLoan (updated)
+DELIMITER //
+DROP PROCEDURE IF EXISTS `AddGroupLoan`//
+CREATE PROCEDURE AddGroupLoan(pGroupId INT, pBranchId INT, pLoanPurpose VARCHAR(40), pLoanAmount INT, pProcessingFeeRate INT, pProcessingFee INT, pInsuranceRate INT, pInsurance INT, pTenure INT, pInterestRate INT, pEWI INT, OUT pStatus INT)
+AddGroupLoan:BEGIN
+	DECLARE vCheck VARCHAR(50);
+	DECLARE vLoanId INT;
+	DECLARE vMemberId INT;
+	DECLARE vCompleted INT;
+	DECLARE cMember CURSOR FOR SELECT MemberId FROM Member WHERE GroupId = pGroupId;
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION SET pStatus=-1;
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET vCompleted=0;
+	SET vCheck:=CheckGroup(pGroupId);
+	IF vCheck='Not found' || vCheck='Loan exists' THEN
+		SET pStatus:=0;
+		Leave AddGroupLoan;
+	ELSE
+		SET pStatus:=1;
+	END IF;
+	SELECT MAX(LoanId) INTO vLoanId FROM LOAN;
+	IF vLoanId IS NULL THEN
+		SET vLoanId := 0;
+	END IF;
+	SET vCompleted:=1;
+	OPEN cMember;
+	CursorLoop: LOOP
+		FETCH cMember INTO vMemberId;
+		IF vCompleted=0 THEN
+			LEAVE CursorLoop;
+		END IF;
+		SET vLoanId:=vLoanId + 1;
+		INSERT INTO Loan VALUES(vLoanId, vMemberId, pBranchId, pLoanPurpose, pLoanAmount, pProcessingFeeRate, pProcessingFee, pInsuranceRate, pInsurance, pTenure, pInterestRate, pEWI, 'P',NULL,NULL,NULL);
+	END LOOP;
+END;//
+
+
+
+--GetAllLoans (updated)
 DELIMITER // 
 DROP PROCEDURE IF EXISTS `GetAllLoans`//
 CREATE PROCEDURE GetAllLoans(pBranchId INT, pGroupId INT)
 BEGIN
 	SELECT L.LoanId, L.MemberId, M.MemberName, L.BranchId, L.LoanPurpose, L.LoanAmount, L.ProcessingFeeRate, L.ProcessingFee, 
 		   L.InsuranceRate, L.Insurance, L.Tenure, L.InterestRate, L.EWI, L.LoanStatus, L.StatusRemarks
-		   FROM Loan L INNER JOIN Member M ON L.MemberId = M.MemberId WHERE BranchId=pBranchId AND M.GroupID=pGroupId;
+		   FROM Loan L INNER JOIN Member M ON L.MemberId = M.MemberId WHERE BranchId=pBranchId AND M.GroupID=pGroupId AND L.LoanStatus<>'C';
 END//
 --Test
 CALL GetAllLoans(1,1)
+
+
+--GetAllMemberLoans (updated)
+DELIMITER // 
+DROP PROCEDURE IF EXISTS `GetAllMemberLoans`//
+CREATE PROCEDURE GetAllMemberLoans(pBranchId INT, pGroupId INT)
+BEGIN
+	SELECT L.LoanId, L.MemberId, M.MemberName, M.AccountNumber, M.IFSC, L.BranchId, L.LoanPurpose, L.LoanAmount, L.ProcessingFeeRate, L.ProcessingFee, 
+		   L.InsuranceRate, L.Insurance, L.Tenure, L.InterestRate, L.EWI, L.LoanStatus, L.StatusRemarks
+		   FROM Loan L INNER JOIN Member M ON L.MemberId = M.MemberId WHERE BranchId=pBranchId AND M.GroupID=pGroupId AND L.LoanStatus<>'C';
+END//
+--Test
+CALL GetAllMemberLoans(1,1)
 
 --GetLoan (29-04-2019)
 DELIMITER //

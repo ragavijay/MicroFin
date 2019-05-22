@@ -238,11 +238,13 @@ INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Descrip
 INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(29, 'I', 650, '2019-05-13', 'Due: 3/30 (13-05-2019)', 'manager');
 INSERT INTO CashReceipt(LoanId, ReceiptType, ReceiptAmount, ReceiptDate, Description, UserId ) VALUES(30, 'I', 650, '2019-05-13', 'Due: 3/30 (13-05-2019)', 'manager');
 
+--Group3 Ins3 (2019-05-18)
 
+--Group4 Ins2 (2019-05-18)
 
+--Group1 Ins7 (2019-05-20)
 
-
-
+--Group2 Ins4 (2019-05-20)
 
 
 

@@ -11,7 +11,7 @@
     <center>
        <div id="print">
             <table class="tg">
-                <tr> <td colspan="2"> <img src="/Content/Images/logo.jpg" /> <h3>Athirstam Microfinance Pvt. Ltd.</h3> </td> <td colspan="2"> <center><img width="150" src="@Model.member.GetPhotoPath()" alt="NA" /></center> </td> </tr>
+                <tr> <td colspan="2"> <img src="/Content/Images/logo.jpg" /> <h3>Athirshtam Microfinance Pvt. Ltd.</h3> </td> <td colspan="2"> <center><img width="150" src="@Model.member.GetPhotoPath()" alt="NA" /></center> </td> </tr>
 
                 <tr> <td> <b>Center Name</b> </td> <td> @Model.member.CenterName </td> <td> <b>Loan Id</b> </td><td> @Model.loan.LoanId </td> </tr>
                 <tr> <td> <b>Group Name</b> </td> <td> @Model.member.GroupName </td> <td> <b>Leader Name</b> </td> <td> @Model.member.LeaderName </td> </tr>
@@ -64,13 +64,33 @@
                 <tr> <td> <b>Tenure (weeks)</b> </td> <td> @Model.loan.Tenure </td> <td> <b>Interest Rate (%)</b> </td> <td> @Model.loan.InterestRate</td></tr>
                 <tr> <td> <b>Weekly Due (Rs.)</b> </td> <td> @Model.loan.Ewi</td> <td> <b>Repayment Amount(Rs.)</b> </td> <td> @Model.loan.RepaymentAmount</td></tr>
         </table>
+        <b> Loan Obligation </b>
+           <table class="tg">
+               <tr> <th> S.No. </th> <th> Institution Name</th>  <th>Inst Type </th> <th> Loan Amount</th> <th> Installment Amount </th> <th> Frequency (M/W/F)</th> <th> Tenure</th> <th> Principal Outstanding</th> </tr>
+               <tr> <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td> </tr>
+               <tr> <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td> </tr>
+               <tr> <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td> </tr>
+           </table>
         <b> Amortization Schedule <br/> </b> 
-        <table width="50%" id="scheduleTable" border="1">
+        <table width="70%" id="scheduleTable" border="1">
             <thead>
                 <tr> <td> <b>Week</b></td> <td> <b> Opening Balance </b></td> <td> <b>Principal</b></td> <td> <b>Interest</b> </td> <td> <b>Total</b> </td> <td> <b>Balance</b> </td> </tr>
             </thead>
             <tbody></tbody>
         </table>
+        <b> Declaration</b>
+           <p align="left" style="text-indent: 50px;"> I, <u>@Model.member.MemberName </u> D/o <u>@Model.member.FName </u> living in address <u> @Model.member.AddressLine1  @Model.member.AddressLine2 @Model.member.AddressLine3 @Model.member.AddressLine4 @Model.member.City - @Model.member.Pincode  </u> 
+           received loan for family purpose Rs <u> @Model.loan.LoanAmount</u> from ATHIRSHTAM MICRO FINANCE PRIVATE LTD and I promise I will pay principal with interest. <br /> </p>
+           <br/>
+           <br/>
+           <pre><p align="left"> Nominee Sign                                             Center Leader Sign                                  Member Sign</p></pre>
+           <br />   
+           <br />
+           <p align="left">CIN U67200TN2018PTC126199 </p>
+           <p align="left">ATHIRSHTAM MICRO FINANCE PRIVATE LTD </p>
+           <p align="left">PLOT NO 162, DOOR NO 103/2, RAJ PALACE,</p>
+           <p align="left">KOCHI DANUSHKODI ROAD, NAGAMALAI PUDUKOTTAI,</p>
+           <p align="left">MADURAI- 625019</p>
     </div>
         <input type="button" value="print" onclick="printMember()"/>
     </center>

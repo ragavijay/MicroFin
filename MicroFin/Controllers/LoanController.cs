@@ -28,6 +28,28 @@ namespace MicroFin.Controllers
                 return View(loan);
             }
         }
+
+        [HttpGet]
+        public ActionResult GroupLoanForm()
+        {
+            return View("GroupLoanForm");
+        }
+
+        [HttpPost]
+        public ActionResult GroupLoan(GroupLoan groupLoan)
+        {
+            groupLoan.BranchId = Convert.ToInt32(Session["BranchId"]);
+            int status = LoanDBService.AddGroupLoan(groupLoan);
+            if (status == 1)
+            {
+                return ViewLoans(groupLoan.GroupId.ToString());
+            }
+            else
+            {
+                return View("GroupLoanForm");
+            }
+        }
+
         [HttpPost]
         public ActionResult Loan(Loan loan)
         {
@@ -49,7 +71,7 @@ namespace MicroFin.Controllers
                 }
                 else
                 {
-                    return ViewLoan(loan.LoanId.ToString());
+                    return ViewLoans(MemberDBService.GetGroupId(loan.MemberId).ToString());
                 }
             }
             else
@@ -74,6 +96,16 @@ namespace MicroFin.Controllers
             int groupId = Convert.ToInt32(id);
             List<Loan> loans = LoanDBService.GetAllLoans(Convert.ToInt32(Session["BranchId"]), groupId);
             return View("ViewLoans", loans);
+        }
+
+        [HttpGet]
+        [Route("LoanTransferReport/{id?}")]
+        public ActionResult LoanTransferReport(string id)
+        {
+            int groupId = Convert.ToInt32(id);
+            List<MemberLoan> memberLoans = LoanDBService.GetAllMemberLoans(Convert.ToInt32(Session["BranchId"]), groupId);
+
+            return View("LoanTransferReport", memberLoans);
         }
         [HttpGet]
         public ActionResult ViewPendingLoans()
@@ -109,10 +141,11 @@ namespace MicroFin.Controllers
         public ActionResult LoanStatus(FormCollection form)
         {
             int loanId = Convert.ToInt32(form["LoanId"]);
+            int memberId = Convert.ToInt32(form["MemberId"]);
             string loanStatus = form["LoanStatus"];
             string statusRemarks = form["StatusRemarks"];
             LoanDBService.UpdateLoanStatus(loanId, loanStatus, statusRemarks);
-            return ViewLoan(loanId.ToString());
+            return ViewLoans(MemberDBService.GetGroupId(memberId).ToString());
         }
     }
 }

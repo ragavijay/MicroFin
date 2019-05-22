@@ -34,6 +34,28 @@ namespace MicroFin.DAO
             return memberName;
         }
 
+        public static string CheckGroup(int groupId)
+        {
+            String response="error";
+            using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
+            {
+                con.Open();
+                using (MySqlCommand cmd = new MySqlCommand("CheckGroup", con))
+                {
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@pGroupId", MySqlDbType.Decimal, 5);
+                    cmd.Parameters["@pGroupId"].Value = groupId;
+                    cmd.Parameters.Add("@ireturnvalue", MySqlDbType.VarChar, 50);
+                    cmd.Parameters["@ireturnvalue"].Direction = ParameterDirection.ReturnValue;
+                    using (MySqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                        rdr.Read();
+                        response = rdr[0].ToString();
+                    }
+                }
+            }
+            return response;
+        }
         public static int AddLoan(Loan loan)
         {
             int status = 0;
@@ -94,6 +116,59 @@ namespace MicroFin.DAO
             }
             return status;
         }
+
+        public static int AddGroupLoan(GroupLoan groupLoan)
+        {
+            int status = 0;
+            using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
+            {
+                con.Open();
+                using (MySqlCommand cmd = new MySqlCommand("AddGroupLoan", con))
+                {
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    cmd.Parameters.Add("@pGroupId", MySqlDbType.Int32);
+                    cmd.Parameters["@pGroupId"].Value = groupLoan.GroupId;
+
+                    cmd.Parameters.Add("@pBranchId", MySqlDbType.Int32);
+                    cmd.Parameters["@pBranchId"].Value = groupLoan.BranchId;
+
+                    cmd.Parameters.Add("@pLoanPurpose", MySqlDbType.VarChar, 40);
+                    cmd.Parameters["@pLoanPurpose"].Value = groupLoan.LoanPurpose;
+
+                    cmd.Parameters.Add("@pLoanAmount", MySqlDbType.Int32);
+                    cmd.Parameters["@pLoanAmount"].Value = groupLoan.LoanAmount;
+
+                    cmd.Parameters.Add("@pProcessingFeeRate", MySqlDbType.Int32);
+                    cmd.Parameters["@pProcessingFeeRate"].Value = groupLoan.ProcessingFeeRate;
+
+                    cmd.Parameters.Add("@pProcessingFee", MySqlDbType.Int32);
+                    cmd.Parameters["@pProcessingFee"].Value = groupLoan.ProcessingFee;
+
+                    cmd.Parameters.Add("@pInsuranceRate", MySqlDbType.Int32);
+                    cmd.Parameters["@pInsuranceRate"].Value = groupLoan.InsuranceRate;
+
+                    cmd.Parameters.Add("@pInsurance", MySqlDbType.Int32);
+                    cmd.Parameters["@pInsurance"].Value = groupLoan.Insurance;
+
+                    cmd.Parameters.Add("@pTenure", MySqlDbType.Int32);
+                    cmd.Parameters["@pTenure"].Value = groupLoan.Tenure;
+
+                    cmd.Parameters.Add("@pInterestRate", MySqlDbType.Int32);
+                    cmd.Parameters["@pInterestRate"].Value = groupLoan.InterestRate;
+
+                    cmd.Parameters.Add("@pEwi", MySqlDbType.Int32);
+                    cmd.Parameters["@pEwi"].Value = groupLoan.Ewi;
+
+                    cmd.Parameters.Add("@pStatus", MySqlDbType.Int32);
+                    cmd.Parameters["@pStatus"].Direction = ParameterDirection.Output;
+
+                    cmd.ExecuteNonQuery();
+                    status = Convert.ToInt32(cmd.Parameters["@pStatus"].Value);
+                }
+            }
+            return status;
+        }
         public static List<Loan> GetAllLoans(int branchId, int groupId)
         {
             Loan loan;
@@ -135,6 +210,47 @@ namespace MicroFin.DAO
                 }
             }
             return loans;
+        }
+
+        public static List<MemberLoan> GetAllMemberLoans(int branchId, int groupId)
+        {
+            Loan loan;
+            Member member;
+            MemberLoan memberLoan;
+            List<MemberLoan> memberLoans = new List<MemberLoan>();
+            using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
+            {
+                con.Open();
+                using (MySqlCommand cmd = new MySqlCommand("GetAllMemberLoans", con))
+                {
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@pBranchId", MySqlDbType.Int32);
+                    cmd.Parameters["@pBranchId"].Value = branchId;
+                    cmd.Parameters.Add("@pGroupId", MySqlDbType.Int32);
+                    cmd.Parameters["@pGroupId"].Value = groupId;
+                    using (MySqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                        while (rdr.Read())
+                        {
+                            memberLoan = new MemberLoan();
+                            loan = new Loan();
+                            loan.LoanId = Convert.ToInt32(rdr["LoanId"].ToString());
+                            loan.MemberId = Convert.ToInt32(rdr["MemberId"].ToString());
+                            loan.MemberName = rdr["MemberName"].ToString();
+                            loan.LoanAmount = Convert.ToInt32(rdr["LoanAmount"].ToString());
+                            member = new Member();
+                            member.MemberId = loan.MemberId;
+                            member.MemberName = loan.MemberName;
+                            member.AccountNumber = rdr["AccountNumber"].ToString();
+                            member.IFSC = rdr["IFSC"].ToString();
+                            memberLoan.member = member;
+                            memberLoan.loan = loan;
+                            memberLoans.Add(memberLoan);
+                        }
+                    }
+                }
+            }
+            return memberLoans;
         }
 
         public static List<Loan> GetAllPendingLoans(int branchId)

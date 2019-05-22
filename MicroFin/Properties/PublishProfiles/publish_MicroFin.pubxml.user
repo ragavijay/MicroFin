@@ -83,10 +83,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/18/2019 18:25:36</publishTime>
     </File>
     <File Include="bin/App_global.asax.compiled">
-      <publishTime>05/19/2019 17:04:14</publishTime>
+      <publishTime>05/21/2019 06:47:42</publishTime>
     </File>
     <File Include="bin/App_global.asax.dll">
-      <publishTime>05/19/2019 17:04:14</publishTime>
+      <publishTime>05/21/2019 06:47:42</publishTime>
     </File>
     <File Include="bin/Content/bootstrap.css">
       <publishTime>04/18/2019 18:25:12</publishTime>
@@ -95,7 +95,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>12/21/2017 20:23:44</publishTime>
     </File>
     <File Include="bin/MicroFin.dll">
-      <publishTime>05/19/2019 17:03:35</publishTime>
+      <publishTime>05/21/2019 06:28:50</publishTime>
     </File>
     <File Include="bin/Microsoft.AI.Agent.Intercept.dll">
       <publishTime>12/07/2015 19:04:38</publishTime>
@@ -293,7 +293,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/18/2019 18:25:37</publishTime>
     </File>
     <File Include="PrecompiledApp.config">
-      <publishTime>05/19/2019 17:04:06</publishTime>
+      <publishTime>05/21/2019 06:47:33</publishTime>
     </File>
     <File Include="Scripts/ai.0.22.9-build00167.js">
       <publishTime>04/18/2019 18:25:37</publishTime>
@@ -350,7 +350,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/26/2019 18:45:56</publishTime>
     </File>
     <File Include="Views/App/Login.cshtml">
-      <publishTime>04/22/2019 19:02:42</publishTime>
+      <publishTime>05/21/2019 06:45:05</publishTime>
     </File>
     <File Include="Views/Center/GroupCenter.cshtml">
       <publishTime>04/19/2019 07:12:00</publishTime>
@@ -370,20 +370,23 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="Views/Group/ViewMemberGroups.cshtml">
       <publishTime>05/19/2019 16:36:17</publishTime>
     </File>
+    <File Include="Views/Loan/GroupLoanForm.cshtml">
+      <publishTime>05/20/2019 19:22:17</publishTime>
+    </File>
     <File Include="Views/Loan/Loan.cshtml">
       <publishTime>04/18/2019 18:59:09</publishTime>
     </File>
     <File Include="Views/Loan/LoanForm.cshtml">
-      <publishTime>05/18/2019 07:54:54</publishTime>
+      <publishTime>05/19/2019 19:11:58</publishTime>
     </File>
     <File Include="Views/Loan/LoanStatusForm.cshtml">
-      <publishTime>05/03/2019 19:15:37</publishTime>
+      <publishTime>05/20/2019 19:24:14</publishTime>
     </File>
     <File Include="Views/Loan/ViewLoan.cshtml">
-      <publishTime>05/18/2019 07:15:53</publishTime>
+      <publishTime>05/21/2019 06:47:00</publishTime>
     </File>
     <File Include="Views/Loan/ViewLoans.cshtml">
-      <publishTime>05/19/2019 16:36:15</publishTime>
+      <publishTime>05/20/2019 19:36:02</publishTime>
     </File>
     <File Include="Views/Loan/ViewPendingLoans.cshtml">
       <publishTime>05/03/2019 06:50:15</publishTime>
@@ -395,7 +398,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/20/2019 18:59:10</publishTime>
     </File>
     <File Include="Views/Member/MemberForm.cshtml">
-      <publishTime>05/18/2019 17:48:22</publishTime>
+      <publishTime>05/19/2019 19:33:46</publishTime>
     </File>
     <File Include="Views/Member/ViewFamilyMembers.cshtml">
       <publishTime>04/28/2019 07:06:07</publishTime>
@@ -431,7 +434,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/18/2019 18:45:11</publishTime>
     </File>
     <File Include="Views/Shared/_Layout.cshtml">
-      <publishTime>05/19/2019 16:53:44</publishTime>
+      <publishTime>05/21/2019 06:28:42</publishTime>
     </File>
     <File Include="Views/Web.config">
       <publishTime>04/18/2019 18:25:09</publishTime>
