@@ -930,3 +930,86 @@ BEGIN
 						OccupationType=pOccupationType, MonthlyIncome=pMonthlyIncome, Qualification=pQualification
 						WHERE MemberId=pMemberId AND SNo=pSNo;
 END//
+
+
+--GetRepaymentStatusGroupInfo
+DELIMITER //
+DROP PROCEDURE IF EXISTS `GetRepaymentStatusGroupInfo`//
+CREATE PROCEDURE GetRepaymentStatusGroupInfo(pGroupId INT) 
+BEGIN
+	SELECT 
+		MG.GroupId,
+		MG.GroupName,
+		IFNULL((SELECT 
+						MemberName
+					FROM
+						Member M
+					WHERE
+						M.GroupID = MG.GroupId
+							AND M.MemberType = 1),
+				'NA') AS LeaderName,
+		L.LoanAmount,
+		L.LoanDate,
+		L.Tenure,
+		L.EWI
+	FROM
+		MemberGroup MG
+			INNER JOIN
+		Member M ON MG.GroupID = M.GroupId
+			INNER JOIN
+		Loan L ON M.MemberId = L.LoanId
+	WHERE
+		MG.GroupId = pGroupId
+			AND L.LoanStatus <> 'C' 
+	LIMIT 1;
+END;//
+
+--GetRepaymentStatusMemberCount
+DELIMITER //
+DROP PROCEDURE IF EXISTS `GetRepaymentStatusMemberCount`//
+CREATE PROCEDURE GetRepaymentStatusMemberCount(pGroupId INT) 
+BEGIN
+	SELECT 
+		COUNT(*) AS MemberCount
+	FROM
+		Member M
+			INNER JOIN
+		Loan L ON M.MemberId = L.MemberId
+	WHERE
+		M.GroupId = pGroupId
+			AND L.LoanStatus <> 'C';
+END;//
+
+--GetRepaymentStatusMemberInfo
+DELIMITER //
+DROP PROCEDURE IF EXISTS `GetRepaymentStatusMemberInfo`//
+CREATE PROCEDURE GetRepaymentStatusMemberInfo(pGroupId INT) 
+BEGIN
+	SELECT 
+		M.MemberId,
+		M.MemberName,
+		L.LoanId
+	FROM
+		Member M
+			INNER JOIN
+		Loan L ON M.MemberId = L.MemberId
+	WHERE
+		M.GroupId = pGroupId
+			AND L.LoanStatus <> 'C';
+END;//
+
+--GetPaymentDates
+DELIMITER //
+DROP PROCEDURE IF EXISTS `GetPaymentDates`//
+CREATE PROCEDURE GetPaymentDates(pLoanId INT) 
+BEGIN
+	SELECT 
+		ReceiptDate,
+		ReceiptAmount
+	FROM
+		CashReceipt
+	WHERE
+		LoanId = pLoanId
+			AND ReceiptType <> 'P'
+	ORDER BY ReceiptId;
+END;//

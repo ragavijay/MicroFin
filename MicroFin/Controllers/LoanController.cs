@@ -147,5 +147,13 @@ namespace MicroFin.Controllers
             LoanDBService.UpdateLoanStatus(loanId, loanStatus, statusRemarks);
             return ViewLoans(MemberDBService.GetGroupId(memberId).ToString());
         }
+
+        [Route("LoanRepaymentStatus/{id?}")]
+        public ActionResult LoanRepaymentStatus(string id)
+        {
+            int groupId = Convert.ToInt32(id);
+            LoanRepaymentStatus loanRepaymentStatus = LoanDBService.GetLoanRepaymentStatus(groupId);
+            return View(loanRepaymentStatus);
+        }
     }
 }

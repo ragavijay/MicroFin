@@ -422,5 +422,132 @@ namespace MicroFin.DAO
                 }
             }
         }
+
+        public static LoanRepaymentStatus GetLoanRepaymentStatus(int groupId)
+        {
+            LoanRepaymentStatus loanStatus = null;
+            using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
+            {
+                con.Open();
+                using (MySqlCommand cmd = new MySqlCommand("GetRepaymentStatusGroupInfo", con))
+                {
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@pGroupId", MySqlDbType.Int32);
+                    cmd.Parameters["@pGroupId"].Value = groupId;
+                    using (MySqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                        if (rdr.Read())
+                        {
+                            loanStatus = new LoanRepaymentStatus();
+                            loanStatus.GroupId = groupId;
+                            loanStatus.GroupName = rdr["GroupName"].ToString();
+                            loanStatus.LeaderName = rdr["LeaderName"].ToString();
+                            loanStatus.LoanAmount = Convert.ToInt32(rdr["LoanAmount"].ToString());
+                            loanStatus.LoanDate = Convert.ToDateTime(rdr["LoanDate"].ToString());
+                            loanStatus.CollectionDay = loanStatus.LoanDate.ToString("dddd");
+                            loanStatus.Tenure = Convert.ToInt32(rdr["Tenure"].ToString());
+                            loanStatus.EWI = Convert.ToInt32(rdr["EWI"].ToString());
+                            loanStatus.StartingDate = loanStatus.LoanDate.AddDays(7);
+                            loanStatus.EndingDate = loanStatus.LoanDate.AddDays(7 * loanStatus.Tenure);
+
+                        }
+                    }
+                }
+            }
+
+
+            using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
+            {
+                con.Open();
+                using (MySqlCommand cmd = new MySqlCommand("GetRepaymentStatusMemberCount", con))
+                {
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@pGroupId", MySqlDbType.Int32);
+                    cmd.Parameters["@pGroupId"].Value = groupId;
+                    using (MySqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                        if (rdr.Read())
+                        {
+                            loanStatus.MemberCount = Convert.ToInt32(rdr["MemberCount"].ToString());
+                        }
+                    }
+                }
+            }
+            loanStatus.MemberId = new int[loanStatus.MemberCount];
+            loanStatus.MemberName = new string[loanStatus.MemberCount];
+            loanStatus.LoanId = new int[loanStatus.MemberCount];
+            loanStatus.ActualDate = new DateTime[loanStatus.Tenure];
+            loanStatus.Amount = new int[loanStatus.Tenure, loanStatus.MemberCount];
+            loanStatus.ColTotal = new int[loanStatus.Tenure];
+            loanStatus.RowTotal = new int[loanStatus.MemberCount];
+            loanStatus.TotalAmount = new int[loanStatus.MemberCount];
+            loanStatus.PendingAmount = new int[loanStatus.MemberCount];
+            using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
+            {
+                con.Open();
+                using (MySqlCommand cmd = new MySqlCommand("GetRepaymentStatusMemberInfo", con))
+                {
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@pGroupId", MySqlDbType.Int32);
+                    cmd.Parameters["@pGroupId"].Value = groupId;
+                    using (MySqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                        int i = 0;
+                        while (rdr.Read())
+                        {
+                            loanStatus.MemberId[i] = Convert.ToInt32(rdr["MemberId"].ToString());
+                            loanStatus.MemberName[i] = rdr["MemberName"].ToString();
+                            loanStatus.LoanId[i] = Convert.ToInt32(rdr["LoanId"].ToString());
+                            i++;
+                        }
+                    }
+                }
+            }
+            for (int i = 0; i < loanStatus.MemberCount; i++)
+            {
+                int installmetsPaid = 0;
+                using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
+                {
+                    con.Open();
+                    using (MySqlCommand cmd = new MySqlCommand("GetPaymentDates", con))
+                    {
+                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@pLoanId", MySqlDbType.Int32);
+                        cmd.Parameters["@pLoanId"].Value = loanStatus.LoanId[i];
+
+                        using (MySqlDataReader rdr = cmd.ExecuteReader())
+                        {
+                            int currentInstallments;
+                            while (rdr.Read())
+                            {
+                                currentInstallments = Convert.ToInt32(rdr["ReceiptAmount"].ToString()) / loanStatus.EWI;
+                                for (int j = installmetsPaid; j <= installmetsPaid + currentInstallments - 1; j++)
+                                {
+                                    if (loanStatus.ActualDate[j] < Convert.ToDateTime(rdr["ReceiptDate"].ToString()))
+                                    {
+                                        loanStatus.ActualDate[j] = Convert.ToDateTime(rdr["ReceiptDate"].ToString());
+                                    }
+                                    loanStatus.Amount[j, i] = loanStatus.EWI;
+                                    loanStatus.ColTotal[j] += loanStatus.EWI;
+                                    loanStatus.RowTotal[i] += loanStatus.EWI;
+                                }
+                                installmetsPaid += currentInstallments;
+                            }
+                        }
+                    }
+                }
+            }
+            for (int i = 0; i < loanStatus.MemberCount; i++)
+            {
+                loanStatus.TotalAmount[i] = loanStatus.EWI * loanStatus.Tenure;
+                loanStatus.OverallTotalAmount += loanStatus.TotalAmount[i];
+                loanStatus.OverallRecdAmount += loanStatus.RowTotal[i];
+                loanStatus.PendingAmount[i] = loanStatus.TotalAmount[i] - loanStatus.RowTotal[i];
+                loanStatus.OverallPendingAmount += loanStatus.PendingAmount[i];
+            }
+           
+            return loanStatus;
+        }
+
     }
 }

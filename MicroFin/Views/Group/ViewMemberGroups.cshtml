@@ -48,7 +48,10 @@
             @Html.ActionLink("Loans", "ViewLoans", "Loan", new { id = item.GroupId }, null)
         </td>
         <td>
-            @Html.ActionLink("Trasfer Report", "LoanTransferReport", "Loan", new { id = item.GroupId }, null)
+            @Html.ActionLink("TrasferReport", "LoanTransferReport", "Loan", new { id = item.GroupId }, null)
+        </td>
+        <td>
+            @Html.ActionLink("LoanStatus", "LoanRepaymentStatus", "Loan", new { id = item.GroupId }, null)
         </td>
         <td>
             @Html.ActionLink("Edit", "MemberGroupForm", new { id=item.GroupId })

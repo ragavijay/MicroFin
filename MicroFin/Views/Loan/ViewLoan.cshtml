@@ -92,13 +92,13 @@
            <p align="left">KOCHI DANUSHKODI ROAD, NAGAMALAI PUDUKOTTAI,</p>
            <p align="left">MADURAI- 625019</p>
     </div>
-        <input type="button" value="print" onclick="printMember()"/>
+        <input type="button" value="print" onclick="printLoan()"/>
     </center>
 }
 <script>
     getBank();
     showSchedule();
-    function printMember() {
+    function printLoan() {
         var divContents = document.getElementById("print").innerHTML;
         var printWindow = window.open('', '', 'height=600,width=600');
         printWindow.document.write('<html><head><title>AMF</title>');

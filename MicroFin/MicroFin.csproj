@@ -210,6 +210,7 @@
     <Compile Include="Models\GroupCenter.cs" />
     <Compile Include="Models\InstalmentReceipt.cs" />
     <Compile Include="Models\GroupLoan.cs" />
+    <Compile Include="Models\LoanRepaymentStatus.cs" />
     <Compile Include="Models\Loan.cs" />
     <Compile Include="Models\Login.cs" />
     <Compile Include="Models\Member.cs" />
@@ -324,6 +325,8 @@
     <Content Include="Views\Loan\ViewLoan.cshtml" />
     <Content Include="Views\Loan\LoanStatusForm.cshtml" />
     <Content Include="Views\Loan\GroupLoanForm.cshtml" />
+    <Content Include="Views\Loan\LoanTransferReport.cshtml" />
+    <Content Include="Views\Loan\LoanRepaymentStatus.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
