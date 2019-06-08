@@ -155,5 +155,12 @@ namespace MicroFin.Controllers
             LoanRepaymentStatus loanRepaymentStatus = LoanDBService.GetLoanRepaymentStatus(groupId);
             return View(loanRepaymentStatus);
         }
+
+        [HttpGet]
+        public ActionResult CumulativeReport()
+        {
+            List<CumulativeReport> cumulativeReport=LoanDBService.GetCumulativeReport();
+            return View("CumulativeReport", cumulativeReport);
+        }
     }
 }

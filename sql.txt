@@ -1013,3 +1013,192 @@ BEGIN
 			AND ReceiptType <> 'P'
 	ORDER BY ReceiptId;
 END;//
+
+--GetEWIDay (NEW)
+DELIMITER //
+DROP FUNCTION IF EXISTS `GetEWIDay`//
+CREATE FUNCTION GetEWIDay(pGroupId INT) RETURNS VARCHAR(15)
+READS SQL DATA
+BEGIN
+	DECLARE vEWIDay VARCHAR(15);
+	SELECT 
+		DAYNAME(L.LoanDate) INTO vEWIDay
+	FROM
+		MemberGroup MG
+			INNER JOIN
+		Member M ON MG.GroupID = M.GroupId
+			INNER JOIN
+		Loan L ON M.MemberId = L.LoanId
+	WHERE
+		MG.GroupId = pGroupId
+			AND L.LoanStatus <> 'C' 
+	LIMIT 1;
+	RETURN vEWIDay;
+END//
+--Test
+SELECT GetEWIDay(1);
+
+--GetEWI (NEW)
+DELIMITER //
+DROP FUNCTION IF EXISTS `GetEWI`//
+CREATE FUNCTION GetEWI(pGroupId INT) RETURNS INT
+READS SQL DATA
+BEGIN
+	DECLARE vEWI INT;
+	SELECT 
+		EWI INTO vEWI
+	FROM
+		MemberGroup MG
+			INNER JOIN
+		Member M ON MG.GroupID = M.GroupId
+			INNER JOIN
+		Loan L ON M.MemberId = L.LoanId
+	WHERE
+		MG.GroupId = pGroupId
+			AND L.LoanStatus <> 'C'
+	LIMIT 1;
+	RETURN vEWI;
+END//
+--Test
+SELECT GetEWI(1);
+
+--GetTotalEWI (NEW)
+DELIMITER //
+DROP FUNCTION IF EXISTS `GetTotalEWI`//
+CREATE FUNCTION GetTotalEWI(pGroupId INT) RETURNS INT
+READS SQL DATA
+BEGIN
+	DECLARE vTotalEWI INT;
+	SELECT 
+		SUM(EWI)*Tenure INTO vTotalEWI
+	FROM
+		MemberGroup MG
+			INNER JOIN
+		Member M ON MG.GroupID = M.GroupId
+			INNER JOIN
+		Loan L ON M.MemberId = L.LoanId
+	WHERE
+		MG.GroupId = pGroupId
+			AND L.LoanStatus <> 'C'; 
+	RETURN vTotalEWI;
+END//
+--Test
+SELECT GetTotalEWI(1);
+
+--GetTenure (NEW)
+DELIMITER //
+DROP FUNCTION IF EXISTS `GetTenure`//
+CREATE FUNCTION GetTenure(pGroupId INT) RETURNS INT
+READS SQL DATA
+BEGIN
+	DECLARE vTenure INT;
+	SELECT 
+		Tenure INTO vTenure
+	FROM
+		MemberGroup MG
+			INNER JOIN
+		Member M ON MG.GroupID = M.GroupId
+			INNER JOIN
+		Loan L ON M.MemberId = L.LoanId
+	WHERE
+		MG.GroupId = pGroupId
+			AND L.LoanStatus <> 'C'
+	LIMIT 1;
+	RETURN vTenure;
+END//
+--Test
+SELECT GetTenure(1);
+
+--GetTotalMembers (NEW)
+DELIMITER //
+DROP FUNCTION IF EXISTS `GetTotalMembers`//
+CREATE FUNCTION GetTotalMembers(pGroupId INT) RETURNS INT
+READS SQL DATA
+BEGIN
+	DECLARE vTotalMembers INT;
+	SELECT 
+		COUNT(*) INTO vTotalMembers
+	FROM
+		Member M
+			INNER JOIN
+		Loan L ON M.MemberId = L.MemberId
+	WHERE
+		M.GroupId = pGroupId
+			AND L.LoanStatus <> 'C';
+	RETURN vTotalMembers;
+END//
+--Test
+SELECT GetTotalMembers(1);
+
+
+--GetTotalEWIReceived (NEW)
+DELIMITER //
+DROP FUNCTION IF EXISTS `GetTotalEWIReceived`//
+CREATE FUNCTION GetTotalEWIReceived(pGroupId INT) RETURNS INT
+READS SQL DATA
+BEGIN
+	DECLARE vTotalEWIReceived INT;
+	SELECT 
+		SUM(ReceiptAmount) INTO vTotalEWIReceived
+	FROM
+		Member M
+			INNER JOIN
+		Loan L ON M.MemberId = L.MemberId
+			INNER JOIN
+		CashReceipt CR ON CR.LoanId = L.LoanId
+	WHERE
+		M.GroupId = pGroupId
+			AND L.LoanStatus <> 'C' AND CR.ReceiptType='I';
+	RETURN vTotalEWIReceived;
+END//
+--Test
+SELECT GetTotalEWIReceived(1);
+
+--GetLeaderName (NEW)
+DELIMITER //
+DROP FUNCTION IF EXISTS `GetLeaderName`//
+CREATE FUNCTION GetLeaderName(pGroupId INT) RETURNS VARCHAR(50)
+READS SQL DATA
+BEGIN
+	DECLARE vLeaderName VARCHAR(50);
+	SELECT 
+		MemberName INTO vLeaderName
+	FROM
+		MemberGroup MG
+			INNER JOIN
+		Member M ON MG.GroupId = M.GroupId
+	WHERE
+		M.MemberType = 1 AND MG.GroupID=pGroupId;
+	IF vLeaderName IS NULL THEN
+		SET vLeaderName:= 'NA';
+	END IF;
+	RETURN vLeaderName;
+END//
+--Test
+SELECT GetLeaderName(1);
+
+
+--GetCumulativeReport
+DELIMITER //
+DROP PROCEDURE IF EXISTS `GetCumulativeReport`//
+CREATE PROCEDURE GetCumulativeReport() 
+BEGIN
+	SELECT * FROM (
+	SELECT 
+		GroupId,
+		GroupName,
+		GetLeaderName(GroupId) AS LeaderName,
+		GetEWIDay(GroupId) AS EWIDay,
+		GetTotalEWI(GroupId) AS TotalEWI,
+		GetTotalMembers(GroupId) AS TotalMembers,
+		GetEWI(GroupId) AS EWI,
+		GetTenure(GroupId) AS Tenure,
+		GetTotalEWIReceived(GroupId) AS TotalEWIReceived
+	FROM
+		MemberGroup) AS MG
+	WHERE 
+		MG.EwiDay IS NOT NULL;
+END;//
+
+
+

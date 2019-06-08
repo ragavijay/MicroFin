@@ -205,6 +205,7 @@
     </Compile>
     <Compile Include="Models\CashReceiptStatement.cs" />
     <Compile Include="Models\Enums.cs" />
+    <Compile Include="Models\CumulativeReport.cs" />
     <Compile Include="Models\EwiDue.cs" />
     <Compile Include="Models\FamilyMember.cs" />
     <Compile Include="Models\GroupCenter.cs" />
@@ -327,6 +328,7 @@
     <Content Include="Views\Loan\GroupLoanForm.cshtml" />
     <Content Include="Views\Loan\LoanTransferReport.cshtml" />
     <Content Include="Views\Loan\LoanRepaymentStatus.cshtml" />
+    <Content Include="Views\Loan\CumulativeReport.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

@@ -1,0 +1,399 @@
+﻿@model MicroFin.Models.Loan
+@{
+    ViewBag.Title = "LoanForm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div id="schedule" style="display:none">
+    Loan Id: <span id="scheduleLoanId"></span> <br />
+    Member Id: <span id="scheduleMemberId"></span> <br />
+    Member Name: <span id="scheduleMemberName"></span> <br />
+    Loan Amount: <span id="scheduleLoanAmount"></span> <br />
+    Interest Rate: <span id="scheduleInterestRate"></span> <br />
+    Weekly Due: <span id="scheduleEwi"></span> <br />
+    <center>
+        <table id="scheduleTable" border="1">
+            <thead>
+                <tr> <td> Week</td> <td> Opening Balance </td> <td> Principal</td> <td> Interest </td> <td> Balance </td> </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+        <input type="button" onclick="closeSchedule();" value="Close" />
+        <input type="button" onclick="printSchedule();" value="Print" />
+    </center>
+</div>
+<div id="LoanForm" class="page-wrapper bg-gra-03 p-t-45 p-b-50">
+    <div class="wrapper wrapper--w790">
+        <div class="card card-5">
+            <div class="card-heading">
+                <h2 class="title">Loan</h2>
+            </div>
+            <div class="card-body">
+                @using (Html.BeginForm("Loan", "Loan", FormMethod.Post,new { @onsubmit="return (validateOnSubmit());"}))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <!--Loan Id -->
+                    <div class="form-row">
+                        <div class="name">Loan Id</div>
+                        <div class="value">
+                            <div class="input-group">
+                                @Html.TextBoxFor(m => m.LoanId, new { @id="LoanId", @class = "input--style-5", @placeholder = "auto-generated", @readonly = "true", @autocomplete="off" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--MemberId -->
+                    <div class="form-row m-b-55">
+                        <div class="name">Member Id</div>
+                        <div class="value">
+                            <div class="row row-space">
+                                <div class="col-2">
+                                    <div class="input-group-desc">
+                                        @if(@Model==null)
+                                        {
+                                            @Html.TextBoxFor(m => m.MemberId, new { id = "MemberId", @class = "input--style-5", @autocomplete = "off", @placeholder = "enter member id", @required = "true", @tabindex = "1" })
+                                        }
+                                        else
+                                        {
+                                            @Html.TextBoxFor(m => m.MemberId, new { id = "MemberId", @class = "input--style-5", @autocomplete = "off", @onkeydown = "event.preventDefault()", @tabindex = "1" })
+                                        }
+                                        <p id="errMemberId" style='color:red;'> </p>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="input-group-desc">
+                                        @if (@Model == null)
+                                        {
+                                            <button class="btn btn--blue" type="button" onclick="checkMember();" tabindex="2">Get</button>
+                                        }
+                                        else
+                                        {
+
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="loanInfo" style="@ViewBag.DisplayMode">
+                        <!--Member Name -->
+                        <div class="form-row">
+                            <div class="name">Member Name</div>
+                            <div class="value">
+                                <div class="input-group">
+                                    @Html.TextBoxFor(m => m.MemberName, new { id = "MemberName", @class = "input--style-5", @autocomplete = "off", @onkeydown = "event.preventDefault()", @required = "true" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--Loan Purpose -->
+                        <div class="form-row">
+                            <div class="name">Loan Purpose</div>
+                            <div class="value">
+                                <div class="input-group">
+                                    @Html.TextBoxFor(m => m.LoanPurpose, new { id = "LoanPurpose", @class = "input--style-5", @autocomplete = "off", @maxlength="40", @required = "true", @tabindex = "3" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--Loan Amount -->
+                        <div class="form-row">
+                            <div class="name">Loan Amount(Rs.)</div>
+                            <div class="value">
+                                <div class="input-group">
+                                    @Html.TextBoxFor(m => m.LoanAmount, new { id = "LoanAmount", @class = "input--style-5", @autocomplete = "off", @required = "true", @tabindex = "4" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--ProcessingFeeRate and ProcessingFee -->
+                        <div class="form-row m-b-55">
+                            <div class="name">Processing Fee</div>
+                            <div class="value">
+                                <div class="row row-space">
+                                    <div class="col-2">
+                                        <div class="input-group-desc">
+                                            @Html.TextBoxFor(m => m.ProcessingFeeRate, new { id = "ProcessingFeeRate", @autocomplete = "off", @class = "input--style-5", @required = "true", @tabindex = "5" })
+                                            <label class="label--desc">Rate(%)</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="input-group-desc">
+                                            @Html.TextBoxFor(m => m.ProcessingFee, new { id = "ProcessingFee", @class = "input--style-5", @autocomplete = "off", @onkeydown = "event.preventDefault()", @required = "true" })
+                                            <label class="label--desc">Processing Fee(Rs.)</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--InsuranceRate and Insurance-->
+                        <div class="form-row m-b-55">
+                            <div class="name">Insurance Rate</div>
+                            <div class="value">
+                                <div class="row row-space">
+                                    <div class="col-2">
+                                        <div class="input-group-desc">
+                                            @Html.TextBoxFor(m => m.InsuranceRate, new { id = "InsuranceRate", @autocomplete = "off", @class = "input--style-5", @required = "true", @tabindex = "6" })
+                                            <label class="label--desc">Rate(%)</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="input-group-desc">
+                                            @Html.TextBoxFor(m => m.Insurance, new { id = "Insurance", @class = "input--style-5", @autocomplete = "off", @onkeydown = "event.preventDefault()", @required = "true" })
+                                            <label class="label--desc">Insurance</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--Tenure -->
+                        <div class="form-row">
+                            <div class="name">Tenure(Weeks)</div>
+                            <div class="value">
+                                <div class="input-group">
+                                    @Html.TextBoxFor(m => m.Tenure, new { id = "Tenure", @class = "input--style-5", @autocomplete = "off", @required = "true", @tabindex = "7" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--InterestRate-->
+                        <div class="form-row m-b-55">
+                            <div class="name">Interest</div>
+                            <div class="value">
+                                <div class="row row-space">
+                                    <div class="col-2">
+                                        <div class="input-group-desc">
+                                            @Html.TextBoxFor(m => m.InterestRate, new { id = "InterestRate", @autocomplete = "off", @class = "input--style-5", @required = "true", @tabindex = "8" })
+                                            <label class="label--desc">Rate(%)</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="input-group-desc">
+                                            <button class="btn btn--blue" type="button" onclick="" style="display:none">Calculate</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!--EWI -->
+                        <div class="form-row">
+                            <div class="name">Weekly Due (Rs.)</div>
+                            <div class="value">
+                                <div class="input-group">
+                                    @Html.TextBoxFor(m => m.Ewi, new { id = "Ewi", @class = "input--style-5", @autocomplete = "off", @onkeydown = "event.preventDefault()", @required = "true" })
+                                    <p id="ErrEwi" style='color:red;'> @ViewBag.ErrEWi </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--RepaymentAmount & Schedule-->
+                        <div class="form-row m-b-55">
+                            <div class="name">Repayment</div>
+                            <div class="value">
+                                <div class="row row-space">
+                                    <div class="col-2">
+                                        <div class="input-group-desc">
+                                            @Html.TextBoxFor(m => m.RepaymentAmount, new { id = "RepaymentAmount", @class = "input--style-5", @autocomplete = "off", @onkeydown = "event.preventDefault()", @required = "true" })
+                                            <label class="label--desc">Amount(Rs.)</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="input-group-desc">
+                                            <button class="btn btn--blue" type="button" onclick="showSchedule();" tabindex="9">Schedule</button>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--Save-->
+                        <div>
+                            <button class="btn btn--radius-2 btn--red" type="submit" tabindex="10">Save</button>
+                            <p style='color:red;'> @ViewBag.ErrTryAgain </p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.getElementById("MemberId").addEventListener("keydown", function (e) {
+        if (document.getElementById("LoanId").value == "") {
+            document.getElementById("loanInfo").style.display = 'none';
+        }
+    });
+
+    document.getElementById("LoanAmount").addEventListener("keyup", function (e) {
+        updateLoanFee();
+        updateEwi();
+    });
+    document.getElementById("ProcessingFeeRate").addEventListener("keyup", function (e) {
+        updateLoanFee();
+    });
+    document.getElementById("InsuranceRate").addEventListener("keyup", function (e) {
+        updateLoanFee();
+    });
+    document.getElementById("InterestRate").addEventListener("keyup", function (e) {
+        updateEwi();
+    });
+    document.getElementById("Tenure").addEventListener("keyup", function (e) {
+        updateEwi();
+    });
+
+    function checkMember() {
+	    if (document.getElementById('MemberId').value == '') {
+	        document.getElementById("errMemberId").innerHTML = "Enter Member Id";
+	        document.getElementById("loanInfo").style.display = 'none';
+		    return;
+	    }
+	
+	    var xhttp = new XMLHttpRequest();
+	    document.getElementById("errMemberId").innerHTML=""
+	    xhttp.onreadystatechange = function() {
+	        if (this.readyState == 4 && this.status == 200) {
+	            var memberName = this.responseText;
+	            if (memberName == 'Not found') {
+	                document.getElementById("errMemberId").innerHTML = "Not found";
+	                document.getElementById("loanInfo").style.display = 'none';
+	            } else if (memberName == 'Loan exists') {
+	                document.getElementById("errMemberId").innerHTML = 'Loan exists';
+	                document.getElementById("loanInfo").style.display = 'none';
+	            } else {
+	                document.getElementById("MemberName").value = this.responseText;
+	                document.getElementById("loanInfo").style.display = 'block';
+	                document.getElementById("LoanPurpose").focus();
+	            }
+		    }
+	    };
+	    xhttp.open("GET", "../api/CheckMember/"
+			    + document.getElementById('MemberId').value, true);
+	    xhttp.send();
+    }
+
+    function updateEwi() {
+        try {
+            var loanAmount = Number(document.getElementById("LoanAmount").value);
+            var tenure = Number(document.getElementById("Tenure").value);
+            var interestRate = Number(document.getElementById("InterestRate").value) / 5200;
+            var factor = Math.pow(1 + interestRate, tenure);
+            var ewi = Math.round(loanAmount * interestRate * factor / (factor - 1));
+            //var repaymentAmount = ewi * tenure + Number(document.getElementById("ProcessingFee").value)
+            //                      + Number(document.getElementById("Insurance").value);
+            var repaymentAmount = ewi * tenure
+            document.getElementById("Ewi").value = ewi;
+            document.getElementById("RepaymentAmount").value = repaymentAmount;
+        } catch (e) { }
+    }
+
+    function updateInterestRate() {
+        try {
+            var loanAmount = Number(document.getElementById("LoanAmount").value);
+            var tenure = Number(document.getElementById("Tenure").value);
+            var ewi = Number(document.getElementById("Ewi").value);
+            //var interestRate = Number(document.getElementById("InterestRate").value) / 5200;
+            var factor = Math.pow(1 + interestRate, tenure);
+            var ewi = Math.round(loanAmount * interestRate * factor / (factor - 1));
+            //var repaymentAmount = ewi * tenure + Number(document.getElementById("ProcessingFee").value)
+            //                      + Number(document.getElementById("Insurance").value);
+            var repaymentAmount = ewi * tenure
+            document.getElementById("Ewi").value = ewi;
+            document.getElementById("RepaymentAmount").value = repaymentAmount;
+        } catch (e) { }
+    }
+
+    function updateLoanFee() {
+        try {
+            document.getElementById("ProcessingFee").value = Number(document.getElementById("ProcessingFeeRate").value)
+				    * Number(document.getElementById("LoanAmount").value) / 100;
+
+        } catch (e) { }
+        try {
+            document.getElementById("Insurance").value = Number(document.getElementById("InsuranceRate").value)
+				    * Number(document.getElementById("LoanAmount").value) / 100;
+        } catch (e) { }
+        
+    }
+    function showSchedule() {
+        if (document.getElementById("RepaymentAmount").value == '' || document.getElementById("RepaymentAmount").value == 'NaN') {
+            document.getElementById("ErrEwi").innerHTML = 'Fill all data';
+            return;
+        } else {
+            document.getElementById("ErrEwi").innerHTML == '';
+        }
+        if (document.getElementById("LoanId").value == '') {
+            document.getElementById("scheduleLoanId").innerHTML = "NA";
+        } else {
+            document.getElementById("scheduleLoanId").innerHTML = document.getElementById("LoanId").value;  
+        }
+        document.getElementById("scheduleMemberId").innerHTML = document.getElementById("MemberId").value;
+        document.getElementById("scheduleMemberName").innerHTML = document.getElementById("MemberName").value;
+        document.getElementById("scheduleLoanAmount").innerHTML = document.getElementById("LoanAmount").value;
+        document.getElementById("scheduleInterestRate").innerHTML = document.getElementById("InterestRate").value;
+        document.getElementById("scheduleEwi").innerHTML = document.getElementById("Ewi").value;
+
+    
+        var tenure = Number(document.getElementById("Tenure").value);
+        var interestRate = Number(document.getElementById("InterestRate").value);
+        var balance = Number(document.getElementById("LoanAmount").value);
+        var factor = Math.pow(1 + interestRate/5200, tenure);
+        var ewi = balance * interestRate * factor / (factor - 1)/5200;
+   
+        var principal, interest;
+    
+        var scheduleTable = document.getElementById("scheduleTable");
+        var currentRow, currentCell;
+        var rows = scheduleTable.rows;
+        var i = rows.length;
+        while (--i) {
+            scheduleTable.deleteRow(i);
+        }
+        for (i = 1; i <= tenure; i++) {
+           
+            currentRow = scheduleTable.insertRow(-1);
+            //Week
+            currentCell = currentRow.insertCell(-1);
+            currentCell.innerHTML = i;
+            //Balance
+            currentCell = currentRow.insertCell(-1);
+            currentCell.innerHTML = balance.toFixed(2);
+
+            interest = balance * interestRate / 100 / 52;
+            principal = ewi - interest;
+            balance = balance - ewi + interest;
+
+            //Principal
+            currentCell = currentRow.insertCell(-1);
+            currentCell.innerHTML = principal.toFixed(2);
+            //Interest
+            currentCell = currentRow.insertCell(-1);
+            currentCell.innerHTML = interest.toFixed(2);
+        
+            //Balance
+            currentCell = currentRow.insertCell(-1);
+            currentCell.innerHTML = Math.abs(balance).toFixed(2);
+        }
+        document.getElementById("LoanForm").style.display = "none";
+        document.getElementById("schedule").style.display = "block";
+    }
+
+    function closeSchedule() {
+        document.getElementById("LoanForm").style.display = "block";
+        document.getElementById("schedule").style.display = "none";
+    }
+    function validateOnSubmit() {
+        if (document.getElementById("RepaymentAmount").value == '' || document.getElementById("RepaymentAmount").value == 'NaN') {
+            document.getElementById("ErrEwi").innerHTML = 'Fill all data';
+            return false;
+        } else {
+            document.getElementById("ErrEwi").innerHTML == '';
+            return true;
+        }
+    }
+</script>

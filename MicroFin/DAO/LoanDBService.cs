@@ -36,7 +36,7 @@ namespace MicroFin.DAO
 
         public static string CheckGroup(int groupId)
         {
-            String response="error";
+            String response = "error";
             using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
             {
                 con.Open();
@@ -75,7 +75,7 @@ namespace MicroFin.DAO
                     cmd.Parameters.Add("@pBranchId", MySqlDbType.Int32);
                     cmd.Parameters["@pBranchId"].Value = loan.BranchId;
 
-                    cmd.Parameters.Add("@pLoanPurpose", MySqlDbType.VarChar,40);
+                    cmd.Parameters.Add("@pLoanPurpose", MySqlDbType.VarChar, 40);
                     cmd.Parameters["@pLoanPurpose"].Value = loan.LoanPurpose;
 
                     cmd.Parameters.Add("@pLoanAmount", MySqlDbType.Int32);
@@ -414,7 +414,7 @@ namespace MicroFin.DAO
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add("@pLoanId", MySqlDbType.Int32);
                     cmd.Parameters["@pLoanId"].Value = loanId;
-                    cmd.Parameters.Add("@pLoanStatus", MySqlDbType.VarChar,1);
+                    cmd.Parameters.Add("@pLoanStatus", MySqlDbType.VarChar, 1);
                     cmd.Parameters["@pLoanStatus"].Value = loanStatus;
                     cmd.Parameters.Add("@pStatusRemarks", MySqlDbType.VarChar, 50);
                     cmd.Parameters["@pStatusRemarks"].Value = statusRemarks;
@@ -545,9 +545,41 @@ namespace MicroFin.DAO
                 loanStatus.PendingAmount[i] = loanStatus.TotalAmount[i] - loanStatus.RowTotal[i];
                 loanStatus.OverallPendingAmount += loanStatus.PendingAmount[i];
             }
-           
+
             return loanStatus;
         }
 
+        public static List<CumulativeReport> GetCumulativeReport()
+        {
+            List<CumulativeReport> cumulativeReportList = new List<CumulativeReport>();
+            CumulativeReport cumulativeReport;
+            using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
+            {
+                con.Open();
+                using (MySqlCommand cmd = new MySqlCommand("GetCumulativeReport", con))
+                {
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    using (MySqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                        while (rdr.Read())
+                        {
+                            cumulativeReport = new CumulativeReport();
+                            cumulativeReport.GroupId = Convert.ToInt32(rdr["GroupId"].ToString());
+                            cumulativeReport.GroupName = rdr["GroupName"].ToString();
+                            cumulativeReport.LeaderName = rdr["LeaderName"].ToString();
+                            cumulativeReport.EwiDay = rdr["EwiDay"].ToString();
+                            cumulativeReport.TotalEwi = Convert.ToInt32(rdr["TotalEwi"].ToString());
+                            cumulativeReport.TotalMembers = Convert.ToInt32(rdr["TotalMembers"].ToString());
+                            cumulativeReport.Ewi = Convert.ToInt32(rdr["Ewi"].ToString());
+                            cumulativeReport.Tenure = Convert.ToInt32(rdr["Tenure"].ToString());
+                            cumulativeReport.TotalEwiReceived = Convert.ToInt32(rdr["TotalEwiReceived"].ToString());
+                            cumulativeReport.Setup();
+                            cumulativeReportList.Add(cumulativeReport);
+                        }
+                    }
+                }
+            }
+            return cumulativeReportList;
+        }
     }
 }
