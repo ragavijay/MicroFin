@@ -957,7 +957,7 @@ BEGIN
 			INNER JOIN
 		Member M ON MG.GroupID = M.GroupId
 			INNER JOIN
-		Loan L ON M.MemberId = L.LoanId
+		Loan L ON M.MemberId = L.MemberId
 	WHERE
 		MG.GroupId = pGroupId
 			AND L.LoanStatus <> 'C' 
@@ -1028,7 +1028,7 @@ BEGIN
 			INNER JOIN
 		Member M ON MG.GroupID = M.GroupId
 			INNER JOIN
-		Loan L ON M.MemberId = L.LoanId
+		Loan L ON M.MemberId = L.MemberId
 	WHERE
 		MG.GroupId = pGroupId
 			AND L.LoanStatus <> 'C' 
@@ -1052,7 +1052,7 @@ BEGIN
 			INNER JOIN
 		Member M ON MG.GroupID = M.GroupId
 			INNER JOIN
-		Loan L ON M.MemberId = L.LoanId
+		Loan L ON M.MemberId = L.MemberId
 	WHERE
 		MG.GroupId = pGroupId
 			AND L.LoanStatus <> 'C'
@@ -1076,7 +1076,7 @@ BEGIN
 			INNER JOIN
 		Member M ON MG.GroupID = M.GroupId
 			INNER JOIN
-		Loan L ON M.MemberId = L.LoanId
+		Loan L ON M.MemberId = L.MemberId
 	WHERE
 		MG.GroupId = pGroupId
 			AND L.LoanStatus <> 'C'; 
@@ -1099,7 +1099,7 @@ BEGIN
 			INNER JOIN
 		Member M ON MG.GroupID = M.GroupId
 			INNER JOIN
-		Loan L ON M.MemberId = L.LoanId
+		Loan L ON M.MemberId = L.MemberId
 	WHERE
 		MG.GroupId = pGroupId
 			AND L.LoanStatus <> 'C'
@@ -1201,4 +1201,62 @@ BEGIN
 END;//
 
 
+--GetGroupPFStatus (new)
+DELIMITER //
+DROP PROCEDURE IF EXISTS `GetGroupPFStatus`//
+CREATE PROCEDURE GetGroupPFStatus(pGroupId INT, OUT pProcessingFee INT, OUT pInsurance INT, OUT pStatusCode INT)
+BEGIN
+	DECLARE vMemberCount INT;
+	DECLARE vApprovedCount INT;
+	SELECT COUNT(*) INTO vMemberCount FROM Member WHERE GroupId = pGroupId;
+	SELECT 
+		COUNT(*) INTO vApprovedCount
+	FROM
+		MemberGroup MG
+			INNER JOIN
+		Member M ON MG.GroupID = M.GroupId
+			INNER JOIN
+		Loan L ON M.MemberId = L.MemberId
+	WHERE
+		MG.GroupId = pGroupId
+			AND L.LoanStatus = 'A'; 
+	IF vMemberCount=vApprovedCount THEN
+		
+		SELECT 
+			ProcessingFee, Insurance INTO pProcessingFee, pInsurance
+		FROM
+			MemberGroup MG
+				INNER JOIN
+			Member M ON MG.GroupID = M.GroupId
+				INNER JOIN
+			Loan L ON M.MemberId = L.MemberId
+		WHERE
+			MG.GroupId = pGroupId
+		LIMIT 1;
+		SET pStatusCode := 1;
+	ELSE
+		SET pStatusCode := 0;
+		SET pProcessingFee := 0;
+		SET pInsurance := 0;
 
+	END IF;
+END;//
+
+--GetGroupMembersLoan (new)
+DELIMITER //
+DROP PROCEDURE IF EXISTS `GetGroupMembersLoan`//
+CREATE PROCEDURE GetGroupMembersLoan(pGroupId INT)
+BEGIN
+	SELECT 
+		M.MemberId, M.MemberName, L.LoanId, L.LoanAmount, L.ProcessingFee, L.Insurance
+	FROM
+		MemberGroup MG
+			INNER JOIN
+		Member M ON MG.GroupID = M.GroupId
+			INNER JOIN
+		Loan L ON M.MemberId = L.MemberId
+	WHERE
+		MG.GroupId = pGroupId AND L.LoanStatus = 'A';
+END//
+--Test
+CALL GetGroupMembersLoan(5);

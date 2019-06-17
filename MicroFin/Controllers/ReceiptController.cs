@@ -16,6 +16,10 @@ namespace MicroFin.Controllers
             return View();
         }
 
+        public ActionResult GroupPFReceiptForm()
+        {
+            return View();
+        }
         [HttpPost]
         public ActionResult PFReceipt(PFReceipt pfReceipt)
         {
@@ -23,6 +27,15 @@ namespace MicroFin.Controllers
             ReceiptDBService.GeneratePFReceipt(pfReceipt);
             return View(pfReceipt);
         }
+
+        [HttpPost]
+        public ActionResult GroupPFReceipt(GroupPFReceipt groupPFReceipt)
+        {
+            groupPFReceipt.UserId = Session["UserId"].ToString();
+            List<GroupPFReceiptInfo> groupPFReceiptInfoList = ReceiptDBService.GenerateGroupPFReceipt(groupPFReceipt);
+            return View(groupPFReceiptInfoList);
+        }
+
 
         public ActionResult InstalmentReceiptForm()
         {

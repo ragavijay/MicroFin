@@ -147,6 +147,58 @@ namespace MicroFin.DAO
             }
         }
 
+
+        public static List<GroupPFReceiptInfo> GenerateGroupPFReceipt(GroupPFReceipt groupPFReceipt)
+        {
+            string userId = groupPFReceipt.UserId;
+            List<GroupPFReceiptInfo> groupPFReceiptInfoList=new List<GroupPFReceiptInfo>();
+            using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
+            {
+                con.Open();
+                using (MySqlCommand cmd = new MySqlCommand("GetGroupMembersLoan", con))
+                {
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@pGroupId", MySqlDbType.Int32);
+                    cmd.Parameters["@pGroupId"].Value = groupPFReceipt.GroupId;
+                    MySqlDataReader rdr =  cmd.ExecuteReader();
+                    while(rdr.Read())
+                    {
+                        GroupPFReceiptInfo groupPFReceiptInfo = new GroupPFReceiptInfo();
+                        groupPFReceiptInfo.ReceiptId = 0;
+                        groupPFReceiptInfo.MemberId = Convert.ToInt32(rdr["MemberId"].ToString());
+                        groupPFReceiptInfo.MemberName = rdr["MemberName"].ToString();
+                        groupPFReceiptInfo.LoanId = Convert.ToInt32(rdr["LoanId"].ToString());
+                        groupPFReceiptInfo.ProcessingFee = Convert.ToInt32(rdr["ProcessingFee"].ToString());
+                        groupPFReceiptInfo.Insurance = Convert.ToInt32(rdr["Insurance"].ToString());
+                        groupPFReceiptInfo.TotalFee = groupPFReceiptInfo.ProcessingFee + groupPFReceiptInfo.Insurance;
+                        groupPFReceiptInfoList.Add(groupPFReceiptInfo);
+                    }
+                }
+            }
+            foreach(GroupPFReceiptInfo groupPFReceiptInfo in groupPFReceiptInfoList) {
+                using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
+                {
+                    con.Open();
+                    using (MySqlCommand cmd = new MySqlCommand("GeneratePFReceipt", con))
+                    {
+                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@pLoanId", MySqlDbType.Int32);
+                        cmd.Parameters["@pLoanId"].Value = groupPFReceiptInfo.LoanId;
+
+                        cmd.Parameters.Add("@pUserId", MySqlDbType.VarChar, 20);
+                        cmd.Parameters["@pUserId"].Value = userId;
+
+                        cmd.Parameters.Add("@pReceiptId", MySqlDbType.Int32);
+                        cmd.Parameters["@pReceiptId"].Direction = ParameterDirection.Output;
+
+                        cmd.ExecuteNonQuery();
+                        groupPFReceiptInfo.ReceiptId = Convert.ToInt32(cmd.Parameters["@pReceiptId"].Value.ToString());
+                    }
+                }
+            }
+            return groupPFReceiptInfoList;
+        }
+
         public static void GenerateInstalmentReceipt(InstalmentReceipt instalmentReceipt)
         {
             using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
@@ -262,5 +314,45 @@ namespace MicroFin.DAO
             }
             return statement;
         }
+
+        public static GroupPFReceipt GetGroupPFReceipt(int groupId)
+        {
+            GroupPFReceipt groupPfReceipt = null;
+            using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
+            {
+                con.Open();
+                using (MySqlCommand cmd = new MySqlCommand("GetGroupPFStatus", con))
+                {
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@pGroupId", MySqlDbType.Int32);
+                    cmd.Parameters["@pGroupId"].Value = groupId;
+
+                    cmd.Parameters.Add("@pStatusCode", MySqlDbType.Int32);
+                    cmd.Parameters["@pStatusCode"].Direction = ParameterDirection.Output;
+
+                    
+                    cmd.Parameters.Add("@pProcessingFee", MySqlDbType.Int32);
+                    cmd.Parameters["@pProcessingFee"].Direction = ParameterDirection.Output;
+
+                    cmd.Parameters.Add("@pInsurance", MySqlDbType.Int32);
+                    cmd.Parameters["@pInsurance"].Direction = ParameterDirection.Output;
+
+                    
+                    cmd.ExecuteNonQuery();
+                    groupPfReceipt = new GroupPFReceipt();
+                    groupPfReceipt.GroupId = groupId;
+                    groupPfReceipt.StatusCode = Convert.ToInt32(cmd.Parameters["@pStatusCode"].Value.ToString());
+                    if (groupPfReceipt.StatusCode == 1)
+                    {
+
+                        groupPfReceipt.ProcessingFee = Convert.ToInt32(cmd.Parameters["@pProcessingFee"].Value.ToString());
+                        groupPfReceipt.Insurance = Convert.ToInt32(cmd.Parameters["@pInsurance"].Value.ToString());
+                        groupPfReceipt.TotalFee = groupPfReceipt.ProcessingFee + groupPfReceipt.Insurance;
+                    }
+                }
+            }
+            return groupPfReceipt;
+        }
+
     }
 }
