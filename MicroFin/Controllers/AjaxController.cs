@@ -108,5 +108,16 @@ namespace MicroFin.Controllers
             response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
             return response;
         }
+
+        [HttpGet]
+        [Route("api/GetGroupInstalmentReceipt/{groupId}")]
+        public HttpResponseMessage GetGroupInstalmentReceipt(int groupId)
+        {
+            GroupInstalmentReceipt groupInstalmentReceipt = ReceiptDBService.GetGroupInstalmentReceipt(groupId);
+            HttpResponseMessage response = new HttpResponseMessage();
+            response.Content = new StringContent(JsonConvert.SerializeObject(groupInstalmentReceipt));
+            response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+            return response;
+        }
     }
 }

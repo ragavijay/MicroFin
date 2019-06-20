@@ -225,6 +225,61 @@ namespace MicroFin.DAO
             }
         }
 
+        public static List<GroupInstalmentReceiptInfo> GenerateGroupInstalmentReceipt(GroupInstalmentReceipt groupInstalmentReceipt)
+        {
+            string userId = groupInstalmentReceipt.UserId;
+            List<GroupInstalmentReceiptInfo> groupInstalmentReceiptInfoList = new List<GroupInstalmentReceiptInfo>();
+            using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
+            {
+                con.Open();
+                using (MySqlCommand cmd = new MySqlCommand("GetGroupMembersOngoingLoan", con))
+                {
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@pGroupId", MySqlDbType.Int32);
+                    cmd.Parameters["@pGroupId"].Value = groupInstalmentReceipt.GroupId;
+                    MySqlDataReader rdr = cmd.ExecuteReader();
+                    while (rdr.Read())
+                    {
+                        GroupInstalmentReceiptInfo groupInstalmentReceiptInfo = new GroupInstalmentReceiptInfo();
+                        groupInstalmentReceiptInfo.ReceiptId = 0;
+                        groupInstalmentReceiptInfo.MemberId = Convert.ToInt32(rdr["MemberId"].ToString());
+                        groupInstalmentReceiptInfo.MemberName = rdr["MemberName"].ToString();
+                        groupInstalmentReceiptInfo.LoanId = Convert.ToInt32(rdr["LoanId"].ToString());
+                        groupInstalmentReceiptInfo.NoOfInstalments = groupInstalmentReceipt.NoOfInstalments;
+                        groupInstalmentReceiptInfo.Ewi = groupInstalmentReceipt.Ewi;
+                        groupInstalmentReceiptInfo.TotalDue = groupInstalmentReceipt.NoOfInstalments * groupInstalmentReceipt.Ewi;
+                        groupInstalmentReceiptInfoList.Add(groupInstalmentReceiptInfo);
+                    }
+                }
+            }
+            foreach (GroupInstalmentReceiptInfo groupInstalmentReceiptInfo in groupInstalmentReceiptInfoList)
+            {
+                using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
+                {
+                    con.Open();
+                    using (MySqlCommand cmd = new MySqlCommand("GenerateInstalmentReceipt", con))
+                    {
+                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@pLoanId", MySqlDbType.Int32);
+                        cmd.Parameters["@pLoanId"].Value = groupInstalmentReceiptInfo.LoanId;
+
+                        cmd.Parameters.Add("@pNoOfInstalments", MySqlDbType.Int32);
+                        cmd.Parameters["@pNoOfInstalments"].Value = groupInstalmentReceiptInfo.NoOfInstalments;
+
+                        cmd.Parameters.Add("@pUserId", MySqlDbType.VarChar, 20);
+                        cmd.Parameters["@pUserId"].Value = userId;
+
+                        cmd.Parameters.Add("@pReceiptId", MySqlDbType.Int32);
+                        cmd.Parameters["@pReceiptId"].Direction = ParameterDirection.Output;
+
+                        cmd.ExecuteNonQuery();
+                        groupInstalmentReceiptInfo.ReceiptId = Convert.ToInt32(cmd.Parameters["@pReceiptId"].Value.ToString());
+                    }
+                }
+            }
+            return groupInstalmentReceiptInfoList;
+        }
+
         public static List<EWIDue> GetEwiDue(int branchId)
         {
             EWIDue ewiDue;
@@ -352,6 +407,45 @@ namespace MicroFin.DAO
                 }
             }
             return groupPfReceipt;
+        }
+
+        public static GroupInstalmentReceipt GetGroupInstalmentReceipt(int groupId)
+        {
+            GroupInstalmentReceipt groupInstalmentReceipt = null;
+            using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
+            {
+                con.Open();
+                using (MySqlCommand cmd = new MySqlCommand("GetGroupInstalmentStatus", con))
+                {
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@pGroupId", MySqlDbType.Int32);
+                    cmd.Parameters["@pGroupId"].Value = groupId;
+
+                    cmd.Parameters.Add("@pStatusCode", MySqlDbType.Int32);
+                    cmd.Parameters["@pStatusCode"].Direction = ParameterDirection.Output;
+
+
+                    cmd.Parameters.Add("@pNoOfInstalments", MySqlDbType.Int32);
+                    cmd.Parameters["@pNoOfInstalments"].Direction = ParameterDirection.Output;
+
+                    cmd.Parameters.Add("@pEWI", MySqlDbType.Int32);
+                    cmd.Parameters["@pEWI"].Direction = ParameterDirection.Output;
+
+
+                    cmd.ExecuteNonQuery();
+                    groupInstalmentReceipt = new GroupInstalmentReceipt();
+                    groupInstalmentReceipt.GroupId = groupId;
+                    groupInstalmentReceipt.StatusCode = Convert.ToInt32(cmd.Parameters["@pStatusCode"].Value.ToString());
+                    if (groupInstalmentReceipt.StatusCode == 1)
+                    {
+
+                        groupInstalmentReceipt.NoOfInstalments = Convert.ToInt32(cmd.Parameters["@pNoOfInstalments"].Value.ToString());
+                        groupInstalmentReceipt.Ewi = Convert.ToInt32(cmd.Parameters["@pEWI"].Value.ToString());
+                        groupInstalmentReceipt.TotalDue = groupInstalmentReceipt.NoOfInstalments * groupInstalmentReceipt.Ewi;
+                    }
+                }
+            }
+            return groupInstalmentReceipt;
         }
 
     }

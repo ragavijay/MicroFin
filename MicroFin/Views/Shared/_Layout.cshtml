@@ -77,7 +77,8 @@
                             <li>  </li>
                             <li><a id="pfReceiptForm" href=""> Fee Receipt (Member)</a></li>
                             <li><a id="groupPfReceiptForm" href=""> Fee Receipt (Group)</a></li>
-                            <li><a id="instalmentReceiptForm" href=""> Due Receipt</a></li>
+                            <li><a id="instalmentReceiptForm" href=""> Due Receipt (Member)</a></li>
+                            <li><a id="groupInstalmentReceiptForm" href=""> Due Receipt (Group)</a></li>
                             <li><a id="viewEwiDueList" href=""> Due Statement</a></li>
                             <li><a id="cashReceiptStatementForm" href=""> Cash Receipt-Statement</a></li>
                         </ul>
@@ -132,6 +133,7 @@
         document.getElementById("groupPfReceiptForm").href = "http://" + window.location.host + "/Receipt/GroupPFReceiptForm";
         
         document.getElementById("instalmentReceiptForm").href = "http://" + window.location.host + "/Receipt/InstalmentReceiptForm";
+        document.getElementById("groupInstalmentReceiptForm").href = "http://" + window.location.host + "/Receipt/GroupInstalmentReceiptForm";
         document.getElementById("viewEwiDueList").href = "http://" + window.location.host + "/Receipt/ViewEwiDueList";
         document.getElementById("cashReceiptStatementForm").href = "http://" + window.location.host + "/Receipt/CashReceiptStatementForm";
         document.getElementById("cumulativeReport").href = "http://" + window.location.host + "/Loan/CumulativeReport";

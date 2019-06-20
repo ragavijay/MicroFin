@@ -1014,7 +1014,7 @@ BEGIN
 	ORDER BY ReceiptId;
 END;//
 
---GetEWIDay (NEW)
+--GetEWIDay 
 DELIMITER //
 DROP FUNCTION IF EXISTS `GetEWIDay`//
 CREATE FUNCTION GetEWIDay(pGroupId INT) RETURNS VARCHAR(15)
@@ -1038,7 +1038,7 @@ END//
 --Test
 SELECT GetEWIDay(1);
 
---GetEWI (NEW)
+--GetEWI 
 DELIMITER //
 DROP FUNCTION IF EXISTS `GetEWI`//
 CREATE FUNCTION GetEWI(pGroupId INT) RETURNS INT
@@ -1062,7 +1062,7 @@ END//
 --Test
 SELECT GetEWI(1);
 
---GetTotalEWI (NEW)
+--GetTotalEWI 
 DELIMITER //
 DROP FUNCTION IF EXISTS `GetTotalEWI`//
 CREATE FUNCTION GetTotalEWI(pGroupId INT) RETURNS INT
@@ -1085,7 +1085,7 @@ END//
 --Test
 SELECT GetTotalEWI(1);
 
---GetTenure (NEW)
+--GetTenure 
 DELIMITER //
 DROP FUNCTION IF EXISTS `GetTenure`//
 CREATE FUNCTION GetTenure(pGroupId INT) RETURNS INT
@@ -1109,7 +1109,7 @@ END//
 --Test
 SELECT GetTenure(1);
 
---GetTotalMembers (NEW)
+--GetTotalMembers
 DELIMITER //
 DROP FUNCTION IF EXISTS `GetTotalMembers`//
 CREATE FUNCTION GetTotalMembers(pGroupId INT) RETURNS INT
@@ -1131,7 +1131,7 @@ END//
 SELECT GetTotalMembers(1);
 
 
---GetTotalEWIReceived (NEW)
+--GetTotalEWIReceived
 DELIMITER //
 DROP FUNCTION IF EXISTS `GetTotalEWIReceived`//
 CREATE FUNCTION GetTotalEWIReceived(pGroupId INT) RETURNS INT
@@ -1149,12 +1149,15 @@ BEGIN
 	WHERE
 		M.GroupId = pGroupId
 			AND L.LoanStatus <> 'C' AND CR.ReceiptType='I';
+	IF vTotalEWIReceived IS NULL THEN
+		SET vTotalEWIReceived:=0;
+	END IF;
 	RETURN vTotalEWIReceived;
 END//
 --Test
 SELECT GetTotalEWIReceived(1);
 
---GetLeaderName (NEW)
+--GetLeaderName 
 DELIMITER //
 DROP FUNCTION IF EXISTS `GetLeaderName`//
 CREATE FUNCTION GetLeaderName(pGroupId INT) RETURNS VARCHAR(50)
@@ -1201,7 +1204,7 @@ BEGIN
 END;//
 
 
---GetGroupPFStatus (new)
+--GetGroupPFStatus
 DELIMITER //
 DROP PROCEDURE IF EXISTS `GetGroupPFStatus`//
 CREATE PROCEDURE GetGroupPFStatus(pGroupId INT, OUT pProcessingFee INT, OUT pInsurance INT, OUT pStatusCode INT)
@@ -1242,7 +1245,7 @@ BEGIN
 	END IF;
 END;//
 
---GetGroupMembersLoan (new)
+--GetGroupMembersLoan
 DELIMITER //
 DROP PROCEDURE IF EXISTS `GetGroupMembersLoan`//
 CREATE PROCEDURE GetGroupMembersLoan(pGroupId INT)
@@ -1260,3 +1263,93 @@ BEGIN
 END//
 --Test
 CALL GetGroupMembersLoan(5);
+
+
+--GetLoanInfo 
+DELIMITER //
+DROP PROCEDURE IF EXISTS `GetLoanInfo`//
+CREATE PROCEDURE GetLoanInfo(pLoanId INT, OUT pEwi INT, OUT pNoOfInstalments INT)
+BEGIN
+	DECLARE vTenure INT;
+	DECLARE vLoanDate DATE;
+	DECLARE vWeeksCompleted INT;
+	DECLARE vWeeksPaid INT;
+	DECLARE vAmountPaid INT;
+	SET pNoOfInstalments := 0;
+	SELECT Tenure, LoanDate, EWI INTO vTenure, vLoanDate, pEwi FROM Loan WHERE LoanId = pLoanId;
+	SET vWeeksCompleted := FLOOR(DATEDIFF(SYSDATE(),vLoanDate)/7);
+	IF vWeeksCompleted > vTenure THEN
+		SET vWeeksCompleted := vTenure;
+	END IF;
+	SELECT SUM(ReceiptAmount) INTO vAmountPaid FROM CashReceipt WHERE LoanId = pLoanId AND ReceiptType='I';
+	IF vAmountPaid IS NULL THEN
+		SET vAmountPaid := 0;
+	END IF;
+	SET vWeeksPaid := vAmountPaid/pEwi;
+	SET pNoOfInstalments := vWeeksCompleted - vWeeksPaid;
+END//
+
+
+--GetGroupMembersLoan
+DELIMITER //
+DROP PROCEDURE IF EXISTS `GetGroupMembersOngoingLoan`//
+CREATE PROCEDURE GetGroupMembersOngoingLoan(pGroupId INT)
+BEGIN
+	SELECT 
+		M.MemberId, M.MemberName, L.LoanId, L.LoanAmount, L.ProcessingFee, L.Insurance
+	FROM
+		MemberGroup MG
+			INNER JOIN
+		Member M ON MG.GroupID = M.GroupId
+			INNER JOIN
+		Loan L ON M.MemberId = L.MemberId
+	WHERE
+		MG.GroupId = pGroupId AND L.LoanStatus = 'O';
+END//
+--Test
+CALL GetGroupMembersOngoingLoan(5);
+
+--GetGroupInstalmentStatus
+DELIMITER //
+DROP PROCEDURE IF EXISTS `GetGroupInstalmentStatus`//
+CREATE PROCEDURE GetGroupInstalmentStatus(pGroupId INT, OUT pNoOfInstalments INT, OUT pEWI INT, OUT pStatusCode INT)
+GetGroupInstalmentStatus:BEGIN
+	DECLARE vCompleted INT;
+	DECLARE vEwi INT;
+	DECLARE vNoOfInstalments INT;
+	DECLARE vLoanId INT;
+	DECLARE cMemberLoan CURSOR FOR 
+		SELECT 
+			L.LoanId
+		FROM
+			MemberGroup MG
+				INNER JOIN
+			Member M ON MG.GroupID = M.GroupId
+				INNER JOIN
+			Loan L ON M.MemberId = L.MemberId
+		WHERE
+			MG.GroupId = pGroupId AND L.LoanStatus = 'O';
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET vCompleted=0;
+	
+	SET pNoOfInstalments:=0;
+	SET pEWI:=0;
+	SET vCompleted:=1;
+	SET pStatusCode:=1;
+	OPEN cMemberLoan;
+	CursorLoop: LOOP
+		FETCH cMemberLoan INTO vLoanId;
+		IF vCompleted=0 THEN
+			LEAVE CursorLoop;
+		END IF;
+		CALL GetLoanInfo(vLoanId, vEwi,vNoOfInstalments);
+		IF pEWI=0 THEN
+			SET pEWI:=vEWI;
+			SET pNoOfInstalments:=vNoOfInstalments;
+		ELSE
+			IF pNoOfInstalments<>vNoOfInstalments THEN
+				SET pStatusCode:=1;
+				LEAVE GetGroupInstalmentStatus;
+			END IF;
+		END IF;
+	END LOOP;
+END;//

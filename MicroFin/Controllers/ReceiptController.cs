@@ -41,6 +41,18 @@ namespace MicroFin.Controllers
         {
             return View();
         }
+        public ActionResult GroupInstalmentReceiptForm()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult GroupInstalmentReceipt(GroupInstalmentReceipt groupInstalmentReceipt)
+        {
+            groupInstalmentReceipt.UserId = Session["UserId"].ToString();
+            List<GroupInstalmentReceiptInfo> groupInstalmentReceiptInfo = ReceiptDBService.GenerateGroupInstalmentReceipt(groupInstalmentReceipt);
+            return View(groupInstalmentReceiptInfo);
+        }
 
         [HttpPost]
         public ActionResult InstalmentReceipt(InstalmentReceipt instalmentReceipt)

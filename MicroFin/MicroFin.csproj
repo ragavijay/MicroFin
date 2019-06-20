@@ -209,7 +209,9 @@
     <Compile Include="Models\EwiDue.cs" />
     <Compile Include="Models\FamilyMember.cs" />
     <Compile Include="Models\GroupCenter.cs" />
+    <Compile Include="Models\GroupInstalmentReceiptInfo.cs" />
     <Compile Include="Models\GroupPFReceiptInfo.cs" />
+    <Compile Include="Models\GroupInstalmentReceipt.cs" />
     <Compile Include="Models\InstalmentReceipt.cs" />
     <Compile Include="Models\GroupLoan.cs" />
     <Compile Include="Models\LoanRepaymentStatus.cs" />
@@ -333,6 +335,8 @@
     <Content Include="Views\Loan\CumulativeReport.cshtml" />
     <Content Include="Views\Receipt\GroupPFReceiptForm.cshtml" />
     <Content Include="Views\Receipt\GroupPFReceipt.cshtml" />
+    <Content Include="Views\Receipt\GroupInstalmentReceiptForm.cshtml" />
+    <Content Include="Views\Receipt\GroupInstalmentReceipt.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
