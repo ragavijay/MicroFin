@@ -119,5 +119,25 @@ namespace MicroFin.Controllers
             response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
             return response;
         }
+
+        [HttpGet]
+        [Route("api/GetMemberByAadhar/{searchText}")]
+        public HttpResponseMessage GetMemberByAadhar(string searchText)
+        {
+            HttpResponseMessage response = new HttpResponseMessage();
+            response.Content = new StringContent(MemberDBService.GetMemberByAadhar(searchText).ToString());
+            response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/plain");
+            return response;
+        }
+
+        [HttpGet]
+        [Route("api/GetMemberByPhone/{searchText}")]
+        public HttpResponseMessage GetMemberByPhone(string searchText)
+        {
+            HttpResponseMessage response = new HttpResponseMessage();
+            response.Content = new StringContent(MemberDBService.GetMemberByPhone(searchText).ToString());
+            response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/plain");
+            return response;
+        }
     }
 }

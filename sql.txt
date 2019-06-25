@@ -404,13 +404,14 @@ END//
 --Test
 CALL GetAllMembers(1)
 
---GetMember (21-04-2019)
+--GetMember ()
 DELIMITER //
 DROP PROCEDURE IF EXISTS `GetMember`//
 CREATE PROCEDURE GetMember(pMemberId INT)
 BEGIN
 	SELECT M.MemberId, M.GroupId, MG.GroupName, GC.CenterName,   
 		IFNULL((SELECT MemberName FROM Member InnerM WHERE InnerM.GroupID=MG.GroupId AND InnerM.MemberType=1),'NA') AS LeaderName,
+		IFNULL((SELECT LoanId FROM Loan L WHERE L.MemberID = M.MemberId),0) AS CurrentLoanId,
 		M.MemberName, M.MemberType, M.Gender, M.DOB, M.MaritalStatus, M.Religion, M.FName, M.HName, M.Occupation, M.OccupationType, 
 		M.AddressLine1, M.AddressLine2, M.AddressLine3, M.AddressLine4, M.Taluk, M.Panchayat, M.City, M.Pincode, 
 		M.NoOfYears, M.HouseType, M.PropertyOwnership, M.Phone, 
@@ -516,7 +517,7 @@ END//
 SELECT CheckMember(1);
 
 
---CheckGroup (updated)
+--CheckGroup 
 DELIMITER //
 DROP FUNCTION IF EXISTS `CheckGroup`//
 CREATE FUNCTION CheckGroup(pGroupId INT) RETURNS CHAR(50)
@@ -541,7 +542,7 @@ END//
 SELECT CheckGroup(1);
 
 
---GetGroupId (updated)
+--GetGroupId
 DELIMITER //
 DROP FUNCTION IF EXISTS `GetGroupId`//
 CREATE FUNCTION GetGroupId(pMemberId INT) RETURNS INT
@@ -1353,3 +1354,51 @@ GetGroupInstalmentStatus:BEGIN
 		END IF;
 	END LOOP;
 END;//
+
+
+--GetMemberByAadhar ()
+DELIMITER //
+DROP FUNCTION IF EXISTS `GetMemberByAadhar`//
+CREATE FUNCTION GetMemberByAadhar(pSearchText VARCHAR(20)) RETURNS INT
+READS SQL DATA
+BEGIN
+	DECLARE vMemberId INT;
+	SELECT MemberId	INTO vMemberId FROM Member WHERE MemberAadharNumber=pSearchText;
+    IF 	vMemberId IS NULL THEN
+		SET vMemberId := 0;
+	END IF;
+	RETURN vMemberId;
+END//
+
+
+--GetMemberByPhone ()
+DELIMITER //
+DROP FUNCTION IF EXISTS `GetMemberByPhone`//
+CREATE FUNCTION GetMemberByPhone(pSearchText VARCHAR(20)) RETURNS INT
+READS SQL DATA
+BEGIN
+	DECLARE vMemberId INT;
+	SELECT MemberId	INTO vMemberId FROM Member WHERE Phone=pSearchText;
+    IF 	vMemberId IS NULL THEN
+		SET vMemberId := 0;
+	END IF;
+	RETURN vMemberId;
+END//
+
+--GetCashReceiptStatement ()
+DELIMITER //
+DROP PROCEDURE IF EXISTS `GetCashReceiptStatement`//
+CREATE PROCEDURE GetCashReceiptStatement(pFromDate DATE, pToDate DATE)
+BEGIN
+	SELECT 
+		R.ReceiptId,
+		L.MemberId,
+		M.MemberName,
+		L.LoanId,
+		R.Description,
+		R.ReceiptAmount AS Amount
+	FROM 
+		CashReceipt R INNER JOIN Loan L ON R.LoanId=L.LoanId 
+			INNER JOIN Member M ON L.MemberId=M.MemberId 
+			WHERE ReceiptDate BETWEEN pFromDate AND pToDate ORDER BY R.ReceiptId;
+END//

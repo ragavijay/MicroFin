@@ -203,6 +203,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\UserCashReceiptStatement.cs" />
     <Compile Include="Models\CashReceiptStatement.cs" />
     <Compile Include="Models\Enums.cs" />
     <Compile Include="Models\CumulativeReport.cs" />
@@ -337,6 +338,8 @@
     <Content Include="Views\Receipt\GroupPFReceipt.cshtml" />
     <Content Include="Views\Receipt\GroupInstalmentReceiptForm.cshtml" />
     <Content Include="Views\Receipt\GroupInstalmentReceipt.cshtml" />
+    <Content Include="Views\Member\SearchMember.cshtml" />
+    <Content Include="Views\Receipt\UserCashReceiptStatement.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

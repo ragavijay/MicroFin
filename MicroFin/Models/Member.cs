@@ -49,6 +49,7 @@ namespace MicroFin.Models
         public DateTime NomineeDOB { get; set; }
         public HttpPostedFileBase Photo { get; set; }
         public HttpPostedFileBase Aadhar { get; set; }
+        public int CurrentLoanId { get; set; }
         public static int GetAge(DateTime dateOfBirth)
         {
             int age = 0;

@@ -313,10 +313,10 @@ namespace MicroFin.DAO
             return ewiDues;
         }
 
-        public static List<CashReceiptStatement> GetCashReceiptStatement(string userId, string userType, DateTime fromDate, DateTime toDate)
+        public static List<UserCashReceiptStatement> GetUserCashReceiptStatement(string userId, string userType, DateTime fromDate, DateTime toDate)
         {
-            List<CashReceiptStatement> statement = new List<CashReceiptStatement>();
-            CashReceiptStatement statementRow;
+            List<UserCashReceiptStatement> statement = new List<UserCashReceiptStatement>();
+            UserCashReceiptStatement statementRow;
             using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
             {
                 con.Open();
@@ -358,7 +358,7 @@ namespace MicroFin.DAO
                     {
                         while (rdr.Read())
                         {
-                            statementRow = new CashReceiptStatement();
+                            statementRow = new UserCashReceiptStatement();
                             statementRow.UserId = rdr["UserId"].ToString();
                             statementRow.UserName = rdr["UserName"].ToString();
                             statementRow.Amount = Convert.ToInt32(rdr["Amount"].ToString());
@@ -368,6 +368,41 @@ namespace MicroFin.DAO
                 }
             }
             return statement;
+        }
+
+        public static List<CashReceiptStatement> GetCashReceiptStatement(DateTime fromDate, DateTime toDate)
+        {
+            List<CashReceiptStatement> statementList = new List<CashReceiptStatement>();
+            CashReceiptStatement statementRow;
+            using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
+            {
+                con.Open();
+                using (MySqlCommand cmd = new MySqlCommand("GetCashReceiptStatement", con))
+                {
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@pFromDate", MySqlDbType.Date);
+                    cmd.Parameters["@pFromDate"].Value = fromDate;
+                    cmd.Parameters.Add("@pToDate", MySqlDbType.Date);
+                    cmd.Parameters["@pToDate"].Value = toDate;
+                    using (MySqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                        int i = 0;
+                        while (rdr.Read())
+                        {
+                            statementRow = new CashReceiptStatement();
+                            statementRow.SNo = ++i;
+                            statementRow.ReceiptId = Convert.ToInt32(rdr["ReceiptId"].ToString());
+                            statementRow.MemberId = Convert.ToInt32(rdr["MemberId"].ToString());
+                            statementRow.MemberName = rdr["MemberName"].ToString();
+                            statementRow.LoanId = Convert.ToInt32(rdr["LoanId"].ToString());
+                            statementRow.Description = rdr["Description"].ToString();
+                            statementRow.Amount = Convert.ToInt32(rdr["Amount"].ToString());
+                            statementList.Add(statementRow);
+                        }
+                    }
+                }
+            }
+            return statementList;
         }
 
         public static GroupPFReceipt GetGroupPFReceipt(int groupId)

@@ -81,7 +81,7 @@ namespace MicroFin.Controllers
             string userType = Session["userType"].ToString();
             DateTime fromDate = DateTime.ParseExact(Request["FromDate"],"dd/MM/yyyy",CultureInfo.InvariantCulture);
             DateTime toDate = DateTime.ParseExact(Request["ToDate"], "dd/MM/yyyy", CultureInfo.InvariantCulture);
-            List<CashReceiptStatement> statement = ReceiptDBService.GetCashReceiptStatement(userId, userType, fromDate, toDate);
+            List<CashReceiptStatement> statement = ReceiptDBService.GetCashReceiptStatement(fromDate, toDate);
             return View(statement);
         }
     }

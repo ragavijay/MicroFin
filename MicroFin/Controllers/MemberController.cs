@@ -157,5 +157,10 @@ namespace MicroFin.Controllers
                return ViewFamilyMembers(familyMember.MemberId.ToString());
             }
         }
+        [HttpGet]
+        public ActionResult SearchMember()
+        {
+            return View();
+        }
     }
 }

@@ -61,4 +61,3 @@ D:\Project\2019\MicroFin\MicroFin\bin\Antlr3.Runtime.pdb
 D:\Project\2019\MicroFin\MicroFin\obj\Release\MicroFin.dll
 D:\Project\2019\MicroFin\MicroFin\obj\Release\MicroFin.pdb
 D:\Project\2019\MicroFin\MicroFin\bin\Content\bootstrap.css
-D:\Project\2019\MicroFin\MicroFin\obj\Release\MicroFin.csprojResolveAssemblyReference.cache

@@ -1,0 +1,135 @@
+﻿@model MicroFin.Models.GroupPFReceipt
+@{
+    ViewBag.Title = "GroupPFReceiptForm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="page-wrapper bg-gra-03 p-t-45 p-b-50">
+    <div class="wrapper wrapper--w790">
+        <div class="card card-5">
+            <div class="card-heading">
+                <h2 class="title">Processing Fee Receipt</h2>
+            </div>
+            <div class="card-body">
+                @using (Html.BeginForm("GroupPFReceipt", "Receipt", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <!--GroupName and GroupId -->
+                    <div class="form-row m-b-55">
+                        <div class="name">Group</div>
+                        <div class="value">
+                            <div class="row row-space">
+                                <div class="col-2">
+                                    <div class="input-group-desc">
+                                        @Html.TextBoxFor(m => m.GroupName, new { id = "GroupName", @autocomplete = "off", @class = "input--style-5", @placeholder = "select group", @required = "true", @tabindex = "1" })
+                                        <p id="errGroupName" style='color:red;'>  </p>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="input-group-desc">
+                                        @Html.TextBoxFor(m => m.GroupId, new { id = "GroupId", @class = "input--style-5", @onkeydown = "event.preventDefault()", @required = "true", @autocomplete = "off" })
+                                        <label class="label--desc">Group Id</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                     <!--LeaderName -->
+                    <div class="form-row m-b-55">
+                        <div class="name">Leader</div>
+                        <div class="value">
+                            <div class="row row-space">
+                                <div class="col-2">
+                                    <div class="input-group-desc">
+                                        @Html.TextBoxFor(m => m.LeaderName, new { id = "LeaderName", @class = "input--style-5", @onkeydown = "event.preventDefault()"})
+                                        <p id="errLoanId" style='color:red;'> </p>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="input-group-desc">
+                                        <button class="btn btn--blue" type="button" onclick="checkGroup();" tabindex="2">Get</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="CenterName"/>
+                    <div id="pfReceiptFormData" style="display:none">
+                        <!--ProcessingFee and Insurance-->
+                        <div class="form-row m-b-55">
+                            <div class="name">Fee</div>
+                            <div class="value">
+                                <div class="row row-space">
+                                    <div class="col-2">
+                                        <div class="input-group-desc">
+                                            @Html.TextBoxFor(m => m.ProcessingFee, new { id = "ProcessingFee", @class = "input--style-5", @onkeydown = "event.preventDefault()", @required = "true" })
+                                            <label class="label--desc">Processing Fee</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="input-group-desc">
+                                            @Html.TextBoxFor(m => m.Insurance, new { id = "Insurance", @class = "input--style-5", @onkeydown = "event.preventDefault()", @required = "true" })
+                                            <label class="label--desc">Insurance</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!--TotalFee-->
+                        <div class="form-row">
+                            <div class="name">Total Fee(Rs.)</div>
+                            <div class="value">
+                                <div class="input-group">
+                                    @Html.TextBoxFor(m => m.TotalFee, new { id = "TotalFee", @class = "input--style-5", @onkeydown = "event.preventDefault()", @required = "true"})
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--Save-->
+                        <div>
+                            <button class="btn btn--radius-2 btn--red" type="submit" tabindex="3">Save</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    createAutoComplete3('http://' + window.location.host + '/api/GetGroupList', 'GroupId', 'CenterName', 'LeaderName', 'GroupName');
+    document.getElementById("GroupName").addEventListener("keydown", function (e) {
+        if (document.getElementById("GroupId").value == "") {
+            document.getElementById("pfReceiptFormData").style.display = 'none';
+        }
+    });
+
+    function checkGroup() {
+        if (document.getElementById('GroupId').value == '') {
+            document.getElementById("errGroupName").innerHTML = "Select a valid group";
+            document.getElementById("pfReceiptFormData").style.display = 'none';
+            return;
+        }
+
+        var xhttp = new XMLHttpRequest();
+        document.getElementById("errGroupName").innerHTML = "";
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                var response = JSON.parse(this.responseText);
+                if (response.StatusCode == 0) {
+                    document.getElementById("errGroupName").innerHTML = "Not Applicable";
+                    document.getElementById("pfReceiptFormData").style.display = 'none';
+                } else {
+                    document.getElementById("errGroupName").innerHTML = "";
+                    document.getElementById("pfReceiptFormData").style.display = 'block';
+                    document.getElementById("ProcessingFee").value = response.ProcessingFee;
+                    document.getElementById("Insurance").value = response.Insurance;
+                    document.getElementById("TotalFee").value = response.TotalFee;
+                }
+            }
+        };
+        xhttp.open("GET", "../api/GetGroupPFReceipt/"
+			    + document.getElementById('GroupId').value, true);
+        xhttp.send();
+    }
+
+</script>

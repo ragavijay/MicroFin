@@ -220,20 +220,20 @@
 	    }
 	
 	    var xhttp = new XMLHttpRequest();
-        document.getElementById("errGroupName").innerHTML=""
+	    document.getElementById("errGroupName").innerHTML = "";
 	    xhttp.onreadystatechange = function() {
 	        if (this.readyState == 4 && this.status == 200) {
 	            var response = this.responseText;
                 if (response == 'Not found') {
                     document.getElementById("errGroupName").innerHTML = "Not found";
-	                document.getElementById("loanInfo").style.display = 'none';
-                } else if (response == 'Loan exists') {
+                    document.getElementById("loanInfo").style.display = 'none';
+                } else if (response == 'Success') {
+                    document.getElementById("loanInfo").style.display = 'block';
+                    document.getElementById("LoanPurpose").focus();
+                } else {
                     document.getElementById("errGroupName").innerHTML = 'Loan already exists for one or more member';
-	                document.getElementById("loanInfo").style.display = 'none';
-	            } else {
-	                document.getElementById("loanInfo").style.display = 'block';
-	                document.getElementById("LoanPurpose").focus();
-	            }
+                    document.getElementById("loanInfo").style.display = 'none';
+                }
 		    }
 	    };
 	    xhttp.open("GET", "../api/CheckGroup/"
