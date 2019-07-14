@@ -138,6 +138,9 @@ namespace MicroFin.DAO
                     cmd.Parameters.Add("@pUserId", MySqlDbType.VarChar, 20);
                     cmd.Parameters["@pUserId"].Value = pfReceipt.UserId;
 
+                    cmd.Parameters.Add("@pActualReceiptDate", MySqlDbType.Date);
+                    cmd.Parameters["@pActualReceiptDate"].Value = pfReceipt.ActualReceiptDate;
+
                     cmd.Parameters.Add("@pReceiptId", MySqlDbType.Int32);
                     cmd.Parameters["@pReceiptId"].Direction = ParameterDirection.Output;
 
@@ -188,6 +191,9 @@ namespace MicroFin.DAO
                         cmd.Parameters.Add("@pUserId", MySqlDbType.VarChar, 20);
                         cmd.Parameters["@pUserId"].Value = userId;
 
+                        cmd.Parameters.Add("@pActualReceiptDate", MySqlDbType.Date);
+                        cmd.Parameters["@pActualReceiptDate"].Value = groupPFReceipt.ActualReceiptDate;
+
                         cmd.Parameters.Add("@pReceiptId", MySqlDbType.Int32);
                         cmd.Parameters["@pReceiptId"].Direction = ParameterDirection.Output;
 
@@ -212,6 +218,9 @@ namespace MicroFin.DAO
 
                     cmd.Parameters.Add("@pNoOfInstalments", MySqlDbType.Int32);
                     cmd.Parameters["@pNoOfInstalments"].Value = instalmentReceipt.NoOfInstalments;
+
+                    cmd.Parameters.Add("@pActualReceiptDate", MySqlDbType.Date);
+                    cmd.Parameters["@pActualReceiptDate"].Value = instalmentReceipt.ActualReceiptDate;
 
                     cmd.Parameters.Add("@pUserId", MySqlDbType.VarChar, 20);
                     cmd.Parameters["@pUserId"].Value = instalmentReceipt.UserId;
@@ -268,6 +277,9 @@ namespace MicroFin.DAO
 
                         cmd.Parameters.Add("@pUserId", MySqlDbType.VarChar, 20);
                         cmd.Parameters["@pUserId"].Value = userId;
+
+                        cmd.Parameters.Add("@pActualReceiptDate", MySqlDbType.Date);
+                        cmd.Parameters["@pActualReceiptDate"].Value = groupInstalmentReceipt.ActualReceiptDate;
 
                         cmd.Parameters.Add("@pReceiptId", MySqlDbType.Int32);
                         cmd.Parameters["@pReceiptId"].Direction = ParameterDirection.Output;

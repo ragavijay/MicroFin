@@ -9,6 +9,7 @@ namespace MicroFin.Models
     {
         public int GroupId { get; set; }
         public int ReceiptId { get; set; }
+        public DateTime ActualReceiptDate { get; set; }
         public string GroupName{ get; set; }
         public string LeaderName { get; set; }
         public int StatusCode { get; set; }

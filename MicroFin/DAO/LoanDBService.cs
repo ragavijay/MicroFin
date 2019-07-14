@@ -81,6 +81,9 @@ namespace MicroFin.DAO
                     cmd.Parameters.Add("@pLoanAmount", MySqlDbType.Int32);
                     cmd.Parameters["@pLoanAmount"].Value = loan.LoanAmount;
 
+                    cmd.Parameters.Add("@pLoanDate", MySqlDbType.Date);
+                    cmd.Parameters["@pLoanDate"].Value = loan.LoanDate;
+
                     cmd.Parameters.Add("@pProcessingFeeRate", MySqlDbType.Int32);
                     cmd.Parameters["@pProcessingFeeRate"].Value = loan.ProcessingFeeRate;
 
@@ -138,6 +141,9 @@ namespace MicroFin.DAO
 
                     cmd.Parameters.Add("@pLoanAmount", MySqlDbType.Int32);
                     cmd.Parameters["@pLoanAmount"].Value = groupLoan.LoanAmount;
+
+                    cmd.Parameters.Add("@pLoanDate", MySqlDbType.Date);
+                    cmd.Parameters["@pLoanDate"].Value = groupLoan.LoanDate;
 
                     cmd.Parameters.Add("@pProcessingFeeRate", MySqlDbType.Int32);
                     cmd.Parameters["@pProcessingFeeRate"].Value = groupLoan.ProcessingFeeRate;
@@ -325,6 +331,7 @@ namespace MicroFin.DAO
                             //loan.RepaymentAmount = loan.Tenure * loan.Ewi + loan.ProcessingFee + loan.Insurance;
                             loan.RepaymentAmount = loan.Tenure * loan.Ewi;
                             loan.StatusRemarks = rdr["StatusRemarks"].ToString();
+                            loan.LoanDate = DateTime.Parse(rdr["LoanDate"].ToString());
                         }
                     }
                 }
@@ -358,6 +365,9 @@ namespace MicroFin.DAO
 
                     cmd.Parameters.Add("@pLoanAmount", MySqlDbType.Int32);
                     cmd.Parameters["@pLoanAmount"].Value = loan.LoanAmount;
+
+                    cmd.Parameters.Add("@pLoanDate", MySqlDbType.Date);
+                    cmd.Parameters["@pLoanDate"].Value = loan.LoanDate;
 
                     cmd.Parameters.Add("@pProcessingFeeRate", MySqlDbType.Int32);
                     cmd.Parameters["@pProcessingFeeRate"].Value = loan.ProcessingFeeRate;

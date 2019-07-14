@@ -8,6 +8,7 @@ namespace MicroFin.Models
     public class PFReceipt
     {
         public int ReceiptId { get; set; }
+        public DateTime ActualReceiptDate { get; set; }
         public int LoanId { get; set; }
         public String LoanStatus { get; set; }
         public int MemberId{ get; set; }
