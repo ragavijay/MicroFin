@@ -125,8 +125,8 @@ namespace MicroFin.Controllers
         public HttpResponseMessage GetMemberByAadhar(string searchText)
         {
             HttpResponseMessage response = new HttpResponseMessage();
-            response.Content = new StringContent(MemberDBService.GetMemberByAadhar(searchText).ToString());
-            response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/plain");
+            response.Content = new StringContent(JsonConvert.SerializeObject(MemberDBService.GetMemberByAadhar(searchText)));
+            response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
             return response;
         }
 
@@ -135,9 +135,19 @@ namespace MicroFin.Controllers
         public HttpResponseMessage GetMemberByPhone(string searchText)
         {
             HttpResponseMessage response = new HttpResponseMessage();
-            response.Content = new StringContent(MemberDBService.GetMemberByPhone(searchText).ToString());
-            response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/plain");
+            response.Content = new StringContent(JsonConvert.SerializeObject(MemberDBService.GetMemberByPhone(searchText)));
+            response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
             return response;
         }
+        [HttpGet]
+        [Route("api/GetMemberByName/{searchText}")]
+        public HttpResponseMessage GetMemberByName(string searchText)
+        {
+            HttpResponseMessage response = new HttpResponseMessage();
+            response.Content = new StringContent(JsonConvert.SerializeObject(MemberDBService.GetMemberByName(searchText)));
+            response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+            return response;
+        }
+
     }
 }

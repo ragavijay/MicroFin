@@ -1357,33 +1357,29 @@ GetGroupInstalmentStatus:BEGIN
 END;//
 
 
---GetMemberByAadhar ()
+--GetMemberByAadhar
 DELIMITER //
-DROP FUNCTION IF EXISTS `GetMemberByAadhar`//
-CREATE FUNCTION GetMemberByAadhar(pSearchText VARCHAR(20)) RETURNS INT
-READS SQL DATA
+DROP PROCEDURE IF EXISTS `GetMemberByAadhar`//
+CREATE PROCEDURE GetMemberByAadhar(pSearchText VARCHAR(20))
 BEGIN
-	DECLARE vMemberId INT;
-	SELECT MemberId	INTO vMemberId FROM Member WHERE MemberAadharNumber=pSearchText;
-    IF 	vMemberId IS NULL THEN
-		SET vMemberId := 0;
-	END IF;
-	RETURN vMemberId;
+	SELECT MemberId, MemberName FROM Member WHERE MemberAadharNumber=pSearchText;
 END//
 
 
---GetMemberByPhone ()
+--GetMemberByPhone 
 DELIMITER //
-DROP FUNCTION IF EXISTS `GetMemberByPhone`//
-CREATE FUNCTION GetMemberByPhone(pSearchText VARCHAR(20)) RETURNS INT
-READS SQL DATA
-BEGIN
-	DECLARE vMemberId INT;
-	SELECT MemberId	INTO vMemberId FROM Member WHERE Phone=pSearchText;
-    IF 	vMemberId IS NULL THEN
-		SET vMemberId := 0;
-	END IF;
-	RETURN vMemberId;
+DROP PROCEDURE IF EXISTS `GetMemberByPhone`//
+CREATE PROCEDURE GetMemberByPhone(pSearchText VARCHAR(20))
+BEGIN	
+	SELECT MemberId, MemberName FROM Member WHERE Phone=pSearchText;
+END//
+
+--GetMemberByPhone 
+DELIMITER //
+DROP PROCEDURE IF EXISTS `GetMemberByName`//
+CREATE PROCEDURE GetMemberByName(pSearchText VARCHAR(20))
+BEGIN	
+	SELECT MemberId, MemberName FROM Member WHERE LOWER(MemberName) LIKE CONCAT('%', LOWER(pSearchText),'%');
 END//
 
 --GetCashReceiptStatement ()

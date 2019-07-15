@@ -527,9 +527,10 @@ namespace MicroFin.DAO
             return groupId;
         }
 
-        public static int GetMemberByAadhar(string searchText)
+        public static List<MemberInfo> GetMemberByAadhar(string searchText)
         {
-            int memberId=0;
+            List<MemberInfo> memberInfoList = new List<MemberInfo>();
+            MemberInfo memberInfo;
             using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
             {
                 con.Open();
@@ -538,21 +539,25 @@ namespace MicroFin.DAO
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add("@pSearchText", MySqlDbType.VarChar,20);
                     cmd.Parameters["@pSearchText"].Value = searchText;
-                    cmd.Parameters.Add("@ireturnvalue", MySqlDbType.Int32);
-                    cmd.Parameters["@ireturnvalue"].Direction = ParameterDirection.ReturnValue;
                     using (MySqlDataReader rdr = cmd.ExecuteReader())
                     {
-                        rdr.Read();
-                        memberId = Convert.ToInt32(rdr[0].ToString());
+                        while (rdr.Read())
+                        {
+                            memberInfo = new MemberInfo();
+                            memberInfo.MemberId = Convert.ToInt32(rdr["MemberId"].ToString());
+                            memberInfo.MemberName = rdr["MemberName"].ToString();
+                            memberInfoList.Add(memberInfo);
+                        }
                     }
                 }
             }
-            return memberId;
+            return memberInfoList;
         }
 
-        public static int GetMemberByPhone(string searchText)
+        public static List<MemberInfo> GetMemberByPhone(string searchText)
         {
-            int memberId = 0;
+            List<MemberInfo> memberInfoList = new List<MemberInfo>();
+            MemberInfo memberInfo;
             using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
             {
                 con.Open();
@@ -561,16 +566,46 @@ namespace MicroFin.DAO
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add("@pSearchText", MySqlDbType.VarChar, 20);
                     cmd.Parameters["@pSearchText"].Value = searchText;
-                    cmd.Parameters.Add("@ireturnvalue", MySqlDbType.Int32);
-                    cmd.Parameters["@ireturnvalue"].Direction = ParameterDirection.ReturnValue;
                     using (MySqlDataReader rdr = cmd.ExecuteReader())
                     {
-                        rdr.Read();
-                        memberId = Convert.ToInt32(rdr[0].ToString());
+                        while (rdr.Read())
+                        {
+                            memberInfo = new MemberInfo();
+                            memberInfo.MemberId = Convert.ToInt32(rdr["MemberId"].ToString());
+                            memberInfo.MemberName = rdr["MemberName"].ToString();
+                            memberInfoList.Add(memberInfo);
+                        }
                     }
                 }
             }
-            return memberId;
+            return memberInfoList;
+        }
+
+        public static List<MemberInfo> GetMemberByName(string searchText)
+        {
+            List<MemberInfo> memberInfoList = new List<MemberInfo>();
+            MemberInfo memberInfo;
+            using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
+            {
+                con.Open();
+                using (MySqlCommand cmd = new MySqlCommand("GetMemberByName", con))
+                {
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@pSearchText", MySqlDbType.VarChar, 20);
+                    cmd.Parameters["@pSearchText"].Value = searchText;
+                    using (MySqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                        while (rdr.Read())
+                        {
+                            memberInfo = new MemberInfo();
+                            memberInfo.MemberId = Convert.ToInt32(rdr["MemberId"].ToString());
+                            memberInfo.MemberName = rdr["MemberName"].ToString();
+                            memberInfoList.Add(memberInfo);
+                        }
+                    }
+                }
+            }
+            return memberInfoList;
         }
     }
 }
