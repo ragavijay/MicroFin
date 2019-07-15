@@ -210,6 +210,7 @@ namespace MicroFin.DAO
                             member.HouseType = (EHouseType)Convert.ToInt32(rdr["HouseType"].ToString());
                             member.Phone = rdr["Phone"].ToString();
                             member.MemberAadharNumber = rdr["MemberAadharNumber"].ToString();
+                            member.RMemberAadharNumber = member.MemberAadharNumber;
                             member.PAN = rdr["PAN"].ToString();
                             member.RationCardNo = rdr["RationCardNo"].ToString();
                             member.VoterIDNo = rdr["VoterIdNo"].ToString();
