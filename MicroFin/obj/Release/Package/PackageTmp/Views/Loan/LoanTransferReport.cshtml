@@ -1,0 +1,74 @@
+﻿@model IEnumerable<MicroFin.Models.MemberLoan>
+
+@{
+    ViewBag.Title = "ViewLoans";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Loans</h2>
+<div id="print">
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.loan.LoanId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.member.MemberId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.member.MemberName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.member.AccountNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.member.IFSC)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.loan.LoanAmount)
+            </th>
+            <th></th>
+            <th></th>
+            <th> </th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.loan.LoanId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.member.MemberId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.member.MemberName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.member.AccountNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.member.IFSC)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.loan.LoanAmount)
+                </td>
+
+            </tr>
+        }
+    </table>
+</div>
+<center> <input type="button" value="Print" onclick="printReport()" /> </center>
+<script>
+    function printReport() {
+        var divContents = document.getElementById("print").innerHTML;
+        var printWindow = window.open('', '', 'height=600,width=600');
+        printWindow.document.write('<html><head><title>AMF</title>');
+        printWindow.document.write('<link rel="stylesheet" href="/Content/home.css" />');
+        printWindow.document.write('</head><body >');
+        printWindow.document.write(divContents);
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+        printWindow.print();
+    }
+</script>

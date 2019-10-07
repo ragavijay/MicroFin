@@ -18,6 +18,7 @@
                             <select id="SearchType">
                                 <option value="Aadhar">Aadhar</option>
                                 <option value="Phone">Phone</option>
+                                <option value="Name">Name</option>
                             </select>
                             <div class="select-dropdown"></div>
                         </div>
@@ -70,19 +71,25 @@
         document.getElementById("errSearchText").innerHTML = "";
         xhttp.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
-                var response = this.responseText;
-                if (response == 0) {
+                var response = JSON.parse(this.responseText);
+                if (response.length == 0) {
                     result.innerHTML = "Not found";
-                } else {
-                    result.innerHTML = "<a href='/Member/ViewMember/" + response  +"'>View</a> <space/>" +
-                                        "<a href='/Member/MemberForm/" + response  +"'>Edit</a>";
+               } else {
+                    var resultString = "";
+                    for (var i = 0; i < response.length; i++) {
+                        resultString += response[i].MemberName + "<space> <a href='/Member/ViewMember/" + response[i].MemberId + "'>View</a> <space/>"
+                                        + "<a href='/Member/MemberForm/" + response[i].MemberId + "'>Edit</a><br/>";
+                    }
+                    result.innerHTML = resultString;
                 }
             }
         };
         if (searchType == 'Aadhar') {
             xhttp.open("GET", "../api/GetMemberByAadhar/" + searchText, true);
-        } else {
+        } else if (searchType == 'Phone') {
             xhttp.open("GET", "../api/GetMemberByPhone/" + searchText, true);
+        } else {
+            xhttp.open("GET", "../api/GetMemberByName/" + searchText, true);
         }
         xhttp.send();
     }

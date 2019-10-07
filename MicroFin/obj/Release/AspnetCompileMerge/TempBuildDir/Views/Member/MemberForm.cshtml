@@ -345,6 +345,17 @@
                         </div>
                     </div>
 
+                     <!--Retype AadharNumber-->
+                    <div class="form-row">
+                        <div class="name">Retype Aadhar Number</div>
+                        <div class="value">
+                            <div class="input-group">
+                                @Html.TextBoxFor(m => m.RMemberAadharNumber, new { @class = "input--style-5", @required = "true", @autocomplete = "off", @tabindex = "29", @pattern = @"^[1-9][0-9]{11}$" })
+                                <p id="ErrRMemberAadharNumber" style='color:red;'> </p>
+                            </div>
+                        </div>
+                    </div>
+
                     <!--Ration Card and Voter ID -->
                     <div class="form-row m-b-55">
                         <div class="name">Ration/ Voter ID Card No.</div>
@@ -352,13 +363,13 @@
                             <div class="row row-space">
                                 <div class="col-2">
                                     <div class="input-group-desc">
-                                        @Html.TextBoxFor(m => m.RationCardNo, new { @class = "input--style-5", @autocomplete = "off", @tabindex = "29", @maxlength = "30" })
+                                        @Html.TextBoxFor(m => m.RationCardNo, new { @class = "input--style-5", @autocomplete = "off", @tabindex = "30", @maxlength = "30" })
                                         <label class="label--desc">Ration Card No.</label>
                                     </div>
                                 </div>
                                 <div class="col-2">
                                     <div class="input-group-desc">
-                                        @Html.TextBoxFor(m => m.VoterIDNo, new { @class = "input--style-5", @autocomplete = "off", @tabindex = "30", @maxlength = "30" })
+                                        @Html.TextBoxFor(m => m.VoterIDNo, new { @class = "input--style-5", @autocomplete = "off", @tabindex = "31", @maxlength = "30" })
                                         <label class="label--desc">Voter ID Card No.</label>
                                     </div>
                                 </div>
@@ -373,13 +384,13 @@
                             <div class="row row-space">
                                 <div class="col-2">
                                     <div class="input-group-desc">
-                                        @Html.TextBoxFor(m => m.NomineeName, new { @class = "input--style-5", @required = "true", @autocomplete = "off", @tabindex = "31", @style = "text-transform:uppercase", @maxlength="50"})
+                                        @Html.TextBoxFor(m => m.NomineeName, new { @class = "input--style-5", @required = "true", @autocomplete = "off", @tabindex = "32", @style = "text-transform:uppercase", @maxlength="50"})
                                         <label class="label--desc">Nominee Name</label>
                                     </div>
                                 </div>
                                 <div class="col-2">
                                     <div class="input-group-desc">
-                                        @Html.TextBoxFor(m => m.Relationship, new { @class = "input--style-5", @required = "true", @autocomplete = "off", @tabindex = "32", @maxlength = "30" })
+                                        @Html.TextBoxFor(m => m.Relationship, new { @class = "input--style-5", @required = "true", @autocomplete = "off", @tabindex = "33", @maxlength = "30" })
                                         <label class="label--desc">Relationship</label>
                                     </div>
                                 </div>
@@ -394,14 +405,14 @@
                             <div class="row row-space">
                                 <div class="col-2">
                                     <div class="input-group-desc">
-                                        @Html.TextBoxFor(m => m.NomineeAadharNumber, new { @class = "input--style-5", @required = "true", @autocomplete = "off", @tabindex = "33", @pattern = @"^[1-9][0-9]{11}$" })
+                                        @Html.TextBoxFor(m => m.NomineeAadharNumber, new { @class = "input--style-5", @required = "true", @autocomplete = "off", @tabindex = "34", @pattern = @"^[1-9][0-9]{11}$" })
                                         <p style='color:red;'> @ViewBag.ErrNomineeAadharNumber </p>
                                         <label class="label--desc">Nominee Aadhar</label>
                                     </div>
                                 </div>
                                 <div class="col-2">
                                     <div class="input-group-desc">
-                                        @Html.TextBoxFor(m => m.NomineeDOB, new { @class = "input--style-5 js-datepicker", @required = "true", @Value = (Model == null|| Model.NomineeDOB==null) ? "" : Model.NomineeDOB.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture), @autocomplete = "off", @tabindex = "34",
+                                        @Html.TextBoxFor(m => m.NomineeDOB, new { @class = "input--style-5 js-datepicker", @required = "true", @Value = (Model == null|| Model.NomineeDOB==null) ? "" : Model.NomineeDOB.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture), @autocomplete = "off", @tabindex = "35",
                                        @pattern = @"^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[13-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$"})
                                         <label class="label--desc">DOB</label>
                                         <p id="errNomineeDob" style='color:red;'> </p>
@@ -416,7 +427,7 @@
                         <div class="name">Photo</div>
                         <div class="value">
                             <div class="input-group">
-                                <input type="file" name="Photo" accept="image/*" class="input--style-5" tabindex = "35" />
+                                <input type="file" name="Photo" accept="image/*" class="input--style-5" tabindex = "36" />
                             </div>
                         </div>
                     </div>
@@ -426,7 +437,7 @@
                         <div class="name">Aadhar</div>
                         <div class="value">
                             <div class="input-group">
-                                <input type="file" name="Aadhar" accept="image/*" class="input--style-5" tabindex="36" />
+                                <input type="file" name="Aadhar" accept="image/*" class="input--style-5" tabindex="37" />
                             </div>
                         </div>
                     </div>
@@ -434,7 +445,7 @@
                     <!--Save-->
                     <div>
                         <p style='color:red;'> @ViewBag.ErrTryAgain </p>
-                        <button class="btn btn--radius-2 btn--red" type="submit"  tabindex = "37">Save</button>
+                        <button class="btn btn--radius-2 btn--red" type="submit"  tabindex = "38">Save</button>
                     </div>
                 }
             </div>
@@ -451,6 +462,12 @@
             return false;
         } else {
             document.getElementById("ErrAccountNumber").innerHTML = "";
+        }
+        if (document.getElementById("MemberAadharNumber").value != document.getElementById("RMemberAadharNumber").value) {
+            document.getElementById("ErrRMemberAadharNumber").innerHTML = "Aadhar Number Mismatch";
+            return false;
+        } else {
+            document.getElementById("ErrRMemberAadharNumber").innerHTML = "";
         }
         document.getElementById("PAN").value = document.getElementById("PAN").value.toUpperCase();
         document.getElementById("IFSC").value = document.getElementById("IFSC").value.toUpperCase();
