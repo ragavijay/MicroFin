@@ -8,6 +8,7 @@ namespace MicroFin.Models
     public class Loan
     {
         public int LoanId { get; set; }
+        public int LoanCycle { get; set; }
         public int MemberId{ get; set; }
         public string MemberName{ get; set; }
         public int BranchId{ get; set; }

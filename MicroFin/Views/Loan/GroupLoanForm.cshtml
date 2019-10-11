@@ -166,7 +166,7 @@
                                     </div>
                                     <div class="col-2">
                                         <div class="input-group-desc">
-                                            <button class="btn btn--blue" type="button" onclick="" style="display:none">Calculate</button>
+                                            <button class="btn btn--blue" type="button" onclick="calculateInterestRate();">Calculate</button>
                                         </div>
                                     </div>
                                 </div>
@@ -303,6 +303,29 @@
 				    * Number(document.getElementById("LoanAmount").value) / 100;
         } catch (e) { }
         
+    }
+
+    function calculateInterestRate() {
+        try {
+            var loanAmount = Number(document.getElementById("LoanAmount").value);
+            var tenure = Number(document.getElementById("Tenure").value);
+            var ewi = prompt("Enter Target Due amount", "");
+            ewi = Number(ewi);
+            var interestRate = 40.0;
+            var currentEwi = 0.0;
+            var currentInterestRate = 0.0;
+            var factor = 0.0;
+            do {
+                interestRate = interestRate + 0.01;
+                currentInterestRate = interestRate / 5200;
+                factor = Math.pow(1 + currentInterestRate, tenure);
+                currentEwi = loanAmount * currentInterestRate * factor / (factor - 1);
+            } while (currentEwi < ewi);
+
+            var repaymentAmount = ewi * tenure;
+            document.getElementById("InterestRate").value = Math.round(interestRate * 100) / 100.0;
+            updateEwi();
+        } catch (e) { }
     }
     
     function validateOnSubmit() {

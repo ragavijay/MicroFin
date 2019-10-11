@@ -210,6 +210,7 @@ namespace MicroFin.DAO
                             //loan.RepaymentAmount = loan.Tenure * loan.Ewi + loan.ProcessingFee + loan.Insurance;
                             loan.RepaymentAmount = loan.Tenure * loan.Ewi;
                             loan.StatusRemarks = rdr["StatusRemarks"].ToString();
+                            loan.LoanCycle = Convert.ToInt32(rdr["LoanCycle"].ToString());
                             loans.Add(loan);
                         }
                     }
@@ -244,6 +245,7 @@ namespace MicroFin.DAO
                             loan.MemberId = Convert.ToInt32(rdr["MemberId"].ToString());
                             loan.MemberName = rdr["MemberName"].ToString();
                             loan.LoanAmount = Convert.ToInt32(rdr["LoanAmount"].ToString());
+                            loan.LoanCycle = Convert.ToInt32(rdr["LoanCycle"].ToString());
                             member = new Member();
                             member.MemberId = loan.MemberId;
                             member.MemberName = loan.MemberName;
@@ -292,6 +294,7 @@ namespace MicroFin.DAO
                             //loan.RepaymentAmount = loan.Tenure * loan.Ewi + loan.ProcessingFee + loan.Insurance;
                             loan.RepaymentAmount = loan.Tenure * loan.Ewi;
                             loan.StatusRemarks = rdr["StatusRemarks"].ToString();
+                            loan.LoanCycle = Convert.ToInt32(rdr["LoanCycle"].ToString());
                             loans.Add(loan);
                         }
                     }
@@ -332,6 +335,7 @@ namespace MicroFin.DAO
                             loan.RepaymentAmount = loan.Tenure * loan.Ewi;
                             loan.StatusRemarks = rdr["StatusRemarks"].ToString();
                             loan.LoanDate = DateTime.Parse(rdr["LoanDate"].ToString());
+                            loan.LoanCycle = Convert.ToInt32(rdr["LoanCycle"].ToString());
                         }
                     }
                 }
@@ -533,9 +537,9 @@ namespace MicroFin.DAO
                                 currentInstallments = Convert.ToInt32(rdr["ReceiptAmount"].ToString()) / loanStatus.EWI;
                                 for (int j = installmetsPaid; j <= installmetsPaid + currentInstallments - 1; j++)
                                 {
-                                    if (loanStatus.ActualDate[j] < Convert.ToDateTime(rdr["ReceiptDate"].ToString()))
+                                    if (loanStatus.ActualDate[j] < Convert.ToDateTime(rdr["ActualReceiptDate"].ToString()))
                                     {
-                                        loanStatus.ActualDate[j] = Convert.ToDateTime(rdr["ReceiptDate"].ToString());
+                                        loanStatus.ActualDate[j] = Convert.ToDateTime(rdr["ActualReceiptDate"].ToString());
                                     }
                                     loanStatus.Amount[j, i] = loanStatus.EWI;
                                     loanStatus.ColTotal[j] += loanStatus.EWI;

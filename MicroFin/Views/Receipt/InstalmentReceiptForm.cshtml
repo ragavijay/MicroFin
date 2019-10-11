@@ -55,36 +55,50 @@
                             </div>
                         </div>
 
-                        <!--NoOfInstalments and Ewi-->
+
+                        <!--NoOfInstalments and PendingInstalments-->
                         <div class="form-row m-b-55">
                             <div class="name">Instalments</div>
                             <div class="value">
                                 <div class="row row-space">
                                     <div class="col-2">
                                         <div class="input-group-desc">
-                                            @Html.TextBoxFor(m => m.NoOfInstalments, new { id = "NoOfInstalments", @class = "input--style-5", @required = "true" })
-                                            <label class="label--desc">Pending Instalments</label>
+                                            @Html.TextBoxFor(m => m.NoOfInstalments, new { id = "NoOfInstalments", @class = "input--style-5", @required = "true", @tabindex="3" })
+                                            <label class="label--desc">Instalments to be paid</label>
                                         </div>
                                     </div>
+                                    <div class="col-2">
+                                        <div class="input-group-desc">
+                                            <input id="PendingInstalments" class="input--style-5" data-val="true" type="text" value="" onkeydown = "event.preventDefault()"/>
+                                            <label class="label--desc">Total Instalments pending </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--Ewi and Amount-->
+                        <div class="form-row m-b-55">
+                            <div class="name">Amount</div>
+                            <div class="value">
+                                <div class="row row-space">
                                     <div class="col-2">
                                         <div class="input-group-desc">
                                             @Html.TextBoxFor(m => m.Ewi, new { id = "Ewi", @class = "input--style-5", @onkeydown = "event.preventDefault()", @required = "true" })
                                             <label class="label--desc">Weekly Due(Rs.)</label>
                                         </div>
                                     </div>
+                                    <div class="col-2">
+                                        <div class="input-group-desc">
+                                            @Html.TextBoxFor(m => m.TotalDue, new { id = "TotalDue", @class = "input--style-5", @onkeydown = "event.preventDefault()", @required = "true" })
+                                            <label class="label--desc">Amount(Rs.)</label>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         
-                        <!--Total Due-->
-                        <div class="form-row">
-                            <div class="name">Total Amount(Rs.)</div>
-                            <div class="value">
-                                <div class="input-group">
-                                    @Html.TextBoxFor(m => m.TotalDue, new { id = "TotalDue", @class = "input--style-5", @onkeydown = "event.preventDefault()", @required = "true"})
-                                </div>
-                            </div>
-                        </div>
+                        
                         <!--Actual Receipt Date -->
                         <div class="form-row">
                             <div class="name">Actual Receipt Date</div>
@@ -96,7 +110,7 @@
                                                                    @required = "true",
                                                                    @Value = (Model == null || Model.ActualReceiptDate == null) ? "" : Model.ActualReceiptDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture),
                                                                    @autocomplete = "off",
-                                                                   @tabindex = "5",
+                                                                   @tabindex = "4",
                                                                    @pattern = @"^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[13-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$"
                                                                })
                                     <p id="errActualReceiptDate" style='color:red;'> </p>
@@ -105,7 +119,7 @@
                         </div>
                         <!--Save-->
                         <div>
-                            <button class="btn btn--radius-2 btn--red" type="submit" tabindex="3">Save</button>
+                            <button class="btn btn--radius-2 btn--red" type="submit" tabindex="5">Save</button>
                         </div>
                     </div>
                 }
@@ -127,6 +141,7 @@
                     document.getElementById("MemberId").value = instalmentReceipt.MemberId;
                     document.getElementById("MemberName").value = instalmentReceipt.MemberName;
                     document.getElementById("NoOfInstalments").value = instalmentReceipt.NoOfInstalments;
+                    document.getElementById("PendingInstalments").value = instalmentReceipt.NoOfInstalments;
                     NoOfInstalments = instalmentReceipt.NoOfInstalments;
                     document.getElementById("Ewi").value = instalmentReceipt.Ewi;
                     document.getElementById("TotalDue").value = instalmentReceipt.TotalDue;
