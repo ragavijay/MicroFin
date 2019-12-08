@@ -11,6 +11,7 @@ D:\Project\2019\MicroFin\MicroFin\bin\roslyn\System.Reflection.Metadata.dll
 D:\Project\2019\MicroFin\MicroFin\bin\roslyn\vbc.exe
 D:\Project\2019\MicroFin\MicroFin\bin\roslyn\VBCSCompiler.exe
 D:\Project\2019\MicroFin\MicroFin\bin\roslyn\VBCSCompiler.exe.config
+D:\Project\2019\MicroFin\MicroFin\bin\Content\bootstrap.css
 D:\Project\2019\MicroFin\MicroFin\bin\MicroFin.dll.config
 D:\Project\2019\MicroFin\MicroFin\bin\MicroFin.dll
 D:\Project\2019\MicroFin\MicroFin\bin\MicroFin.pdb
@@ -28,6 +29,7 @@ D:\Project\2019\MicroFin\MicroFin\bin\MySql.Data.dll
 D:\Project\2019\MicroFin\MicroFin\bin\Newtonsoft.Json.dll
 D:\Project\2019\MicroFin\MicroFin\bin\System.Data.dll
 D:\Project\2019\MicroFin\MicroFin\bin\System.Net.Http.Formatting.dll
+D:\Project\2019\MicroFin\MicroFin\bin\System.ValueTuple.dll
 D:\Project\2019\MicroFin\MicroFin\bin\System.Web.Helpers.dll
 D:\Project\2019\MicroFin\MicroFin\bin\System.Web.Http.dll
 D:\Project\2019\MicroFin\MicroFin\bin\System.Web.Http.WebHost.dll
@@ -46,6 +48,7 @@ D:\Project\2019\MicroFin\MicroFin\bin\Microsoft.AI.WindowsServer.xml
 D:\Project\2019\MicroFin\MicroFin\bin\Microsoft.ApplicationInsights.xml
 D:\Project\2019\MicroFin\MicroFin\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
 D:\Project\2019\MicroFin\MicroFin\bin\MySql.Data.xml
+D:\Project\2019\MicroFin\MicroFin\bin\System.ValueTuple.xml
 D:\Project\2019\MicroFin\MicroFin\bin\Newtonsoft.Json.xml
 D:\Project\2019\MicroFin\MicroFin\bin\System.Net.Http.Formatting.xml
 D:\Project\2019\MicroFin\MicroFin\bin\System.Web.Helpers.xml
@@ -58,7 +61,5 @@ D:\Project\2019\MicroFin\MicroFin\bin\System.Web.WebPages.xml
 D:\Project\2019\MicroFin\MicroFin\bin\System.Web.WebPages.Deployment.xml
 D:\Project\2019\MicroFin\MicroFin\bin\System.Web.WebPages.Razor.xml
 D:\Project\2019\MicroFin\MicroFin\bin\Antlr3.Runtime.pdb
-D:\Project\2019\MicroFin\MicroFin\obj\Debug\MicroFin.csprojResolveAssemblyReference.cache
 D:\Project\2019\MicroFin\MicroFin\obj\Debug\MicroFin.dll
 D:\Project\2019\MicroFin\MicroFin\obj\Debug\MicroFin.pdb
-D:\Project\2019\MicroFin\MicroFin\bin\Content\bootstrap.css

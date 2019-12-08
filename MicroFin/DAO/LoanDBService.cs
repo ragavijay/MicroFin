@@ -595,5 +595,57 @@ namespace MicroFin.DAO
             }
             return cumulativeReportList;
         }
+
+        public static List<MemberLoan> GetGlobalMemberLoans(int branchId)
+        {
+            Loan loan;
+            Member member;
+            MemberLoan memberLoan;
+            List<MemberLoan> memberLoans = new List<MemberLoan>();
+            using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
+            {
+                con.Open();
+                using (MySqlCommand cmd = new MySqlCommand("GetGlobalMemberLoans", con))
+                {
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@pBranchId", MySqlDbType.Int32);
+                    cmd.Parameters["@pBranchId"].Value = branchId;
+                    using (MySqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                        while (rdr.Read())
+                        {
+                            memberLoan = new MemberLoan();
+                            loan = new Loan();
+                            loan.LoanId = Convert.ToInt32(rdr["LoanId"].ToString());
+                            loan.LoanDate = Convert.ToDateTime(rdr["LoanDate"].ToString());
+                            loan.LoanStatus = rdr["LoanStatus"].ToString();
+                            loan.LoanPurpose = rdr["LoanPurpose"].ToString();
+                            loan.MemberId = Convert.ToInt32(rdr["MemberId"].ToString());
+                            loan.MemberName = rdr["MemberName"].ToString();
+                            loan.LoanAmount = Convert.ToInt32(rdr["LoanAmount"].ToString());
+                            loan.LoanCycle = Convert.ToInt32(rdr["LoanCycle"].ToString());
+                            try
+                            {
+                                loan.LastPaymentDate = Convert.ToDateTime(rdr["LastPaymentDate"].ToString());
+                            } catch(Exception e)
+                            {
+                                //loan.LastPaymentDate = null;
+                            }
+                            loan.Tenure = Convert.ToInt32(rdr["Tenure"].ToString());
+                            loan.Ewi = Convert.ToInt32(rdr["EWI"].ToString());
+                            member = new Member();
+                            member.MemberId = loan.MemberId;
+                            member.MemberName = loan.MemberName;
+                            member.AccountNumber = rdr["AccountNumber"].ToString();
+                            member.IFSC = rdr["IFSC"].ToString();
+                            memberLoan.member = member;
+                            memberLoan.loan = loan;
+                            memberLoans.Add(memberLoan);
+                        }
+                    }
+                }
+            }
+            return memberLoans;
+        }
     }
 }

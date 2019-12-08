@@ -89,6 +89,7 @@ namespace MicroFin.Controllers
         {
             int groupId = Convert.ToInt32(id);
             List<Member> members = MemberDBService.GetAllMembers(groupId);
+            ViewBag.GroupId = id;
             return View("ViewMembers", members);
         }
 
@@ -161,6 +162,17 @@ namespace MicroFin.Controllers
         public ActionResult SearchMember()
         {
             return View();
+        }
+
+        [HttpGet]
+        [Route("ExportMembers/{id?}")]
+        public FileStreamResult ExportMembers(string id)
+        {
+            int groupId = Convert.ToInt32(id);
+            List<Member> members = MemberDBService.GetAllMembers(groupId);
+            MemoryStream memory = MicroFin.Models.Member.GetExportMembers(members);
+            return File(memory, "application/vnd.ms-excel", "Members.csv");
+
         }
     }
 }

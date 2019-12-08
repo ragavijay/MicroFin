@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -104,9 +105,21 @@ namespace MicroFin.Controllers
         {
             int groupId = Convert.ToInt32(id);
             List<MemberLoan> memberLoans = LoanDBService.GetAllMemberLoans(Convert.ToInt32(Session["BranchId"]), groupId);
-
+            ViewBag.GroupId = id;
             return View("LoanTransferReport", memberLoans);
         }
+
+        [HttpGet]
+        [Route("ExportTransferReport/{id?}")]
+        public FileStreamResult ExportTransferReport(string id)
+        {
+            int groupId = Convert.ToInt32(id);
+            List<MemberLoan> memberLoans = LoanDBService.GetAllMemberLoans(Convert.ToInt32(Session["BranchId"]), groupId);
+            MemoryStream memory = MemberLoan.GetExportTransferReport(memberLoans);
+            return File(memory, "application/vnd.ms-excel", "LoanTransfer.csv");
+
+        }
+
         [HttpGet]
         public ActionResult ViewPendingLoans()
         {
@@ -161,6 +174,16 @@ namespace MicroFin.Controllers
         {
             List<CumulativeReport> cumulativeReport=LoanDBService.GetCumulativeReport();
             return View("CumulativeReport", cumulativeReport);
+        }
+
+        [HttpGet]
+        [Route("ExportLoans")]
+        public FileStreamResult ExportLoans()
+        {
+            List<MemberLoan> memberLoans = LoanDBService.GetGlobalMemberLoans(1);
+            MemoryStream memory = MicroFin.Models.Loan.GetExportLoans(memberLoans);
+            return File(memory, "application/vnd.ms-excel", "Loans.csv");
+
         }
     }
 }

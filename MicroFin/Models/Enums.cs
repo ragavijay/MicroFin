@@ -11,7 +11,7 @@ namespace MicroFin.Models
     }
     public enum EMaritalStatus
     {
-        Married, Widow, Divorced, Unmarried
+        Married, Seperated, Divorced, Widowed, Unmarried, Untagged
     }
     public enum EReligion
     {
@@ -36,5 +36,12 @@ namespace MicroFin.Models
     public enum EOccupationType
     {
         SelfEmployed, Salaried, None
+    }
+
+    public enum ERelationship
+    {
+        Father, Husband, Mother, Son, Daughter, Wife, Brother,
+        Mother_In_Law, Father_In_Law, Daughter_In_Law,
+        Sister_In_Law, Son_In_Law, Brother_In_Law, Other
     }
 }

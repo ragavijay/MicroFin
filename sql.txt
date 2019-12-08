@@ -83,9 +83,10 @@ CREATE TABLE Member (
 	AccountNumber VARCHAR(20),
 	IFSC CHAR(11),
     NomineeName VARCHAR(50),
-    Relationship VARCHAR(30),
+    Relationship INT,
     NomineeAadharNumber CHAR(12),
     NomineeDOB DATE,
+	BankCustomerId VARCHAR(20),
 	CONSTRAINT pKey_M_MemberId PRIMARY KEY(MemberId),
     CONSTRAINT fKey_M_GroupId FOREIGN KEY (GroupId)
         REFERENCES MemberGroup(GroupId)
@@ -348,8 +349,9 @@ CREATE PROCEDURE AddMember(OUT pMemberId INT,
 							pVoterIDNo VARCHAR(30),
 							pAccountNumber VARCHAR(20),
 							pIFSC CHAR(11),
+							pBankCustomerId VARCHAR(20),
 							pNomineeName VARCHAR(50), 
-							pRelationship VARCHAR(30), 
+							pRelationship INT, 
 							pNomineeAadharNumber CHAR(12), 
 							pNomineeDOB DATE, 
 							OUT pStatusCode INT)
@@ -375,13 +377,13 @@ AddMember: BEGIN
 					   FName, HName, Occupation, OccupationType, AddressLine1, AddressLine2, AddressLine3, AddressLine4,
 					   Taluk, Panchayat,
 					   City, Pincode, NoOfYears, HouseType, Phone, MemberAadharNumber, PAN, RationCardNo, VoterIDNo, 
-					   AccountNumber, IFSC, NomineeName, Relationship, NomineeAadharNumber, NomineeDOB) 
+					   AccountNumber, IFSC,BankCustomerId, NomineeName, Relationship, NomineeAadharNumber, NomineeDOB) 
 					   VALUES
 					   (pMemberId, pGroupId, pMemberType, pMemberName,pGender, pDOB, pMaritalStatus, pReligion, 
 					   pFName, pHName, pOccupation, pOccupationType, pAddressLine1, pAddressLine2, pAddressLine3, 
 					   pAddressLine4, pTaluk, pPanchayat, pCity, pPincode, pNoOfYears, pHouseType, pPhone, 
-					   pMemberAadharNumber, pPAN,pRationCardNo, pVoterIDNo, pAccountNumber, pIFSC, pNomineeName, 
-					   pRelationship, pNomineeAadharNumber, pNomineeDOB);
+					   pMemberAadharNumber, pPAN,pRationCardNo, pVoterIDNo, pAccountNumber, pIFSC, pBankCustomerId, 
+					   pNomineeName, pRelationship, pNomineeAadharNumber, pNomineeDOB);
 	IF vCheck=0 THEN
 		SELECT COUNT(*) INTO vCheck FROM Member WHERE MemberAadharNumber = pMemberAadharNumber;
 		IF vCheck>0 THEN
@@ -393,7 +395,7 @@ AddMember: BEGIN
 END//
 
 
---GetAllMembers (28-04-2019)
+--GetAllMembers (Old)
 DELIMITER //
 DROP PROCEDURE IF EXISTS `GetAllMembers`//
 CREATE PROCEDURE GetAllMembers(pGroupId INT)
@@ -404,6 +406,25 @@ BEGIN
 		WHERE M.GroupID = pGroupId;
 END//
 --Test
+CALL GetAllMembers(New)
+
+--GetAllMembers (28-04-2019)
+DELIMITER //
+DROP PROCEDURE IF EXISTS `GetAllMembers`//
+CREATE PROCEDURE GetAllMembers(pGroupId INT)
+BEGIN
+	SELECT M.MemberId, M.GroupId, MG.GroupName, GC.CenterName, GC.CenterId, GC.BranchId,  
+		IFNULL((SELECT MemberName FROM Member InnerM WHERE InnerM.GroupID=MG.GroupId AND InnerM.MemberType=1),'NA') AS LeaderName,
+		IFNULL((SELECT LoanId FROM Loan L WHERE L.MemberID = M.MemberId),0) AS CurrentLoanId,
+		M.MemberName, M.MemberType, M.Gender, M.DOB, M.MaritalStatus, M.Religion, M.FName, M.HName, M.Occupation, M.OccupationType, 
+		M.AddressLine1, M.AddressLine2, M.AddressLine3, M.AddressLine4, M.Taluk, M.Panchayat, M.City, M.Pincode, 
+		M.NoOfYears, M.HouseType, M.PropertyOwnership, M.Phone, 
+		M.MemberAadharNumber, M.PAN, M.RationCardNo, M.VoterIDNo, M.AccountNumber, M.IFSC, M.BankCustomerId,  
+		M.NomineeName, M.Relationship, M.NomineeAadharNumber, M.NomineeDOB
+		FROM  Member M INNER JOIN MemberGroup MG ON M.GroupId=MG.GroupId INNER JOIN GroupCenter GC ON MG.CenterId = GC.CenterId  
+	WHERE M.GroupID = pGroupId;
+END//
+--Test
 CALL GetAllMembers(1)
 
 --GetMember ()
@@ -411,13 +432,13 @@ DELIMITER //
 DROP PROCEDURE IF EXISTS `GetMember`//
 CREATE PROCEDURE GetMember(pMemberId INT)
 BEGIN
-	SELECT M.MemberId, M.GroupId, MG.GroupName, GC.CenterName,   
+	SELECT M.MemberId, M.GroupId, MG.GroupName, GC.CenterName, GC.CenterId, GC.BranchId,  
 		IFNULL((SELECT MemberName FROM Member InnerM WHERE InnerM.GroupID=MG.GroupId AND InnerM.MemberType=1),'NA') AS LeaderName,
 		IFNULL((SELECT LoanId FROM Loan L WHERE L.MemberID = M.MemberId),0) AS CurrentLoanId,
 		M.MemberName, M.MemberType, M.Gender, M.DOB, M.MaritalStatus, M.Religion, M.FName, M.HName, M.Occupation, M.OccupationType, 
 		M.AddressLine1, M.AddressLine2, M.AddressLine3, M.AddressLine4, M.Taluk, M.Panchayat, M.City, M.Pincode, 
 		M.NoOfYears, M.HouseType, M.PropertyOwnership, M.Phone, 
-		M.MemberAadharNumber, M.PAN, M.RationCardNo, M.VoterIDNo, M.AccountNumber, M.IFSC, 
+		M.MemberAadharNumber, M.PAN, M.RationCardNo, M.VoterIDNo, M.AccountNumber, M.IFSC, M.BankCustomerId,  
 		M.NomineeName, M.Relationship, M.NomineeAadharNumber, M.NomineeDOB
 		FROM  Member M INNER JOIN MemberGroup MG ON M.GroupId=MG.GroupId INNER JOIN GroupCenter GC ON MG.CenterId = GC.CenterId  
 		WHERE M.MemberId = pMemberId;
@@ -458,8 +479,9 @@ CREATE PROCEDURE EditMember(pMemberId INT,
 							pVoterIDNo VARCHAR(30),
 							pAccountNumber VARCHAR(20),
 							pIFSC CHAR(11),
+							pBankCustomerId VARCHAR(20),
 							pNomineeName VARCHAR(50), 
-							pRelationship VARCHAR(30), 
+							pRelationship INT, 
 							pNomineeAadharNumber CHAR(12), 
 							pNomineeDOB DATE, 
 							OUT pStatusCode INT)
@@ -482,7 +504,7 @@ EditMember:BEGIN
 						AddressLine4=pAddressLine4, Taluk=pTaluk, Panchayat=pPanchayat,
 						City=pCity, Pincode=pPincode, NoOfYears=pNoOfYears, HouseType=pHouseType,
 						Phone=pPhone, MemberAadharNumber=pMemberAadharNumber, PAN=pPAN, RationCardNo=pRationCardNo,
-						VoterIDNo=pVoterIDNo, AccountNumber=pAccountNumber, IFSC = pIFSC,
+						VoterIDNo=pVoterIDNo, AccountNumber=pAccountNumber, IFSC = pIFSC, BankCustomerId = pBankCustomerId, 
 						NomineeName=pNomineeName, Relationship=pRelationship,
 						NomineeAadharNumber=pNomineeAadharNumber, NomineeDOB=pNomineeDOB 
 		WHERE MemberId=pMemberId;
@@ -659,10 +681,25 @@ CREATE PROCEDURE GetAllMemberLoans(pBranchId INT, pGroupId INT)
 BEGIN
 	SELECT L.LoanId, L.MemberId, M.MemberName, M.AccountNumber, M.IFSC, L.BranchId, L.LoanPurpose, L.LoanAmount, L.ProcessingFeeRate, L.ProcessingFee, 
 		   L.InsuranceRate, L.Insurance, L.Tenure, L.InterestRate, L.EWI, L.LoanStatus, L.StatusRemarks, L.LoanCycle
-		   FROM Loan L INNER JOIN Member M ON L.MemberId = M.MemberId WHERE BranchId=pBranchId AND M.GroupID=pGroupId AND L.LoanStatus<>'C';
+		   FROM Loan L INNER JOIN Member M ON L.MemberId = M.MemberId WHERE BranchId=pBranchId AND M.GroupID=pGroupId 
+		   AND L.LoanCycle=(SELECT MAX(LoanCycle) FROM Loan L1 WHERE L1.MemberId=L.MemberId);
 END//
 --Test
 CALL GetAllMemberLoans(1,1)
+
+--GetGlobalMemberLoans (Used for export)
+DELIMITER // 
+DROP PROCEDURE IF EXISTS `GetGlobalMemberLoans`//
+CREATE PROCEDURE GetGlobalMemberLoans(pBranchId INT)
+BEGIN
+	SELECT L.LoanId, L.MemberId, M.MemberName, M.AccountNumber, M.IFSC, L.BranchId, L.LoanPurpose, L.LoanAmount, L.ProcessingFeeRate, L.LoanDate, 
+		   L.ProcessingFee, L.InsuranceRate, L.Insurance, L.Tenure, L.InterestRate, L.EWI, L.LoanStatus, L.StatusRemarks, L.LoanCycle,
+		   (SELECT MAX(ReceiptDate) FROM CashReceipt WHERE LoanId = L.LoanId AND ReceiptType='I') AS LastPaymentDate
+		   FROM Loan L INNER JOIN Member M ON L.MemberId = M.MemberId WHERE BranchId=pBranchId AND 
+		   L.LoanCycle=(SELECT MAX(LoanCycle) FROM Loan L1 WHERE L1.MemberId=L.MemberId);
+END//
+--Test
+CALL GetGlobalMemberLoans(1)
 
 --GetLoan
 DELIMITER //
@@ -1421,3 +1458,10 @@ BEGIN
 			WHERE ReceiptDate BETWEEN pFromDate AND pToDate ORDER BY R.ReceiptId;
 END//
 
+
+--Patch 15-Oct-2019
+UPDATE member set Relationship=NULL WHERE MemberId > 0
+ALTER TABLE member MODIFY COLUMN Relationship INT
+UPDATE member set Relationship=1 WHERE MemberId > 0
+--Procedure AddMember updated
+--Procedure EditMember updated

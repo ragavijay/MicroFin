@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
-
+using System.IO;
 namespace MicroFin.Models
 {
     public class MemberInfo
@@ -16,6 +16,9 @@ namespace MicroFin.Models
         public int MemberId { get; set; }
         public int GroupId { get; set; }
         public string GroupName { get; set; }
+        public int BranchId { get; set; }
+        public int CenterId { get; set; }
+
         public string CenterName { get; set; }
         public string LeaderName { get; set; }
         public EMemberType MemberType { get; set; }
@@ -49,8 +52,9 @@ namespace MicroFin.Models
         public string AccountNumber { get; set; }
         public string RAccountNumber { get; set; }
         public string IFSC { get; set; }
+        public string BankCustomerId { get; set; }
         public string NomineeName { get; set; }
-        public string Relationship { get; set; }
+        public ERelationship Relationship { get; set; }
         public string NomineeAadharNumber { get; set; }
         public DateTime NomineeDOB { get; set; }
         public HttpPostedFileBase Photo { get; set; }
@@ -86,6 +90,37 @@ namespace MicroFin.Models
         public string GetPhotoPath()
         {
             return @"http://fileuploads.amftn.in/Img/Member/" + MemberId + ".jpg";
+        }
+
+        public static MemoryStream GetExportMembers(List<Member> members)
+        {
+            MemoryStream memory = new MemoryStream();
+            StreamWriter stream = new StreamWriter(memory);
+            foreach (Member member in members)
+            {
+                stream.WriteLine(String.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16}",
+                    member.BranchId.ToString("D3") + member.CenterId.ToString("D2") +  member.GroupId.ToString("D2") + member.MemberId.ToString("D3"),
+                    member.MemberName,
+                    member.GetMemberAge() + "/" + member.DOB.ToString("dd-MM-yyyy"),
+                    "M" + (int)member.MaritalStatus + 1,
+                    member.Religion,
+                    (member.Gender == EGender.Female ? "F" : "T"),
+                    member.NomineeName,
+                    member.GetNomineeAge() + "/" + member.NomineeDOB.ToString("dd-MM-yyyy"),
+                    "K" + (int)member.Relationship+1,
+                    member.Phone,
+                    member.Aadhar,
+                    member.VoterIDNo,
+                    member.RationCardNo,
+                    member.AddressLine1 + "," + member.AddressLine2 + "," + member.AddressLine3 + "," + member.AddressLine4 + "," + member.City + "," + member.Pincode,
+                    member.AccountNumber,
+                    member.IFSC,
+                    member.Occupation)
+                );
+            }
+            stream.Flush();
+            memory.Position = 0;
+            return memory;
         }
     }
 }

@@ -110,10 +110,13 @@ namespace MicroFin.DAO
                     cmd.Parameters.Add("@pIFSC", MySqlDbType.VarChar, 11);
                     cmd.Parameters["@pIFSC"].Value = member.IFSC;
 
+                    cmd.Parameters.Add("@pBankCustomerId", MySqlDbType.VarChar, 20);
+                    cmd.Parameters["@pBankCustomerId"].Value = member.BankCustomerId;
+
                     cmd.Parameters.Add("@pNomineeName", MySqlDbType.VarChar, 50);
                     cmd.Parameters["@pNomineeName"].Value = member.NomineeName;
 
-                    cmd.Parameters.Add("@pRelationship", MySqlDbType.VarChar, 30);
+                    cmd.Parameters.Add("@pRelationship", MySqlDbType.Int32);
                     cmd.Parameters["@pRelationship"].Value = member.Relationship;
 
                     cmd.Parameters.Add("@pNomineeAadharNumber", MySqlDbType.VarChar, 12);
@@ -155,36 +158,9 @@ namespace MicroFin.DAO
                         {
                             member = new Member();
                             member.MemberId = Convert.ToInt32(rdr["MemberId"].ToString());
-                            member.MemberName = rdr["MemberName"].ToString();
-                            member.GroupName = rdr["GroupName"].ToString();
-                            member.CenterName = rdr["CenterName"].ToString();
-                            member.LeaderName = rdr["LeaderName"].ToString();
-                            members.Add(member);
-                        }
-                    }
-                }
-            }
-            return members;
-        }
-
-        public static Member GetMember(int memberId)
-        {
-            Member member = null;
-            using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
-            {
-                con.Open();
-                using (MySqlCommand cmd = new MySqlCommand("GetMember", con))
-                {
-                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@pMemberId", MySqlDbType.Int32);
-                    cmd.Parameters["@pMemberId"].Value = memberId;
-                    using (MySqlDataReader rdr = cmd.ExecuteReader())
-                    {
-                        if (rdr.Read())
-                        {
-                            member = new Member();
-                            member.MemberId = Convert.ToInt32(rdr["MemberId"].ToString());
                             member.GroupId = Convert.ToInt32(rdr["GroupId"].ToString());
+                            member.CenterId = Convert.ToInt32(rdr["CenterId"].ToString());
+                            member.BranchId = Convert.ToInt32(rdr["BranchId"].ToString());
                             member.GroupName = rdr["GroupName"].ToString();
                             member.CenterName = rdr["CenterName"].ToString();
                             member.LeaderName = rdr["LeaderName"].ToString();
@@ -217,8 +193,75 @@ namespace MicroFin.DAO
                             member.AccountNumber = rdr["AccountNumber"].ToString();
                             member.RAccountNumber = member.AccountNumber;
                             member.IFSC = rdr["IFSC"].ToString();
+                            member.BankCustomerId = rdr["BankCustomerId"].ToString();
                             member.NomineeName = rdr["NomineeName"].ToString();
-                            member.Relationship = rdr["Relationship"].ToString();
+                            member.Relationship = (ERelationship)Convert.ToInt32(rdr["Relationship"].ToString());
+                            member.NomineeAadharNumber = rdr["NomineeAadharNumber"].ToString();
+                            member.NomineeDOB = DateTime.Parse(rdr["NomineeDOB"].ToString());
+                            member.CurrentLoanId = Convert.ToInt32(rdr["CurrentLoanId"].ToString());
+                            members.Add(member);
+                        }
+                    }
+                }
+            }
+            return members;
+        }
+
+        public static Member GetMember(int memberId)
+        {
+            Member member = null;
+            using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
+            {
+                con.Open();
+                using (MySqlCommand cmd = new MySqlCommand("GetMember", con))
+                {
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@pMemberId", MySqlDbType.Int32);
+                    cmd.Parameters["@pMemberId"].Value = memberId;
+                    using (MySqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                        if (rdr.Read())
+                        {
+                            member = new Member();
+                            member.MemberId = Convert.ToInt32(rdr["MemberId"].ToString());
+                            member.GroupId = Convert.ToInt32(rdr["GroupId"].ToString());
+                            member.CenterId = Convert.ToInt32(rdr["CenterId"].ToString());
+                            member.BranchId = Convert.ToInt32(rdr["BranchId"].ToString());
+                            member.GroupName = rdr["GroupName"].ToString();
+                            member.CenterName = rdr["CenterName"].ToString();
+                            member.LeaderName = rdr["LeaderName"].ToString();
+                            member.MemberType = (EMemberType)Convert.ToInt32(rdr["MemberType"].ToString());
+                            member.MemberName = rdr["MemberName"].ToString();
+                            member.Gender = (EGender)Convert.ToInt32(rdr["Gender"].ToString());
+                            member.DOB = DateTime.Parse(rdr["DOB"].ToString());
+                            member.MaritalStatus = (EMaritalStatus)Convert.ToInt32(rdr["MaritalStatus"].ToString());
+                            member.Religion = (EReligion)Convert.ToInt32(rdr["Religion"].ToString());
+                            member.FName = rdr["FName"].ToString();
+                            member.HName = rdr["HName"].ToString();
+                            member.Occupation = (EOccupation)Convert.ToInt32(rdr["Occupation"].ToString());
+                            member.OccupationType = (EOccupationType)Convert.ToInt32(rdr["OccupationType"].ToString());
+                            member.AddressLine1 = rdr["AddressLine1"].ToString();
+                            member.AddressLine2 = rdr["AddressLine2"].ToString();
+                            member.AddressLine3 = rdr["AddressLine3"].ToString();
+                            member.AddressLine4 = rdr["AddressLine4"].ToString();
+                            member.Taluk = rdr["Taluk"].ToString();
+                            member.Panchayat = rdr["Panchayat"].ToString();
+                            member.City = rdr["City"].ToString();
+                            member.Pincode = rdr["Pincode"].ToString();
+                            member.NoOfYears = Convert.ToInt32(rdr["NoOfYears"].ToString());
+                            member.HouseType = (EHouseType)Convert.ToInt32(rdr["HouseType"].ToString());
+                            member.Phone = rdr["Phone"].ToString();
+                            member.MemberAadharNumber = rdr["MemberAadharNumber"].ToString();
+                            member.RMemberAadharNumber = member.MemberAadharNumber;
+                            member.PAN = rdr["PAN"].ToString();
+                            member.RationCardNo = rdr["RationCardNo"].ToString();
+                            member.VoterIDNo = rdr["VoterIdNo"].ToString();
+                            member.AccountNumber = rdr["AccountNumber"].ToString();
+                            member.RAccountNumber = member.AccountNumber;
+                            member.IFSC = rdr["IFSC"].ToString();
+                            member.BankCustomerId = rdr["BankCustomerId"].ToString();
+                            member.NomineeName = rdr["NomineeName"].ToString();
+                            member.Relationship = (ERelationship)Convert.ToInt32(rdr["Relationship"].ToString());
                             member.NomineeAadharNumber = rdr["NomineeAadharNumber"].ToString();
                             member.NomineeDOB = DateTime.Parse(rdr["NomineeDOB"].ToString());
                             member.CurrentLoanId = Convert.ToInt32(rdr["CurrentLoanId"].ToString());
@@ -326,10 +369,13 @@ namespace MicroFin.DAO
                     cmd.Parameters.Add("@pIFSC", MySqlDbType.VarChar, 11);
                     cmd.Parameters["@pIFSC"].Value = member.IFSC;
 
+                    cmd.Parameters.Add("@pBankCustomerId", MySqlDbType.VarChar, 20);
+                    cmd.Parameters["@pBankCustomerId"].Value = member.BankCustomerId;
+
                     cmd.Parameters.Add("@pNomineeName", MySqlDbType.VarChar, 50);
                     cmd.Parameters["@pNomineeName"].Value = member.NomineeName;
 
-                    cmd.Parameters.Add("@pRelationship", MySqlDbType.VarChar, 30);
+                    cmd.Parameters.Add("@pRelationship", MySqlDbType.Int32);
                     cmd.Parameters["@pRelationship"].Value = member.Relationship;
 
                     cmd.Parameters.Add("@pNomineeAadharNumber", MySqlDbType.VarChar, 12);
