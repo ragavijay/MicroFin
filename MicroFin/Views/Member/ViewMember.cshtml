@@ -13,7 +13,7 @@
                 <tr> <td colspan="2"> <img src="/Content/Images/logo.jpg" /> <h3>Athirstam Microfinance Pvt. Ltd.</h3> </td> <td colspan="2"> <img width="150" src="@Model.GetPhotoPath()" alt="NA" /> </td> </tr>
                 <tr> <td> <b>Center Name</b> </td> <td> @Model.CenterName </td> <td colspan="2"> </td> </tr>
                 <tr> <td> <b>Group Name</b> </td> <td> @Model.GroupName </td> <td> <b>Leader Name</b> </td> <td> @Model.LeaderName </td> </tr>
-                <tr> <td> <b>Member Id </b> </td> <td> @Model.MemberId </td> <td > <b>Current Loan</b> </td> <td> @if (Model.CurrentLoanId > 0)
+                <tr> <td> <b>Member Code </b> </td> <td> @Model.MemberCode </td> <td > <b>Current Loan</b> </td> <td> @if (Model.CurrentLoanId > 0)
                 {  @Html.ActionLink("View", "ViewLoan", "Loan", new { id = Model.CurrentLoanId }, null); <space/>
                         @Html.ActionLink("Edit", "LoanForm", "Loan", new { id = Model.CurrentLoanId }, null);  }
                         else

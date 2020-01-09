@@ -16,8 +16,8 @@ namespace MicroFin.Controllers
         [Route("MemberGroupForm/{id?}")]
         public ActionResult MemberGroupForm(string id)
         {
-            int groupId = Convert.ToInt32(id);
-            if (groupId == 0)
+            string groupId = id;
+            if (groupId == null)
             {
                 return View();
             }
@@ -31,12 +31,13 @@ namespace MicroFin.Controllers
         [HttpPost]
         public ActionResult MemberGroup(MemberGroup group)
         {
-            if (group.GroupId == 0)
+            
+            if (group.GroupCode == null)
             {
                 int statusCode = GroupDBService.AddMemberGroup(group);
                 if (statusCode == 0)
                 {
-                    @ViewBag.ErrGroupName = "Center already existes";
+                    @ViewBag.ErrGroupName = "Group already existes";
                     return View("MemberGroupForm", group);
                 }
                 else if (statusCode == -1)

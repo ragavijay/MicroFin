@@ -7,7 +7,7 @@ namespace MicroFin.Models
 {
     public class FamilyMember
     {
-        public int MemberId { get; set; }
+        public string MemberCode { get; set; }
         public int SNo { get; set; }
         public string FamilyMemberName { get; set; }
         public string Relationship { get; set; }

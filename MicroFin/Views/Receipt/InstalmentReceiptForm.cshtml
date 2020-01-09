@@ -14,14 +14,14 @@
                 @using (Html.BeginForm("InstalmentReceipt", "Receipt", FormMethod.Post, new { @onsubmit = "return (validateOnSubmit());"}))
                 {
                     @Html.AntiForgeryToken()
-                    <!--LoanId -->
+                    <!--LoanCode -->
                     <div class="form-row m-b-55">
                         <div class="name">Loan Id</div>
                         <div class="value">
                             <div class="row row-space">
                                 <div class="col-2">
                                     <div class="input-group-desc">
-                                        @Html.TextBoxFor(m => m.LoanId, new { id = "LoanId", @class = "input--style-5", @placeholder = "enter loan id", @required = "true", @tabindex="1"})
+                                        @Html.TextBoxFor(m => m.LoanCode, new { id = "LoanCode", @class = "input--style-5", @placeholder = "enter loan id", @required = "true", @tabindex="1"})
                                         <p id="errLoanId" style='color:red;'> </p>
                                     </div>
                                 </div>
@@ -34,15 +34,15 @@
                         </div>
                     </div>
                     <div id="instalmentReceiptFormData" style="display:none">
-                        <!--MemberId and MemberName -->
+                        <!--MemberCode and MemberName -->
                         <div class="form-row m-b-55">
                             <div class="name">Member</div>
                             <div class="value">
                                 <div class="row row-space">
                                     <div class="col-2">
                                         <div class="input-group-desc">
-                                            @Html.TextBoxFor(m => m.MemberId, new { id = "MemberId", @class = "input--style-5", @onkeydown = "event.preventDefault()", @required = "true" })
-                                            <label class="label--desc">Id</label>
+                                            @Html.TextBoxFor(m => m.MemberCode, new { id = "MemberCode", @class = "input--style-5", @onkeydown = "event.preventDefault()", @required = "true" })
+                                            <label class="label--desc">Code</label>
                                         </div>
                                     </div>
                                     <div class="col-2">
@@ -130,15 +130,15 @@
 <script>
     var NoOfInstalments;
     function getLoanStatus() {
-        var loanId = document.getElementById('LoanId').value;
-        if (loanId == '')
+        var loanCode = document.getElementById('LoanCode').value;
+        if (loanCode == '')
             return;
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
                 var instalmentReceipt = JSON.parse(this.responseText);
                 if (instalmentReceipt.LoanStatus == 'O') {
-                    document.getElementById("MemberId").value = instalmentReceipt.MemberId;
+                    document.getElementById("MemberCode").value = instalmentReceipt.MemberCode;
                     document.getElementById("MemberName").value = instalmentReceipt.MemberName;
                     document.getElementById("NoOfInstalments").value = instalmentReceipt.NoOfInstalments;
                     document.getElementById("PendingInstalments").value = instalmentReceipt.NoOfInstalments;
@@ -163,10 +163,10 @@
 
             }
         };
-        xhttp.open("GET", "../api/GetInstalmentReceipt/" + loanId, true);
+        xhttp.open("GET", "../api/GetInstalmentReceipt/" + loanCode, true);
         xhttp.send();
     }
-    document.getElementById("LoanId").addEventListener("keydown", function (e) {
+    document.getElementById("LoanCode").addEventListener("keydown", function (e) {
         document.getElementById("instalmentReceiptFormData").style.display = 'none';
     });
     document.getElementById("NoOfInstalments").addEventListener("keyup", function (e) {

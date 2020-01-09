@@ -19,14 +19,14 @@ namespace MicroFin.Controllers
         [Route("MemberForm/{id?}")]
         public ActionResult MemberForm(string id)
         {
-            int memberId = Convert.ToInt32(id);
-            if (memberId == 0)
+            string memberCode = id;
+            if (memberCode == null)
             {
                 return View();
             }
             else
             {
-                Member member = MemberDBService.GetMember(memberId);
+                Member member = MemberDBService.GetMember(memberCode);
                 return View(member);
             }
         }
@@ -35,7 +35,7 @@ namespace MicroFin.Controllers
         public ActionResult Member(Member member)
         {
             int statusCode;
-            if (member.MemberId == 0)
+            if (member.MemberCode == null)
             {
                 statusCode = MemberDBService.AddMember(member);
                
@@ -69,17 +69,17 @@ namespace MicroFin.Controllers
                 if (member.Photo != null && member.Photo.ContentLength>0)
                 {
                     directory = path +  @"\FileUploads\Img\Member\";
-                    fileName = member.MemberId + ".jpg";
+                    fileName = member.MemberCode + ".jpg";
                     member.Photo.SaveAs(Path.Combine(directory, fileName));
 
                 }
                 if (member.Aadhar != null && member.Aadhar.ContentLength > 0)
                 {
                     directory = directory = path + @"\FileUploads\Img\Aadhar\";
-                    fileName = member.MemberId + ".jpg";
+                    fileName = member.MemberCode + ".jpg";
                     member.Aadhar.SaveAs(Path.Combine(directory, fileName));
                 }
-                return ViewMembers(member.GroupId.ToString());
+                return ViewMembers(member.GroupCode.ToString());
             }
         }
 
@@ -87,9 +87,9 @@ namespace MicroFin.Controllers
         [Route("ViewMembers/{id?}")]
         public ActionResult ViewMembers(string id)
         {
-            int groupId = Convert.ToInt32(id);
-            List<Member> members = MemberDBService.GetAllMembers(groupId);
-            ViewBag.GroupId = id;
+            string groupCode = id;
+            List<Member> members = MemberDBService.GetAllMembers(groupCode);
+            ViewBag.GroupCode = id;
             return View("ViewMembers", members);
         }
 
@@ -97,8 +97,8 @@ namespace MicroFin.Controllers
         [Route("ViewMember/{id?}")]
         public ActionResult ViewMember(string id)
         {
-            Member member = MemberDBService.GetMember(Convert.ToInt32(id));
-            member.FamilyMembers = MemberDBService.GetFamilyMembers(Convert.ToInt32(id));
+            Member member = MemberDBService.GetMember(id);
+            member.FamilyMembers = MemberDBService.GetFamilyMembers(id);
             return View(member);
         }
 
@@ -106,9 +106,9 @@ namespace MicroFin.Controllers
         [Route("ViewFamilyMembers/{id?}")]
         public ActionResult ViewFamilyMembers(string id)
         {
-            List<FamilyMember> familyMembers = MemberDBService.GetFamilyMembers(Convert.ToInt32(id));
-            @ViewBag.MemberName = MemberDBService.GetMember(Convert.ToInt32(id)).MemberName;
-            @ViewBag.MemberId= id;
+            List<FamilyMember> familyMembers = MemberDBService.GetFamilyMembers(id);
+            @ViewBag.MemberName = MemberDBService.GetMember(id).MemberName;
+            @ViewBag.MemberCode= id;
             return View("ViewFamilyMembers",familyMembers);
         }
 
@@ -119,16 +119,16 @@ namespace MicroFin.Controllers
             string[] input= id.Split(' ');
             if (input.Length == 1)
             {
-                Member member = MemberDBService.GetMember(Convert.ToInt32(id));
+                Member member = MemberDBService.GetMember(id);
                 FamilyMember familyMember = new FamilyMember();
-                familyMember.MemberId = member.MemberId;
+                familyMember.MemberCode = member.MemberCode;
                 familyMember.OccupationType = EOccupationType.None;
                 return View(familyMember);
             } else
             {
-                int memberId = Convert.ToInt32(input[0]);
+                string memberCode = input[0];
                 int sNo = Convert.ToInt32(input[1]);
-                FamilyMember familyMember = MemberDBService.GetFamilyMember(memberId, sNo);
+                FamilyMember familyMember = MemberDBService.GetFamilyMember(memberCode, sNo);
                 return View(familyMember);
             }
 
@@ -155,7 +155,7 @@ namespace MicroFin.Controllers
             }
             else
             {
-               return ViewFamilyMembers(familyMember.MemberId.ToString());
+               return ViewFamilyMembers(familyMember.MemberCode);
             }
         }
         [HttpGet]
@@ -168,8 +168,8 @@ namespace MicroFin.Controllers
         [Route("ExportMembers/{id?}")]
         public FileStreamResult ExportMembers(string id)
         {
-            int groupId = Convert.ToInt32(id);
-            List<Member> members = MemberDBService.GetAllMembers(groupId);
+            string groupCode = id;
+            List<Member> members = MemberDBService.GetAllMembers(groupCode);
             MemoryStream memory = MicroFin.Models.Member.GetExportMembers(members);
             return File(memory, "application/vnd.ms-excel", "Members.csv");
 

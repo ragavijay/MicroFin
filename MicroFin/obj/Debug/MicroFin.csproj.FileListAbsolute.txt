@@ -63,3 +63,4 @@ D:\Project\2019\MicroFin\MicroFin\bin\System.Web.WebPages.Razor.xml
 D:\Project\2019\MicroFin\MicroFin\bin\Antlr3.Runtime.pdb
 D:\Project\2019\MicroFin\MicroFin\obj\Debug\MicroFin.dll
 D:\Project\2019\MicroFin\MicroFin\obj\Debug\MicroFin.pdb
+D:\Project\2019\MicroFin\MicroFin\obj\Debug\MicroFin.csprojResolveAssemblyReference.cache

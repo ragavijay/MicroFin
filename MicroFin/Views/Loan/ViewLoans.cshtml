@@ -10,10 +10,10 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.LoanId)
+            @Html.DisplayNameFor(model => model.LoanCode)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.MemberId)
+            @Html.DisplayNameFor(model => model.MemberCode)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.MemberName)
@@ -29,10 +29,10 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.LoanId)
+            @Html.DisplayFor(modelItem => item.LoanCode)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.MemberId)
+            @Html.DisplayFor(modelItem => item.MemberCode)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.MemberName)
@@ -41,18 +41,18 @@
             @Html.DisplayFor(modelItem => item.LoanAmount)
         </td>
         <td>
-            @Html.ActionLink("View", "ViewLoan", new { id = item.LoanId })
+            @Html.ActionLink("View", "ViewLoan", new { id = item.LoanCode })
         </td>
         <td>
             @if(item.LoanStatus=="P" || item.LoanStatus=="A")
             {
-                @Html.ActionLink("Edit", "LoanForm", new { id=item.LoanId })
+                @Html.ActionLink("Edit", "LoanForm", new { id=item.LoanCode })
             }
         </td>
         <td>
             @if (item.LoanStatus == "P" || item.LoanStatus == "A")
             {
-                @Html.ActionLink("Approve", "LoanStatusForm", new { id = item.LoanId })
+                @Html.ActionLink("Approve", "LoanStatusForm", new { id = item.LoanCode })
             }
         </td>
     </tr>

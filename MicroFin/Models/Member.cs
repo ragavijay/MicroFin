@@ -8,16 +8,17 @@ namespace MicroFin.Models
 {
     public class MemberInfo
     {
-        public int MemberId { get; set; }
+        public string MemberCode { get; set; }
         public string MemberName { get; set; }
     }
     public class Member
     {
+        public string MemberCode { get; set; }
         public int MemberId { get; set; }
-        public int GroupId { get; set; }
+        public string GroupCode { get; set; }
         public string GroupName { get; set; }
         public int BranchId { get; set; }
-        public int CenterId { get; set; }
+        public string CenterCode { get; set; }
 
         public string CenterName { get; set; }
         public string LeaderName { get; set; }
@@ -89,7 +90,7 @@ namespace MicroFin.Models
         }
         public string GetPhotoPath()
         {
-            return @"http://fileuploads.amftn.in/Img/Member/" + MemberId + ".jpg";
+            return @"http://fileuploads.amftn.in/Img/Member/" + MemberCode + ".jpg";
         }
 
         public static MemoryStream GetExportMembers(List<Member> members)
@@ -99,7 +100,7 @@ namespace MicroFin.Models
             foreach (Member member in members)
             {
                 stream.WriteLine(String.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16}",
-                    member.BranchId.ToString("D3") + member.CenterId.ToString("D2") +  member.GroupId.ToString("D2") + member.MemberId.ToString("D3"),
+                    member.MemberCode,
                     member.MemberName,
                     member.GetMemberAge() + "/" + member.DOB.ToString("dd-MM-yyyy"),
                     "M" + (int)member.MaritalStatus + 1,

@@ -22,8 +22,8 @@ namespace MicroFin.DAO
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
-                    cmd.Parameters.Add("@pCenterId", MySqlDbType.Int32);
-                    cmd.Parameters["@pCenterId"].Direction = ParameterDirection.Output;
+                    cmd.Parameters.Add("@pCenterCode", MySqlDbType.Int32);
+                    cmd.Parameters["@pCenterCode"].Direction = ParameterDirection.Output;
 
                     cmd.Parameters.Add("@pCenterName", MySqlDbType.VarChar, 40);
                     cmd.Parameters["@pCenterName"].Value = center.CenterName;
@@ -38,8 +38,9 @@ namespace MicroFin.DAO
                     statusCode = Convert.ToInt32(cmd.Parameters["@pStatusCode"].Value);
                     if (statusCode == 1)
                     {
-                        int centerId = Convert.ToInt32(cmd.Parameters["@pCenterId"].Value);
-                        center.CenterId = centerId;
+                        string centerCode = cmd.Parameters["@pCenterCode"].Value.ToString();
+                        center.CenterCode = centerCode;
+                        center.CenterId = Convert.ToInt32(centerCode.Substring(3));
                     }
                 }
             }
@@ -62,6 +63,7 @@ namespace MicroFin.DAO
                         while (rdr.Read())
                         {
                             GroupCenter center = new GroupCenter();
+                            center.CenterCode = rdr["CenterCode"].ToString();
                             center.CenterId = Convert.ToInt32(rdr["CenterId"].ToString());
                             center.CenterName = rdr["CenterName"].ToString();
                             centers.Add(center);
@@ -71,7 +73,7 @@ namespace MicroFin.DAO
             }
             return centers;
         }
-        public static GroupCenter GetGroupCenter(int centerId)
+        public static GroupCenter GetGroupCenter(string centerCode)
         {
             GroupCenter center = null;
             using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
@@ -80,13 +82,14 @@ namespace MicroFin.DAO
                 using (MySqlCommand cmd = new MySqlCommand("GetGroupCenter", con))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@pCenterId", MySqlDbType.Int32);
-                    cmd.Parameters["@pCenterId"].Value = centerId;
+                    cmd.Parameters.Add("@pCenterCode", MySqlDbType.VarChar);
+                    cmd.Parameters["@pCenterCode"].Value = centerCode;
                     using (MySqlDataReader rdr = cmd.ExecuteReader())
                     {
                         if (rdr.Read())
                         {
                             center = new GroupCenter();
+                            center.CenterCode = rdr["CenterCode"].ToString();
                             center.CenterId = Convert.ToInt32(rdr["CenterId"].ToString());
                             center.CenterName = rdr["CenterName"].ToString();
                         }
@@ -107,8 +110,8 @@ namespace MicroFin.DAO
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
-                    cmd.Parameters.Add("@pCenterId", MySqlDbType.Int32);
-                    cmd.Parameters["@pCenterId"].Value = center.CenterId;
+                    cmd.Parameters.Add("@pCenterCode", MySqlDbType.VarChar);
+                    cmd.Parameters["@pCenterCode"].Value = center.CenterCode;
 
                     cmd.Parameters.Add("@pCenterName", MySqlDbType.VarChar, 40);
                     cmd.Parameters["@pCenterName"].Value = center.CenterName;
@@ -139,7 +142,7 @@ namespace MicroFin.DAO
                         while (rdr.Read())
                         {
                             GroupCenter center = new GroupCenter();
-                            center.CenterId = Convert.ToInt32(rdr["CenterId"].ToString());
+                            center.CenterCode = rdr["CenterCode"].ToString();
                             center.CenterName = rdr["CenterName"].ToString();
                             centers.Add(center);
                         }

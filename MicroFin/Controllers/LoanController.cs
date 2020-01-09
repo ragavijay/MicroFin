@@ -17,15 +17,15 @@ namespace MicroFin.Controllers
         [Route("LoanForm/{id?}")]
         public ActionResult LoanForm(string id)
         {
-            int loanId = Convert.ToInt32(id);
-            if (loanId == 0)
+            string loanCode = id;
+            if (loanCode == null)
             {
                 @ViewBag.DisplayMode = "display:none";
                 return View();
             }
             else
             {
-                Loan loan = LoanDBService.GetLoan(loanId);
+                Loan loan = LoanDBService.GetLoan(loanCode);
                 return View(loan);
             }
         }
@@ -43,7 +43,7 @@ namespace MicroFin.Controllers
             int status = LoanDBService.AddGroupLoan(groupLoan);
             if (status == 1)
             {
-                return ViewLoans(groupLoan.GroupId.ToString());
+                return ViewLoans(groupLoan.GroupCode.ToString());
             }
             else
             {
@@ -54,7 +54,7 @@ namespace MicroFin.Controllers
         [HttpPost]
         public ActionResult Loan(Loan loan)
         {
-            if (loan.LoanId == 0)
+            if (loan.LoanCode == null)
             {
                 loan.BranchId = Convert.ToInt32(Session["BranchId"]);
                 int status = LoanDBService.AddLoan(loan);
@@ -72,7 +72,7 @@ namespace MicroFin.Controllers
                 }
                 else
                 {
-                    return ViewLoans(MemberDBService.GetGroupId(loan.MemberId).ToString());
+                    return ViewLoans(MemberDBService.GetGroupCode(loan.MemberCode));
                 }
             }
             else
@@ -85,7 +85,7 @@ namespace MicroFin.Controllers
                 }
                 else
                 {
-                    return ViewLoan(loan.LoanId.ToString());
+                    return ViewLoan(loan.LoanCode);
                 }
             }
         }
@@ -94,8 +94,8 @@ namespace MicroFin.Controllers
         [Route("ViewLoans/{id?}")]
         public ActionResult ViewLoans(string id)
         {
-            int groupId = Convert.ToInt32(id);
-            List<Loan> loans = LoanDBService.GetAllLoans(Convert.ToInt32(Session["BranchId"]), groupId);
+            string groupCode = id;
+            List<Loan> loans = LoanDBService.GetAllLoans(Convert.ToInt32(Session["BranchId"]), groupCode);
             return View("ViewLoans", loans);
         }
 
@@ -103,8 +103,8 @@ namespace MicroFin.Controllers
         [Route("LoanTransferReport/{id?}")]
         public ActionResult LoanTransferReport(string id)
         {
-            int groupId = Convert.ToInt32(id);
-            List<MemberLoan> memberLoans = LoanDBService.GetAllMemberLoans(Convert.ToInt32(Session["BranchId"]), groupId);
+            string groupCode = id;
+            List<MemberLoan> memberLoans = LoanDBService.GetAllMemberLoans(Convert.ToInt32(Session["BranchId"]), groupCode);
             ViewBag.GroupId = id;
             return View("LoanTransferReport", memberLoans);
         }
@@ -113,8 +113,8 @@ namespace MicroFin.Controllers
         [Route("ExportTransferReport/{id?}")]
         public FileStreamResult ExportTransferReport(string id)
         {
-            int groupId = Convert.ToInt32(id);
-            List<MemberLoan> memberLoans = LoanDBService.GetAllMemberLoans(Convert.ToInt32(Session["BranchId"]), groupId);
+            string groupCode = id;
+            List<MemberLoan> memberLoans = LoanDBService.GetAllMemberLoans(Convert.ToInt32(Session["BranchId"]), groupCode);
             MemoryStream memory = MemberLoan.GetExportTransferReport(memberLoans);
             return File(memory, "application/vnd.ms-excel", "LoanTransfer.csv");
 
@@ -131,41 +131,41 @@ namespace MicroFin.Controllers
         [Route("ViewLoan/{id?}")]
         public ActionResult ViewLoan(string id)
         {
-            int loanId = Convert.ToInt32(id);
+            string loanCode = id;
             MemberLoan memberLoan = new MemberLoan();
-            memberLoan.loan = LoanDBService.GetLoan(loanId);
-            memberLoan.member = MemberDBService.GetMember(memberLoan.loan.MemberId);
-            memberLoan.member.FamilyMembers = MemberDBService.GetFamilyMembers(memberLoan.loan.MemberId);
+            memberLoan.loan = LoanDBService.GetLoan(loanCode);
+            memberLoan.member = MemberDBService.GetMember(memberLoan.loan.MemberCode);
+            memberLoan.member.FamilyMembers = MemberDBService.GetFamilyMembers(memberLoan.loan.MemberCode);
             return View("ViewLoan",memberLoan);
         }
 
         [Route("LoanStatusForm/{id?}")]
         public ActionResult LoanStatusForm(string id)
         {
-            int loanId = Convert.ToInt32(id);
+            string loanCode = id;
             MemberLoan memberLoan = new MemberLoan();
-            memberLoan.loan = LoanDBService.GetLoan(loanId);
-            memberLoan.member = MemberDBService.GetMember(memberLoan.loan.MemberId);
-            memberLoan.member.FamilyMembers = MemberDBService.GetFamilyMembers(memberLoan.loan.MemberId);
+            memberLoan.loan = LoanDBService.GetLoan(loanCode);
+            memberLoan.member = MemberDBService.GetMember(memberLoan.loan.MemberCode);
+            memberLoan.member.FamilyMembers = MemberDBService.GetFamilyMembers(memberLoan.loan.MemberCode);
             return View(memberLoan);
         }
 
         [HttpPost]
         public ActionResult LoanStatus(FormCollection form)
         {
-            int loanId = Convert.ToInt32(form["LoanId"]);
-            int memberId = Convert.ToInt32(form["MemberId"]);
+            string loanCode = form["LoanCode"];
+            string memberCode = form["MemberCode"];
             string loanStatus = form["LoanStatus"];
             string statusRemarks = form["StatusRemarks"];
-            LoanDBService.UpdateLoanStatus(loanId, loanStatus, statusRemarks);
-            return ViewLoans(MemberDBService.GetGroupId(memberId).ToString());
+            LoanDBService.UpdateLoanStatus(loanCode, loanStatus, statusRemarks);
+            return ViewLoans(MemberDBService.GetGroupCode(memberCode));
         }
 
         [Route("LoanRepaymentStatus/{id?}")]
         public ActionResult LoanRepaymentStatus(string id)
         {
-            int groupId = Convert.ToInt32(id);
-            LoanRepaymentStatus loanRepaymentStatus = LoanDBService.GetLoanRepaymentStatus(groupId);
+            string groupCode = id;
+            LoanRepaymentStatus loanRepaymentStatus = LoanDBService.GetLoanRepaymentStatus(1);
             return View(loanRepaymentStatus);
         }
 

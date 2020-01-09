@@ -17,14 +17,14 @@ namespace MicroFin.Controllers
         [Route("GroupCenterForm/{id?}")]
         public ActionResult GroupCenterForm(string id)
         {
-            int centerId = Convert.ToInt32(id);
-            if (centerId == 0)
+            string centerCode = id;
+            if (centerCode == null)
             {
                 return View();
             }
             else
             {
-                GroupCenter center = CenterDBService.GetGroupCenter(centerId);
+                GroupCenter center = CenterDBService.GetGroupCenter(centerCode);
                 return View(center);
             }
         }
@@ -32,7 +32,7 @@ namespace MicroFin.Controllers
         [HttpPost]
         public ActionResult GroupCenter(GroupCenter center)
         {
-            if (center.CenterId == 0)
+            if (center.CenterCode == null)
             {
                 center.BranchId = Convert.ToInt32(Session["BranchId"]);
                 int statusCode = CenterDBService.AddGroupCenter(center);
@@ -46,7 +46,7 @@ namespace MicroFin.Controllers
                     @ViewBag.ErrTryAgain = "Try again";
                     return View("GroupCenterForm", center);
                 }
-                {
+                else { 
                     return ViewGroupCenters();
                 }
             }

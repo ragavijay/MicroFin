@@ -14,12 +14,12 @@
             <div class="card-body">
                 @using (Html.BeginForm("FamilyMember", "Member", FormMethod.Post, new { @onsubmit = "return validateForm();" }))
                 {
-                    <!--Member Id -->
+                    <!--Member Code -->
                     <div class="form-row">
-                        <div class="name">Member Id</div>
+                        <div class="name">Member Code</div>
                         <div class="value">
                             <div class="input-group">
-                                @Html.TextBoxFor(m => m.MemberId, new { @class = "input--style-5", @readonly = "true", @autocomplete = "off" })
+                                @Html.TextBoxFor(m => m.MemberCode, new { @class = "input--style-5", @readonly = "true", @autocomplete = "off" })
                             </div>
                         </div>
                     </div>

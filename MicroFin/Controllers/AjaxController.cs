@@ -45,42 +45,42 @@ namespace MicroFin.Controllers
         }
 
         [HttpGet]
-        [Route("api/CheckMember/{memberId}")]
-        public HttpResponseMessage CheckMember(int memberId)
+        [Route("api/CheckMember/{memberCode}")]
+        public HttpResponseMessage CheckMember(string memberCode)
         {
             HttpResponseMessage response = new HttpResponseMessage();
-            response.Content = new StringContent(LoanDBService.CheckMember(memberId));
+            response.Content = new StringContent(LoanDBService.CheckMember(memberCode));
             response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/plain");
             return response;
         }
 
 
         [HttpGet]
-        [Route("api/CheckGroup/{groupId}")]
-        public HttpResponseMessage CheckGroup(int groupId)
+        [Route("api/CheckGroup/{groupCode}")]
+        public HttpResponseMessage CheckGroup(string groupCode)
         {
             HttpResponseMessage response = new HttpResponseMessage();
-            response.Content = new StringContent(LoanDBService.CheckGroup(groupId));
+            response.Content = new StringContent(LoanDBService.CheckGroup(groupCode));
             response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/plain");
             return response;
         }
 
         [HttpGet]
-        [Route("api/ApproveLoan/{loanId}")]
-        public HttpResponseMessage ApproveLoan(int loanId)
+        [Route("api/ApproveLoan/{loanCode}")]
+        public HttpResponseMessage ApproveLoan(string loanCode)
         {
             HttpResponseMessage response = new HttpResponseMessage();
-            LoanDBService.ApproveLoan(loanId);
+            LoanDBService.ApproveLoan(loanCode);
             response.Content = new StringContent("Approved");
             response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/plain");
             return response;
         }
 
         [HttpGet]
-        [Route("api/GetPFReceipt/{loanId}")]
-        public HttpResponseMessage GetPFReceipt(int loanId)
+        [Route("api/GetPFReceipt/{loanCode}")]
+        public HttpResponseMessage GetPFReceipt(string loanCode)
         {
-            PFReceipt pfReceipt = ReceiptDBService.GetPFReceipt(loanId);
+            PFReceipt pfReceipt = ReceiptDBService.GetPFReceipt(loanCode);
             HttpResponseMessage response = new HttpResponseMessage();
             response.Content = new StringContent(JsonConvert.SerializeObject(pfReceipt));
             response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
@@ -88,32 +88,34 @@ namespace MicroFin.Controllers
         }
 
         [HttpGet]
-        [Route("api/GetInstalmentReceipt/{loanId}")]
-        public HttpResponseMessage GetInstalmentReceipt(int loanId)
+        [Route("api/GetGroupPFReceipt/{groupCode}")]
+        public HttpResponseMessage GetGroupPFReceipt(string groupCode)
         {
-            InstalmentReceipt instalmentReceipt = ReceiptDBService.GetInstalmentReceipt(loanId);
-            HttpResponseMessage response = new HttpResponseMessage();
-            response.Content = new StringContent(JsonConvert.SerializeObject(instalmentReceipt));
-            response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
-            return response;
-        }
-
-        [HttpGet]
-        [Route("api/GetGroupPFReceipt/{groupId}")]
-        public HttpResponseMessage GetGroupPFReceipt(int groupId)
-        {
-            GroupPFReceipt groupPFReceipt = ReceiptDBService.GetGroupPFReceipt(groupId);
+            GroupPFReceipt groupPFReceipt = ReceiptDBService.GetGroupPFReceipt(groupCode);
             HttpResponseMessage response = new HttpResponseMessage();
             response.Content = new StringContent(JsonConvert.SerializeObject(groupPFReceipt));
             response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
             return response;
         }
 
+
         [HttpGet]
-        [Route("api/GetGroupInstalmentReceipt/{groupId}")]
-        public HttpResponseMessage GetGroupInstalmentReceipt(int groupId)
+        [Route("api/GetInstalmentReceipt/{loanCode}")]
+        public HttpResponseMessage GetInstalmentReceipt(string loanCode)
         {
-            GroupInstalmentReceipt groupInstalmentReceipt = ReceiptDBService.GetGroupInstalmentReceipt(groupId);
+            InstalmentReceipt instalmentReceipt = ReceiptDBService.GetInstalmentReceipt(loanCode);
+            HttpResponseMessage response = new HttpResponseMessage();
+            response.Content = new StringContent(JsonConvert.SerializeObject(instalmentReceipt));
+            response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+            return response;
+        }
+
+      
+        [HttpGet]
+        [Route("api/GetGroupInstalmentReceipt/{groupCode}")]
+        public HttpResponseMessage GetGroupInstalmentReceipt(string groupCode)
+        {
+            GroupInstalmentReceipt groupInstalmentReceipt = ReceiptDBService.GetGroupInstalmentReceipt(groupCode);
             HttpResponseMessage response = new HttpResponseMessage();
             response.Content = new StringContent(JsonConvert.SerializeObject(groupInstalmentReceipt));
             response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");

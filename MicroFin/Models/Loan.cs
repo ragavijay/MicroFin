@@ -9,9 +9,11 @@ namespace MicroFin.Models
 {
     public class Loan
     {
+        public string LoanCode { get; set; }
         public int LoanId { get; set; }
         public int LoanCycle { get; set; }
         public int MemberId{ get; set; }
+        public string MemberCode { get; set; }
         public string MemberName{ get; set; }
         public int BranchId{ get; set; }
         public string LoanPurpose{ get; set; }
@@ -26,6 +28,7 @@ namespace MicroFin.Models
         public int Ewi{ get; set; }
         public string LoanStatus{ get; set; }
         public DateTime LoanDate{ get; set; }
+        public DateTime LoanDisposalDate { get; set; }
         public string StatusRemarks { get; set; }
         public DateTime LastPaymentDate { get; set; }
 

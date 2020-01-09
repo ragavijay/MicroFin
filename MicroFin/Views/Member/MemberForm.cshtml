@@ -19,7 +19,7 @@
                         <div class="name">Member Id</div>
                         <div class="value">
                             <div class="input-group">
-                                @Html.TextBoxFor(m => m.MemberId, new { @class = "input--style-5", @placeholder = "auto-generated", @readonly = "true", @autocomplete="off"})
+                                @Html.TextBoxFor(m => m.MemberCode, new { @class = "input--style-5", @placeholder = "auto-generated", @readonly = "true", @autocomplete="off"})
                             </div>
                         </div>
                     </div>
@@ -37,7 +37,7 @@
                                 </div>
                                 <div class="col-2">
                                     <div class="input-group-desc">
-                                        @Html.TextBoxFor(m => m.GroupId, new { id = "GroupId", @class = "input--style-5", @onkeydown = "event.preventDefault()", @required = "true", @autocomplete = "off"})
+                                        @Html.TextBoxFor(m => m.GroupCode, new { id = "GroupCode", @class = "input--style-5", @onkeydown = "event.preventDefault()", @required = "true", @autocomplete = "off"})
                                         <label class="label--desc">Group Id</label>
                                     </div>
                                 </div>
@@ -463,7 +463,7 @@
     </div>
 </div>
 <script>
-    createAutoComplete3('http://' + window.location.host + '/api/GetGroupList', 'GroupId', 'CenterName', 'LeaderName', 'GroupName');
+    createAutoComplete3('http://' + window.location.host + '/api/GetGroupList', 'GroupCode', 'CenterName', 'LeaderName', 'GroupName');
     getBank();
     setDefaultDate();
     function validateForm() {

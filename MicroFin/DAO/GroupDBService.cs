@@ -23,14 +23,14 @@ namespace MicroFin.DAO
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
-                    cmd.Parameters.Add("@pGroupId", MySqlDbType.Int32);
-                    cmd.Parameters["@pGroupId"].Direction = ParameterDirection.Output;
+                    cmd.Parameters.Add("@pGroupCode", MySqlDbType.VarChar,9);
+                    cmd.Parameters["@pGroupCode"].Direction = ParameterDirection.Output;
 
                     cmd.Parameters.Add("@pGroupName", MySqlDbType.VarChar, 40);
                     cmd.Parameters["@pGroupName"].Value = group.GroupName;
 
-                    cmd.Parameters.Add("@pCenterId", MySqlDbType.Int32);
-                    cmd.Parameters["@pCenterId"].Value = group.CenterId;
+                    cmd.Parameters.Add("@pCenterCode", MySqlDbType.VarChar,6);
+                    cmd.Parameters["@pCenterCode"].Value = group.CenterCode;
 
                     cmd.Parameters.Add("@pStatusCode", MySqlDbType.Int32);
                     cmd.Parameters["@pStatusCode"].Direction = ParameterDirection.Output;
@@ -39,8 +39,11 @@ namespace MicroFin.DAO
                     statusCode = Convert.ToInt32(cmd.Parameters["@pStatusCode"].Value);
                     if (statusCode == 1)
                     {
-                        int groupId = Convert.ToInt32(cmd.Parameters["@pGroupId"].Value);
+                        string groupCode = cmd.Parameters["@pGroupCode"].Value.ToString();
+                        int groupId = Convert.ToInt32(groupCode.Substring(5));
+                        group.GroupCode = groupCode;
                         group.GroupId = groupId;
+
                     }
                 }
             }
@@ -64,9 +67,9 @@ namespace MicroFin.DAO
                         while (rdr.Read())
                         {
                             group = new MemberGroup();
-                            group.GroupId = Convert.ToInt32(rdr["GroupId"].ToString());
+                            group.GroupCode = rdr["GroupCode"].ToString();
                             group.GroupName = rdr["GroupName"].ToString();
-                            group.CenterId = Convert.ToInt32(rdr["CenterId"].ToString());
+                            group.CenterCode = rdr["CenterCode"].ToString();
                             group.CenterName = rdr["CenterName"].ToString();
                             groups.Add(group);
                         }
@@ -75,7 +78,7 @@ namespace MicroFin.DAO
             }
             return groups;
         }
-        public static MemberGroup GetMemberGroup(int groupId)
+        public static MemberGroup GetMemberGroup(string  groupCode)
         {
             MemberGroup group = null;
             using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
@@ -84,16 +87,17 @@ namespace MicroFin.DAO
                 using (MySqlCommand cmd = new MySqlCommand("GetMemberGroup", con))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@pGroupId", MySqlDbType.Int32);
-                    cmd.Parameters["@pGroupId"].Value = groupId;
+                    cmd.Parameters.Add("@pGroupCode", MySqlDbType.VarChar,9);
+                    cmd.Parameters["@pGroupCode"].Value = groupCode;
                     using (MySqlDataReader rdr = cmd.ExecuteReader())
                     {
                         if (rdr.Read())
                         {
                             group = new MemberGroup();
+                            group.GroupCode = groupCode;
                             group.GroupId = Convert.ToInt32(rdr["GroupId"].ToString());
                             group.GroupName = rdr["GroupName"].ToString();
-                            group.CenterId = Convert.ToInt32(rdr["CenterId"].ToString());
+                            group.CenterCode = rdr["CenterCode"].ToString();
                             group.CenterName = rdr["CenterName"].ToString();
                         }
                     }
@@ -112,14 +116,17 @@ namespace MicroFin.DAO
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
-                    cmd.Parameters.Add("@pGroupId", MySqlDbType.Int32);
-                    cmd.Parameters["@pGroupId"].Value = group.GroupId;
+                    cmd.Parameters.Add("@pGroupCode", MySqlDbType.VarChar,9);
+                    cmd.Parameters["@pGroupCode"].Value = group.GroupCode;
 
                     cmd.Parameters.Add("@pGroupName", MySqlDbType.VarChar, 40);
                     cmd.Parameters["@pGroupName"].Value = group.GroupName;
 
-                    cmd.Parameters.Add("@pCenterId", MySqlDbType.Int32);
-                    cmd.Parameters["@pCenterId"].Value = group.CenterId;
+                    cmd.Parameters.Add("@pCenterCode", MySqlDbType.VarChar,6);
+                    cmd.Parameters["@pCenterCode"].Value = group.CenterCode;
+
+                    //cmd.Parameters.Add("@pBranchId", MySqlDbType.VarChar, 6);
+                    //cmd.Parameters["@pBranchId"].Value = group.BranchId;
 
                     cmd.Parameters.Add("@pStatusCode", MySqlDbType.Int32);
                     cmd.Parameters["@pStatusCode"].Direction = ParameterDirection.Output;
@@ -147,7 +154,7 @@ namespace MicroFin.DAO
                         while (rdr.Read())
                         {
                             MemberGroup group = new MemberGroup();
-                            group.GroupId = Convert.ToInt32(rdr["GroupId"].ToString());
+                            group.GroupCode = rdr["GroupCode"].ToString();
                             group.GroupName = rdr["GroupName"].ToString();
                             group.CenterName = rdr["CenterName"].ToString();
                             group.LeaderName = rdr["LeaderName"].ToString();

@@ -7,7 +7,7 @@ namespace MicroFin.Models
 {
     public class GroupPFReceipt
     {
-        public int GroupId { get; set; }
+        public string GroupCode { get; set; }
         public int ReceiptId { get; set; }
         public DateTime ActualReceiptDate { get; set; }
         public string GroupName{ get; set; }

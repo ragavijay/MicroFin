@@ -11,7 +11,7 @@ namespace MicroFin.DAO
 {
     public class ReceiptDBService
     {
-        public static PFReceipt GetPFReceipt(int loanId)
+        public static PFReceipt GetPFReceipt(string loanCode)
         {
             PFReceipt pfReceipt = null;
             using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
@@ -20,14 +20,14 @@ namespace MicroFin.DAO
                 using (MySqlCommand cmd = new MySqlCommand("GetLoanStatus", con))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@pLoanId", MySqlDbType.Int32);
-                    cmd.Parameters["@pLoanId"].Value = loanId;
+                    cmd.Parameters.Add("@pLoanCode", MySqlDbType.VarChar,13);
+                    cmd.Parameters["@pLoanCode"].Value = loanCode;
 
                     cmd.Parameters.Add("@pLoanStatus", MySqlDbType.VarChar, 1);
                     cmd.Parameters["@pLoanStatus"].Direction = ParameterDirection.Output;
 
-                    cmd.Parameters.Add("@pMemberId", MySqlDbType.Int32);
-                    cmd.Parameters["@pMemberId"].Direction = ParameterDirection.Output;
+                    cmd.Parameters.Add("@pMemberCode", MySqlDbType.VarChar,11);
+                    cmd.Parameters["@pMemberCode"].Direction = ParameterDirection.Output;
 
                     cmd.Parameters.Add("@pMemberName", MySqlDbType.VarChar, 50);
                     cmd.Parameters["@pMemberName"].Direction = ParameterDirection.Output;
@@ -52,11 +52,11 @@ namespace MicroFin.DAO
 
                     cmd.ExecuteNonQuery();
                     pfReceipt = new PFReceipt();
-                    pfReceipt.LoanId = loanId;
+                    pfReceipt.LoanCode = loanCode;
                     pfReceipt.LoanStatus = cmd.Parameters["@pLoanStatus"].Value.ToString();
                     if (pfReceipt.LoanStatus == "A")
                     {
-                        pfReceipt.MemberId = Convert.ToInt32(cmd.Parameters["@pMemberId"].Value.ToString());
+                        pfReceipt.MemberCode = cmd.Parameters["@pMemberCode"].Value.ToString();
                         pfReceipt.MemberName = cmd.Parameters["@pMemberName"].Value.ToString();
                         pfReceipt.ProcessingFee = Convert.ToInt32(cmd.Parameters["@pProcessingFee"].Value.ToString());
                         pfReceipt.Insurance = Convert.ToInt32(cmd.Parameters["@pInsurance"].Value.ToString());
@@ -68,7 +68,7 @@ namespace MicroFin.DAO
         }
 
 
-        public static InstalmentReceipt GetInstalmentReceipt(int loanId)
+        public static InstalmentReceipt GetInstalmentReceipt(string loanCode)
         {
             InstalmentReceipt instalmentReceipt = null;
             using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
@@ -77,14 +77,14 @@ namespace MicroFin.DAO
                 using (MySqlCommand cmd = new MySqlCommand("GetLoanStatus", con))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@pLoanId", MySqlDbType.Int32);
-                    cmd.Parameters["@pLoanId"].Value = loanId;
+                    cmd.Parameters.Add("@pLoanCode", MySqlDbType.VarChar,13);
+                    cmd.Parameters["@pLoanCode"].Value = loanCode;
 
                     cmd.Parameters.Add("@pLoanStatus", MySqlDbType.VarChar, 1);
                     cmd.Parameters["@pLoanStatus"].Direction = ParameterDirection.Output;
 
-                    cmd.Parameters.Add("@pMemberId", MySqlDbType.Int32);
-                    cmd.Parameters["@pMemberId"].Direction = ParameterDirection.Output;
+                    cmd.Parameters.Add("@pMemberCode", MySqlDbType.Int32);
+                    cmd.Parameters["@pMemberCode"].Direction = ParameterDirection.Output;
 
                     cmd.Parameters.Add("@pMemberName", MySqlDbType.VarChar, 50);
                     cmd.Parameters["@pMemberName"].Direction = ParameterDirection.Output;
@@ -109,11 +109,11 @@ namespace MicroFin.DAO
 
                     cmd.ExecuteNonQuery();
                     instalmentReceipt = new InstalmentReceipt();
-                    instalmentReceipt.LoanId = loanId;
+                    instalmentReceipt.LoanCode = loanCode;
                     instalmentReceipt.LoanStatus = cmd.Parameters["@pLoanStatus"].Value.ToString();
                     if (instalmentReceipt.LoanStatus == "O")
                     {
-                        instalmentReceipt.MemberId = Convert.ToInt32(cmd.Parameters["@pMemberId"].Value.ToString());
+                        instalmentReceipt.MemberCode = cmd.Parameters["@pMemberCode"].Value.ToString();
                         instalmentReceipt.MemberName = cmd.Parameters["@pMemberName"].Value.ToString();
                         instalmentReceipt.NoOfInstalments = Convert.ToInt32(cmd.Parameters["@pNoOfInstalments"].Value.ToString());
                         instalmentReceipt.Ewi = Convert.ToInt32(cmd.Parameters["@pEwi"].Value.ToString());
@@ -132,8 +132,8 @@ namespace MicroFin.DAO
                 using (MySqlCommand cmd = new MySqlCommand("GeneratePFReceipt", con))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@pLoanId", MySqlDbType.Int32);
-                    cmd.Parameters["@pLoanId"].Value = pfReceipt.LoanId;
+                    cmd.Parameters.Add("@pLoanCode", MySqlDbType.VarChar,13);
+                    cmd.Parameters["@pLoanCode"].Value = pfReceipt.LoanCode;
 
                     cmd.Parameters.Add("@pUserId", MySqlDbType.VarChar, 20);
                     cmd.Parameters["@pUserId"].Value = pfReceipt.UserId;
@@ -161,16 +161,16 @@ namespace MicroFin.DAO
                 using (MySqlCommand cmd = new MySqlCommand("GetGroupMembersLoan", con))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@pGroupId", MySqlDbType.Int32);
-                    cmd.Parameters["@pGroupId"].Value = groupPFReceipt.GroupId;
+                    cmd.Parameters.Add("@pGroupCode", MySqlDbType.VarChar,11);
+                    cmd.Parameters["@pGroupCode"].Value = groupPFReceipt.GroupCode;
                     MySqlDataReader rdr =  cmd.ExecuteReader();
                     while(rdr.Read())
                     {
                         GroupPFReceiptInfo groupPFReceiptInfo = new GroupPFReceiptInfo();
                         groupPFReceiptInfo.ReceiptId = 0;
-                        groupPFReceiptInfo.MemberId = Convert.ToInt32(rdr["MemberId"].ToString());
+                        groupPFReceiptInfo.MemberCode = rdr["MemberCode"].ToString();
                         groupPFReceiptInfo.MemberName = rdr["MemberName"].ToString();
-                        groupPFReceiptInfo.LoanId = Convert.ToInt32(rdr["LoanId"].ToString());
+                        groupPFReceiptInfo.LoanCode = rdr["LoanCode"].ToString();
                         groupPFReceiptInfo.ProcessingFee = Convert.ToInt32(rdr["ProcessingFee"].ToString());
                         groupPFReceiptInfo.Insurance = Convert.ToInt32(rdr["Insurance"].ToString());
                         groupPFReceiptInfo.TotalFee = groupPFReceiptInfo.ProcessingFee + groupPFReceiptInfo.Insurance;
@@ -185,8 +185,8 @@ namespace MicroFin.DAO
                     using (MySqlCommand cmd = new MySqlCommand("GeneratePFReceipt", con))
                     {
                         cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@pLoanId", MySqlDbType.Int32);
-                        cmd.Parameters["@pLoanId"].Value = groupPFReceiptInfo.LoanId;
+                        cmd.Parameters.Add("@pLoanCode", MySqlDbType.VarChar,11);
+                        cmd.Parameters["@pLoanCode"].Value = groupPFReceiptInfo.LoanCode;
 
                         cmd.Parameters.Add("@pUserId", MySqlDbType.VarChar, 20);
                         cmd.Parameters["@pUserId"].Value = userId;
@@ -213,8 +213,8 @@ namespace MicroFin.DAO
                 using (MySqlCommand cmd = new MySqlCommand("GenerateInstalmentReceipt", con))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@pLoanId", MySqlDbType.Int32);
-                    cmd.Parameters["@pLoanId"].Value = instalmentReceipt.LoanId;
+                    cmd.Parameters.Add("@pLoanCode", MySqlDbType.VarChar,13);
+                    cmd.Parameters["@pLoanCode"].Value = instalmentReceipt.LoanCode;
 
                     cmd.Parameters.Add("@pNoOfInstalments", MySqlDbType.Int32);
                     cmd.Parameters["@pNoOfInstalments"].Value = instalmentReceipt.NoOfInstalments;
@@ -244,16 +244,16 @@ namespace MicroFin.DAO
                 using (MySqlCommand cmd = new MySqlCommand("GetGroupMembersOngoingLoan", con))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@pGroupId", MySqlDbType.Int32);
-                    cmd.Parameters["@pGroupId"].Value = groupInstalmentReceipt.GroupId;
+                    cmd.Parameters.Add("@pGroupCode", MySqlDbType.VarChar,9);
+                    cmd.Parameters["@pGroupCode"].Value = groupInstalmentReceipt.GroupCode;
                     MySqlDataReader rdr = cmd.ExecuteReader();
                     while (rdr.Read())
                     {
                         GroupInstalmentReceiptInfo groupInstalmentReceiptInfo = new GroupInstalmentReceiptInfo();
                         groupInstalmentReceiptInfo.ReceiptId = 0;
-                        groupInstalmentReceiptInfo.MemberId = Convert.ToInt32(rdr["MemberId"].ToString());
+                        groupInstalmentReceiptInfo.MemberCode = rdr["MemberCode"].ToString();
                         groupInstalmentReceiptInfo.MemberName = rdr["MemberName"].ToString();
-                        groupInstalmentReceiptInfo.LoanId = Convert.ToInt32(rdr["LoanId"].ToString());
+                        groupInstalmentReceiptInfo.LoanCode = rdr["LoanCode"].ToString();
                         groupInstalmentReceiptInfo.NoOfInstalments = groupInstalmentReceipt.NoOfInstalments;
                         groupInstalmentReceiptInfo.Ewi = groupInstalmentReceipt.Ewi;
                         groupInstalmentReceiptInfo.TotalDue = groupInstalmentReceipt.NoOfInstalments * groupInstalmentReceipt.Ewi;
@@ -269,8 +269,8 @@ namespace MicroFin.DAO
                     using (MySqlCommand cmd = new MySqlCommand("GenerateInstalmentReceipt", con))
                     {
                         cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@pLoanId", MySqlDbType.Int32);
-                        cmd.Parameters["@pLoanId"].Value = groupInstalmentReceiptInfo.LoanId;
+                        cmd.Parameters.Add("@pLoanCode", MySqlDbType.VarChar,13);
+                        cmd.Parameters["@pLoanCode"].Value = groupInstalmentReceiptInfo.LoanCode;
 
                         cmd.Parameters.Add("@pNoOfInstalments", MySqlDbType.Int32);
                         cmd.Parameters["@pNoOfInstalments"].Value = groupInstalmentReceiptInfo.NoOfInstalments;
@@ -417,7 +417,7 @@ namespace MicroFin.DAO
             return statementList;
         }
 
-        public static GroupPFReceipt GetGroupPFReceipt(int groupId)
+        public static GroupPFReceipt GetGroupPFReceipt(string groupCode)
         {
             GroupPFReceipt groupPfReceipt = null;
             using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
@@ -426,8 +426,8 @@ namespace MicroFin.DAO
                 using (MySqlCommand cmd = new MySqlCommand("GetGroupPFStatus", con))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@pGroupId", MySqlDbType.Int32);
-                    cmd.Parameters["@pGroupId"].Value = groupId;
+                    cmd.Parameters.Add("@pGroupCode", MySqlDbType.VarChar,9);
+                    cmd.Parameters["@pGroupCode"].Value = groupCode;
 
                     cmd.Parameters.Add("@pStatusCode", MySqlDbType.Int32);
                     cmd.Parameters["@pStatusCode"].Direction = ParameterDirection.Output;
@@ -442,7 +442,7 @@ namespace MicroFin.DAO
                     
                     cmd.ExecuteNonQuery();
                     groupPfReceipt = new GroupPFReceipt();
-                    groupPfReceipt.GroupId = groupId;
+                    groupPfReceipt.GroupCode = groupCode;
                     groupPfReceipt.StatusCode = Convert.ToInt32(cmd.Parameters["@pStatusCode"].Value.ToString());
                     if (groupPfReceipt.StatusCode == 1)
                     {
@@ -456,7 +456,7 @@ namespace MicroFin.DAO
             return groupPfReceipt;
         }
 
-        public static GroupInstalmentReceipt GetGroupInstalmentReceipt(int groupId)
+        public static GroupInstalmentReceipt GetGroupInstalmentReceipt(string groupCode)
         {
             GroupInstalmentReceipt groupInstalmentReceipt = null;
             using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
@@ -465,8 +465,8 @@ namespace MicroFin.DAO
                 using (MySqlCommand cmd = new MySqlCommand("GetGroupInstalmentStatus", con))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@pGroupId", MySqlDbType.Int32);
-                    cmd.Parameters["@pGroupId"].Value = groupId;
+                    cmd.Parameters.Add("@pGroupCode", MySqlDbType.VarChar,11);
+                    cmd.Parameters["@pGroupCode"].Value = groupCode;
 
                     cmd.Parameters.Add("@pStatusCode", MySqlDbType.Int32);
                     cmd.Parameters["@pStatusCode"].Direction = ParameterDirection.Output;
@@ -481,7 +481,7 @@ namespace MicroFin.DAO
 
                     cmd.ExecuteNonQuery();
                     groupInstalmentReceipt = new GroupInstalmentReceipt();
-                    groupInstalmentReceipt.GroupId = groupId;
+                    groupInstalmentReceipt.GroupCode = groupCode;
                     groupInstalmentReceipt.StatusCode = Convert.ToInt32(cmd.Parameters["@pStatusCode"].Value.ToString());
                     if (groupInstalmentReceipt.StatusCode == 1)
                     {

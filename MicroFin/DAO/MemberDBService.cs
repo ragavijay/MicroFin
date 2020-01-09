@@ -23,11 +23,11 @@ namespace MicroFin.DAO
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
-                    cmd.Parameters.Add("@pMemberId", MySqlDbType.Int32);
-                    cmd.Parameters["@pMemberId"].Direction = ParameterDirection.Output;
+                    cmd.Parameters.Add("@pMemberCode", MySqlDbType.VarChar,11);
+                    cmd.Parameters["@pMemberCode"].Direction = ParameterDirection.Output;
 
-                    cmd.Parameters.Add("@pGroupId", MySqlDbType.Int32);
-                    cmd.Parameters["@pGroupId"].Value = member.GroupId;
+                    cmd.Parameters.Add("@pGroupCode", MySqlDbType.VarChar,9);
+                    cmd.Parameters["@pGroupCode"].Value = member.GroupCode;
 
                     cmd.Parameters.Add("@pMemberType", MySqlDbType.Int32);
                     cmd.Parameters["@pMemberType"].Value = member.MemberType;
@@ -132,15 +132,15 @@ namespace MicroFin.DAO
                     statusCode = Convert.ToInt32(cmd.Parameters["@pStatusCode"].Value);
                     if (statusCode == 1)
                     {
-                        int memberId = Convert.ToInt32(cmd.Parameters["@pMemberId"].Value);
-                        member.MemberId = memberId;
+                        string memberCode = cmd.Parameters["@pMemberCode"].Value.ToString();
+                        member.MemberCode = memberCode;
                     }
                 }
             }
             return statusCode;
         }
 
-        public static List<Member> GetAllMembers(int groupId)
+        public static List<Member> GetAllMembers(string groupCode)
         {
             Member member;
             List<Member> members = new List<Member>();
@@ -150,16 +150,17 @@ namespace MicroFin.DAO
                 using (MySqlCommand cmd = new MySqlCommand("GetAllMembers", con))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@pGroupId", MySqlDbType.Int32);
-                    cmd.Parameters["@pGroupId"].Value = groupId;
+                    cmd.Parameters.Add("@pGroupCode", MySqlDbType.VarChar,9);
+                    cmd.Parameters["@pGroupCode"].Value = groupCode;
                     using (MySqlDataReader rdr = cmd.ExecuteReader())
                     {
                         while (rdr.Read())
                         {
                             member = new Member();
+                            member.MemberCode = rdr["MemberCode"].ToString();
                             member.MemberId = Convert.ToInt32(rdr["MemberId"].ToString());
-                            member.GroupId = Convert.ToInt32(rdr["GroupId"].ToString());
-                            member.CenterId = Convert.ToInt32(rdr["CenterId"].ToString());
+                            member.GroupCode = rdr["GroupCode"].ToString();
+                            member.CenterCode = rdr["CenterCode"].ToString();
                             member.BranchId = Convert.ToInt32(rdr["BranchId"].ToString());
                             member.GroupName = rdr["GroupName"].ToString();
                             member.CenterName = rdr["CenterName"].ToString();
@@ -198,7 +199,7 @@ namespace MicroFin.DAO
                             member.Relationship = (ERelationship)Convert.ToInt32(rdr["Relationship"].ToString());
                             member.NomineeAadharNumber = rdr["NomineeAadharNumber"].ToString();
                             member.NomineeDOB = DateTime.Parse(rdr["NomineeDOB"].ToString());
-                            member.CurrentLoanId = Convert.ToInt32(rdr["CurrentLoanId"].ToString());
+                            //member.CurrentLoanId = Convert.ToInt32(rdr["CurrentLoanId"].ToString());
                             members.Add(member);
                         }
                     }
@@ -207,7 +208,7 @@ namespace MicroFin.DAO
             return members;
         }
 
-        public static Member GetMember(int memberId)
+        public static Member GetMember(string memberCode)
         {
             Member member = null;
             using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
@@ -216,16 +217,17 @@ namespace MicroFin.DAO
                 using (MySqlCommand cmd = new MySqlCommand("GetMember", con))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@pMemberId", MySqlDbType.Int32);
-                    cmd.Parameters["@pMemberId"].Value = memberId;
+                    cmd.Parameters.Add("@pMemberCode", MySqlDbType.VarChar,11);
+                    cmd.Parameters["@pMemberCode"].Value = memberCode;
                     using (MySqlDataReader rdr = cmd.ExecuteReader())
                     {
                         if (rdr.Read())
                         {
                             member = new Member();
+                            member.MemberCode = rdr["MemberCode"].ToString();
                             member.MemberId = Convert.ToInt32(rdr["MemberId"].ToString());
-                            member.GroupId = Convert.ToInt32(rdr["GroupId"].ToString());
-                            member.CenterId = Convert.ToInt32(rdr["CenterId"].ToString());
+                            member.GroupCode = rdr["GroupCode"].ToString();
+                            member.CenterCode = rdr["CenterCode"].ToString();
                             member.BranchId = Convert.ToInt32(rdr["BranchId"].ToString());
                             member.GroupName = rdr["GroupName"].ToString();
                             member.CenterName = rdr["CenterName"].ToString();
@@ -264,7 +266,7 @@ namespace MicroFin.DAO
                             member.Relationship = (ERelationship)Convert.ToInt32(rdr["Relationship"].ToString());
                             member.NomineeAadharNumber = rdr["NomineeAadharNumber"].ToString();
                             member.NomineeDOB = DateTime.Parse(rdr["NomineeDOB"].ToString());
-                            member.CurrentLoanId = Convert.ToInt32(rdr["CurrentLoanId"].ToString());
+                            //member.CurrentLoanId = Convert.ToInt32(rdr["CurrentLoanId"].ToString());
                         }
                     }
                 }
@@ -282,11 +284,14 @@ namespace MicroFin.DAO
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
+                    cmd.Parameters.Add("@pMemberCode", MySqlDbType.VarChar,11);
+                    cmd.Parameters["@pMemberCode"].Value = member.MemberCode;
+
                     cmd.Parameters.Add("@pMemberId", MySqlDbType.Int32);
                     cmd.Parameters["@pMemberId"].Value = member.MemberId;
 
-                    cmd.Parameters.Add("@pGroupId", MySqlDbType.Int32);
-                    cmd.Parameters["@pGroupId"].Value = member.GroupId;
+                    cmd.Parameters.Add("@pGroupCode", MySqlDbType.VarChar,9);
+                    cmd.Parameters["@pGroupCode"].Value = member.GroupCode;
 
                     cmd.Parameters.Add("@pMemberType", MySqlDbType.Int32);
                     cmd.Parameters["@pMemberType"].Value = member.MemberType;
@@ -395,7 +400,7 @@ namespace MicroFin.DAO
         }
 
         //GetFamilyMembers
-        public static List<FamilyMember> GetFamilyMembers(int memberId)
+        public static List<FamilyMember> GetFamilyMembers(string memberCode)
         {
             FamilyMember familyMember;
             List<FamilyMember> familyMembers = new List<FamilyMember>();
@@ -405,14 +410,14 @@ namespace MicroFin.DAO
                 using (MySqlCommand cmd = new MySqlCommand("GetFamilyMembers", con))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@pMemberId", MySqlDbType.Int32);
-                    cmd.Parameters["@pMemberId"].Value = memberId;
+                    cmd.Parameters.Add("@pMemberCode", MySqlDbType.VarChar,11);
+                    cmd.Parameters["@pMemberCode"].Value = memberCode;
                     using (MySqlDataReader rdr = cmd.ExecuteReader())
                     {
                         while (rdr.Read())
                         {
                             familyMember = new FamilyMember();
-                            familyMember.MemberId = memberId;
+                            familyMember.MemberCode = memberCode;
                             familyMember.SNo = Convert.ToInt32(rdr["SNo"].ToString());
                             familyMember.FamilyMemberName = rdr["FamilyMemberName"].ToString();
                             familyMember.Relationship = rdr["Relationship"].ToString();
@@ -437,8 +442,8 @@ namespace MicroFin.DAO
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
-                    cmd.Parameters.Add("@pMemberId", MySqlDbType.Int32);
-                    cmd.Parameters["@pMemberId"].Value = familyMember.MemberId;
+                    cmd.Parameters.Add("@pMemberCode", MySqlDbType.VarChar,11);
+                    cmd.Parameters["@pMemberCode"].Value = familyMember.MemberCode;
 
                     cmd.Parameters.Add("@pSNo", MySqlDbType.Int32);
                     cmd.Parameters["@pSNo"].Direction = ParameterDirection.Output;
@@ -465,7 +470,7 @@ namespace MicroFin.DAO
                     statusCode = Convert.ToInt32(cmd.Parameters["@pStatusCode"].Value);
                     if (statusCode == 1)
                     {
-                        int sNo = Convert.ToInt32(cmd.Parameters["@pMemberId"].Value);
+                        int sNo = Convert.ToInt32(cmd.Parameters["@pSNo"].Value);
                         familyMember.SNo = sNo;
                     }
                 }
@@ -483,8 +488,8 @@ namespace MicroFin.DAO
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
-                    cmd.Parameters.Add("@pMemberId", MySqlDbType.Int32);
-                    cmd.Parameters["@pMemberId"].Value = familyMember.MemberId;
+                    cmd.Parameters.Add("@pMemberCode", MySqlDbType.VarChar,11);
+                    cmd.Parameters["@pMemberCode"].Value = familyMember.MemberCode;
 
                     cmd.Parameters.Add("@pSNo", MySqlDbType.Int32);
                     cmd.Parameters["@pSNo"].Value = familyMember.SNo;
@@ -511,7 +516,7 @@ namespace MicroFin.DAO
                     statusCode = Convert.ToInt32(cmd.Parameters["@pStatusCode"].Value);
                     if (statusCode == 1)
                     {
-                        int sNo = Convert.ToInt32(cmd.Parameters["@pMemberId"].Value);
+                        int sNo = Convert.ToInt32(cmd.Parameters["@pSNo"].Value);
                         familyMember.SNo = sNo;
                     }
                 }
@@ -519,7 +524,7 @@ namespace MicroFin.DAO
             return statusCode;
         }
 
-        public static FamilyMember GetFamilyMember(int memberId,int sNo)
+        public static FamilyMember GetFamilyMember(string memberCode,int sNo)
         {
             FamilyMember familyMember=null;
             using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
@@ -528,8 +533,8 @@ namespace MicroFin.DAO
                 using (MySqlCommand cmd = new MySqlCommand("GetFamilyMember", con))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@pMemberId", MySqlDbType.Int32);
-                    cmd.Parameters["@pMemberId"].Value = memberId;
+                    cmd.Parameters.Add("@pMemberCode", MySqlDbType.VarChar,11);
+                    cmd.Parameters["@pMemberCode"].Value = memberCode;
                     cmd.Parameters.Add("@pSNo", MySqlDbType.Int32);
                     cmd.Parameters["@pSNo"].Value = sNo;
                     using (MySqlDataReader rdr = cmd.ExecuteReader())
@@ -537,7 +542,7 @@ namespace MicroFin.DAO
                         while (rdr.Read())
                         {
                             familyMember = new FamilyMember();
-                            familyMember.MemberId = memberId;
+                            familyMember.MemberCode = memberCode;
                             familyMember.SNo = Convert.ToInt32(rdr["SNo"].ToString());
                             familyMember.FamilyMemberName = rdr["FamilyMemberName"].ToString();
                             familyMember.Relationship = rdr["Relationship"].ToString();
@@ -551,27 +556,27 @@ namespace MicroFin.DAO
             return familyMember;
         }
 
-        public static int GetGroupId(int memberId)
+        public static string GetGroupCode(string memberCode)
         {
-            int groupId;
+            string groupCode=null;
             using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
             {
                 con.Open();
-                using (MySqlCommand cmd = new MySqlCommand("GetGroupId", con))
+                using (MySqlCommand cmd = new MySqlCommand("GetGroupCode", con))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@pMemberId", MySqlDbType.Decimal, 5);
-                    cmd.Parameters["@pMemberId"].Value = memberId;
+                    cmd.Parameters.Add("@pMemberCode", MySqlDbType.VarChar, 11);
+                    cmd.Parameters["@pMemberCode"].Value = memberCode;
                     cmd.Parameters.Add("@ireturnvalue", MySqlDbType.VarChar, 50);
                     cmd.Parameters["@ireturnvalue"].Direction = ParameterDirection.ReturnValue;
                     using (MySqlDataReader rdr = cmd.ExecuteReader())
                     {
                         rdr.Read();
-                        groupId = Convert.ToInt32(rdr[0].ToString());
+                        groupCode = rdr[0].ToString();
                     }
                 }
             }
-            return groupId;
+            return groupCode;
         }
 
         public static List<MemberInfo> GetMemberByAadhar(string searchText)
@@ -591,9 +596,9 @@ namespace MicroFin.DAO
                         while (rdr.Read())
                         {
                             memberInfo = new MemberInfo();
-                            memberInfo.MemberId = Convert.ToInt32(rdr["MemberId"].ToString());
+                            memberInfo.MemberCode = rdr["MemberCode"].ToString();
                             memberInfo.MemberName = rdr["MemberName"].ToString();
-                            memberInfoList.Add(memberInfo);
+                            memberInfoList.Add(memberInfo); 
                         }
                     }
                 }
@@ -618,7 +623,7 @@ namespace MicroFin.DAO
                         while (rdr.Read())
                         {
                             memberInfo = new MemberInfo();
-                            memberInfo.MemberId = Convert.ToInt32(rdr["MemberId"].ToString());
+                            memberInfo.MemberCode = rdr["MemberCode"].ToString();
                             memberInfo.MemberName = rdr["MemberName"].ToString();
                             memberInfoList.Add(memberInfo);
                         }
@@ -645,7 +650,7 @@ namespace MicroFin.DAO
                         while (rdr.Read())
                         {
                             memberInfo = new MemberInfo();
-                            memberInfo.MemberId = Convert.ToInt32(rdr["MemberId"].ToString());
+                            memberInfo.MemberCode = rdr["MemberCode"].ToString();
                             memberInfo.MemberName = rdr["MemberName"].ToString();
                             memberInfoList.Add(memberInfo);
                         }
