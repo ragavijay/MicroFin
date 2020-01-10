@@ -20,7 +20,7 @@ namespace MicroFin.DAO
                 using (MySqlCommand cmd = new MySqlCommand("CheckMember", con))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@pMemberCode", MySqlDbType.VarChar, 11);
+                    cmd.Parameters.Add("@pMemberCode", MySqlDbType.VarChar, 8);
                     cmd.Parameters["@pMemberCode"].Value = memberCode;
                     cmd.Parameters.Add("@ireturnvalue", MySqlDbType.VarChar, 50);
                     cmd.Parameters["@ireturnvalue"].Direction = ParameterDirection.ReturnValue;
@@ -43,7 +43,7 @@ namespace MicroFin.DAO
                 using (MySqlCommand cmd = new MySqlCommand("CheckGroup", con))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@pGroupCode", MySqlDbType.VarChar,9);
+                    cmd.Parameters.Add("@pGroupCode", MySqlDbType.VarChar, 6);
                     cmd.Parameters["@pGroupCode"].Value = groupCode;
                     cmd.Parameters.Add("@ireturnvalue", MySqlDbType.VarChar, 50);
                     cmd.Parameters["@ireturnvalue"].Direction = ParameterDirection.ReturnValue;
@@ -66,10 +66,10 @@ namespace MicroFin.DAO
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
-                    cmd.Parameters.Add("@pLoanCode", MySqlDbType.VarChar, 13);
+                    cmd.Parameters.Add("@pLoanCode", MySqlDbType.VarChar, 10);
                     cmd.Parameters["@pLoanCode"].Direction = ParameterDirection.Output;
 
-                    cmd.Parameters.Add("@pMemberCode", MySqlDbType.VarChar,11);
+                    cmd.Parameters.Add("@pMemberCode", MySqlDbType.VarChar,8);
                     cmd.Parameters["@pMemberCode"].Value = loan.MemberCode;
 
                     cmd.Parameters.Add("@pBranchId", MySqlDbType.Int32);
@@ -133,7 +133,7 @@ namespace MicroFin.DAO
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
-                    cmd.Parameters.Add("@pGroupCode", MySqlDbType.VarChar,9);
+                    cmd.Parameters.Add("@pGroupCode", MySqlDbType.VarChar, 6);
                     cmd.Parameters["@pGroupCode"].Value = groupLoan.GroupCode;
 
                     cmd.Parameters.Add("@pBranchId", MySqlDbType.Int32);
@@ -193,7 +193,7 @@ namespace MicroFin.DAO
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add("@pBranchId", MySqlDbType.Int32);
                     cmd.Parameters["@pBranchId"].Value = branchId;
-                    cmd.Parameters.Add("@pGroupCode", MySqlDbType.VarChar,9);
+                    cmd.Parameters.Add("@pGroupCode", MySqlDbType.VarChar,6);
                     cmd.Parameters["@pGroupCode"].Value = groupCode;
                     using (MySqlDataReader rdr = cmd.ExecuteReader())
                     {
@@ -239,7 +239,7 @@ namespace MicroFin.DAO
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add("@pBranchId", MySqlDbType.Int32);
                     cmd.Parameters["@pBranchId"].Value = branchId;
-                    cmd.Parameters.Add("@pGroupCode", MySqlDbType.VarChar,9);
+                    cmd.Parameters.Add("@pGroupCode", MySqlDbType.VarChar, 6);
                     cmd.Parameters["@pGroupCode"].Value = groupCode;
                     using (MySqlDataReader rdr = cmd.ExecuteReader())
                     {
@@ -317,7 +317,7 @@ namespace MicroFin.DAO
                 using (MySqlCommand cmd = new MySqlCommand("GetLoan", con))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@pLoanCode", MySqlDbType.VarChar,13);
+                    cmd.Parameters.Add("@pLoanCode", MySqlDbType.VarChar, 10);
                     cmd.Parameters["@pLoanCode"].Value = loanCode;
                     using (MySqlDataReader rdr = cmd.ExecuteReader())
                     {
@@ -350,8 +350,6 @@ namespace MicroFin.DAO
             return loan;
         }
 
-
-
         public static int EditLoan(Loan loan)
         {
             int statusCode = 0;
@@ -362,10 +360,10 @@ namespace MicroFin.DAO
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
-                    cmd.Parameters.Add("@pLoanCode", MySqlDbType.VarChar,13);
+                    cmd.Parameters.Add("@pLoanCode", MySqlDbType.VarChar, 10);
                     cmd.Parameters["@pLoanCode"].Value = loan.LoanCode;
 
-                    cmd.Parameters.Add("@pMemberCode", MySqlDbType.VarChar,11);
+                    cmd.Parameters.Add("@pMemberCode", MySqlDbType.VarChar, 8);
                     cmd.Parameters["@pMemberCode"].Value = loan.MemberCode;
 
                     cmd.Parameters.Add("@pBranchId", MySqlDbType.Int32);
@@ -421,7 +419,7 @@ namespace MicroFin.DAO
                 using (MySqlCommand cmd = new MySqlCommand("ApproveLoan", con))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@pLoanCode", MySqlDbType.VarChar,13);
+                    cmd.Parameters.Add("@pLoanCode", MySqlDbType.VarChar, 10);
                     cmd.Parameters["@pLoanCode"].Value = loanCode;
                     cmd.ExecuteNonQuery();
                 }
@@ -436,7 +434,7 @@ namespace MicroFin.DAO
                 using (MySqlCommand cmd = new MySqlCommand("UpdateLoanStatus", con))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@pLoanCode", MySqlDbType.VarChar,13);
+                    cmd.Parameters.Add("@pLoanCode", MySqlDbType.VarChar, 10);
                     cmd.Parameters["@pLoanCode"].Value = loanCode;
                     cmd.Parameters.Add("@pLoanStatus", MySqlDbType.VarChar, 1);
                     cmd.Parameters["@pLoanStatus"].Value = loanStatus;

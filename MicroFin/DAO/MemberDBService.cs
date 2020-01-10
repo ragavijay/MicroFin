@@ -23,10 +23,10 @@ namespace MicroFin.DAO
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
-                    cmd.Parameters.Add("@pMemberCode", MySqlDbType.VarChar,11);
+                    cmd.Parameters.Add("@pMemberCode", MySqlDbType.VarChar, 8);
                     cmd.Parameters["@pMemberCode"].Direction = ParameterDirection.Output;
 
-                    cmd.Parameters.Add("@pGroupCode", MySqlDbType.VarChar,9);
+                    cmd.Parameters.Add("@pGroupCode", MySqlDbType.VarChar, 6);
                     cmd.Parameters["@pGroupCode"].Value = member.GroupCode;
 
                     cmd.Parameters.Add("@pMemberType", MySqlDbType.Int32);
@@ -150,7 +150,7 @@ namespace MicroFin.DAO
                 using (MySqlCommand cmd = new MySqlCommand("GetAllMembers", con))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@pGroupCode", MySqlDbType.VarChar,9);
+                    cmd.Parameters.Add("@pGroupCode", MySqlDbType.VarChar, 6);
                     cmd.Parameters["@pGroupCode"].Value = groupCode;
                     using (MySqlDataReader rdr = cmd.ExecuteReader())
                     {
@@ -217,7 +217,7 @@ namespace MicroFin.DAO
                 using (MySqlCommand cmd = new MySqlCommand("GetMember", con))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@pMemberCode", MySqlDbType.VarChar,11);
+                    cmd.Parameters.Add("@pMemberCode", MySqlDbType.VarChar, 8);
                     cmd.Parameters["@pMemberCode"].Value = memberCode;
                     using (MySqlDataReader rdr = cmd.ExecuteReader())
                     {
@@ -284,13 +284,13 @@ namespace MicroFin.DAO
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
-                    cmd.Parameters.Add("@pMemberCode", MySqlDbType.VarChar,11);
+                    cmd.Parameters.Add("@pMemberCode", MySqlDbType.VarChar, 8);
                     cmd.Parameters["@pMemberCode"].Value = member.MemberCode;
 
                     cmd.Parameters.Add("@pMemberId", MySqlDbType.Int32);
                     cmd.Parameters["@pMemberId"].Value = member.MemberId;
 
-                    cmd.Parameters.Add("@pGroupCode", MySqlDbType.VarChar,9);
+                    cmd.Parameters.Add("@pGroupCode", MySqlDbType.VarChar, 6);
                     cmd.Parameters["@pGroupCode"].Value = member.GroupCode;
 
                     cmd.Parameters.Add("@pMemberType", MySqlDbType.Int32);
@@ -410,7 +410,7 @@ namespace MicroFin.DAO
                 using (MySqlCommand cmd = new MySqlCommand("GetFamilyMembers", con))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@pMemberCode", MySqlDbType.VarChar,11);
+                    cmd.Parameters.Add("@pMemberCode", MySqlDbType.VarChar, 8);
                     cmd.Parameters["@pMemberCode"].Value = memberCode;
                     using (MySqlDataReader rdr = cmd.ExecuteReader())
                     {
@@ -442,7 +442,7 @@ namespace MicroFin.DAO
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
-                    cmd.Parameters.Add("@pMemberCode", MySqlDbType.VarChar,11);
+                    cmd.Parameters.Add("@pMemberCode", MySqlDbType.VarChar, 8);
                     cmd.Parameters["@pMemberCode"].Value = familyMember.MemberCode;
 
                     cmd.Parameters.Add("@pSNo", MySqlDbType.Int32);
@@ -488,7 +488,7 @@ namespace MicroFin.DAO
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
-                    cmd.Parameters.Add("@pMemberCode", MySqlDbType.VarChar,11);
+                    cmd.Parameters.Add("@pMemberCode", MySqlDbType.VarChar, 8);
                     cmd.Parameters["@pMemberCode"].Value = familyMember.MemberCode;
 
                     cmd.Parameters.Add("@pSNo", MySqlDbType.Int32);
@@ -565,7 +565,7 @@ namespace MicroFin.DAO
                 using (MySqlCommand cmd = new MySqlCommand("GetGroupCode", con))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@pMemberCode", MySqlDbType.VarChar, 11);
+                    cmd.Parameters.Add("@pMemberCode", MySqlDbType.VarChar, 8);
                     cmd.Parameters["@pMemberCode"].Value = memberCode;
                     cmd.Parameters.Add("@ireturnvalue", MySqlDbType.VarChar, 50);
                     cmd.Parameters["@ireturnvalue"].Direction = ParameterDirection.ReturnValue;

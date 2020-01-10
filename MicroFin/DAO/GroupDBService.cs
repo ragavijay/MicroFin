@@ -23,7 +23,7 @@ namespace MicroFin.DAO
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
-                    cmd.Parameters.Add("@pGroupCode", MySqlDbType.VarChar,9);
+                    cmd.Parameters.Add("@pGroupCode", MySqlDbType.VarChar, 6);
                     cmd.Parameters["@pGroupCode"].Direction = ParameterDirection.Output;
 
                     cmd.Parameters.Add("@pGroupName", MySqlDbType.VarChar, 40);
@@ -40,7 +40,7 @@ namespace MicroFin.DAO
                     if (statusCode == 1)
                     {
                         string groupCode = cmd.Parameters["@pGroupCode"].Value.ToString();
-                        int groupId = Convert.ToInt32(groupCode.Substring(5));
+                        int groupId = Convert.ToInt32(groupCode.Substring(4));
                         group.GroupCode = groupCode;
                         group.GroupId = groupId;
 
@@ -87,7 +87,7 @@ namespace MicroFin.DAO
                 using (MySqlCommand cmd = new MySqlCommand("GetMemberGroup", con))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@pGroupCode", MySqlDbType.VarChar,9);
+                    cmd.Parameters.Add("@pGroupCode", MySqlDbType.VarChar, 6);
                     cmd.Parameters["@pGroupCode"].Value = groupCode;
                     using (MySqlDataReader rdr = cmd.ExecuteReader())
                     {
@@ -116,13 +116,13 @@ namespace MicroFin.DAO
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
-                    cmd.Parameters.Add("@pGroupCode", MySqlDbType.VarChar,9);
+                    cmd.Parameters.Add("@pGroupCode", MySqlDbType.VarChar, 6);
                     cmd.Parameters["@pGroupCode"].Value = group.GroupCode;
 
                     cmd.Parameters.Add("@pGroupName", MySqlDbType.VarChar, 40);
                     cmd.Parameters["@pGroupName"].Value = group.GroupName;
 
-                    cmd.Parameters.Add("@pCenterCode", MySqlDbType.VarChar,6);
+                    cmd.Parameters.Add("@pCenterCode", MySqlDbType.VarChar, 4);
                     cmd.Parameters["@pCenterCode"].Value = group.CenterCode;
 
                     //cmd.Parameters.Add("@pBranchId", MySqlDbType.VarChar, 6);

@@ -22,7 +22,7 @@ namespace MicroFin.DAO
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
-                    cmd.Parameters.Add("@pCenterCode", MySqlDbType.Int32);
+                    cmd.Parameters.Add("@pCenterCode", MySqlDbType.VarChar, 4);
                     cmd.Parameters["@pCenterCode"].Direction = ParameterDirection.Output;
 
                     cmd.Parameters.Add("@pCenterName", MySqlDbType.VarChar, 40);
@@ -82,7 +82,7 @@ namespace MicroFin.DAO
                 using (MySqlCommand cmd = new MySqlCommand("GetGroupCenter", con))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@pCenterCode", MySqlDbType.VarChar);
+                    cmd.Parameters.Add("@pCenterCode", MySqlDbType.VarChar,4);
                     cmd.Parameters["@pCenterCode"].Value = centerCode;
                     using (MySqlDataReader rdr = cmd.ExecuteReader())
                     {
@@ -110,7 +110,7 @@ namespace MicroFin.DAO
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
-                    cmd.Parameters.Add("@pCenterCode", MySqlDbType.VarChar);
+                    cmd.Parameters.Add("@pCenterCode", MySqlDbType.VarChar, 4);
                     cmd.Parameters["@pCenterCode"].Value = center.CenterCode;
 
                     cmd.Parameters.Add("@pCenterName", MySqlDbType.VarChar, 40);

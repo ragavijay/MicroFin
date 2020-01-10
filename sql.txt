@@ -37,7 +37,7 @@ CREATE TABLE BranchUser (
 
 --Version 2.0 (Modified: CenterCode added as pKey)
 CREATE TABLE GroupCenter (
-    CenterCode CHAR(6),
+    CenterCode CHAR(4),
 	CenterId INT,
     CenterName VARCHAR(40) UNIQUE,
     BranchId INT,
@@ -47,19 +47,19 @@ CREATE TABLE GroupCenter (
 
 --Version 2.0 (Modified: GroupCode added as pKey)
 CREATE TABLE MemberGroup (
-    GroupCode CHAR(9), 
+    GroupCode CHAR(6), 
 	GroupId INT,
     GroupName VARCHAR(40) UNIQUE,
-    CenterCode CHAR(6),
+    CenterCode CHAR(4),
     CONSTRAINT pKey_MG_GroupCode PRIMARY KEY (GroupCode),
     CONSTRAINT fKey_MG_CenterId FOREIGN KEY (CenterCode) REFERENCES GroupCenter(CenterCode)
 );
 
 --Version 2.0 (Modified: MemberCode added as pKey)
 CREATE TABLE Member (
-    MemberCode CHAR(11), 
+    MemberCode CHAR(8), 
 	MemberId INT,
-    GroupCode CHAR(9),
+    GroupCode CHAR(6),
     MemberType INT,
     MemberName VARCHAR(50),
 	Gender INT,
@@ -99,7 +99,7 @@ CREATE TABLE Member (
 
 --Version 2.0
 CREATE TABLE FamilyMember (
-	MemberCode CHAR(11),
+	MemberCode CHAR(8),
 	SNo INT,
 	FamilyMemberName VARCHAR(50),
 	Relationship VARCHAR(30),
@@ -112,8 +112,8 @@ CREATE TABLE FamilyMember (
 
 --Version 2.0 (LoanCode added)
 CREATE TABLE Loan (
-    LoanCode CHAR(13),
-    MemberCode CHAR(11),
+    LoanCode CHAR(10),
+    MemberCode CHAR(8),
 	LoanCycle INT,
     BranchId INT,
 	LoanPurpose VARCHAR(40),
@@ -142,7 +142,7 @@ CREATE TABLE Loan (
 
 CREATE TABLE CashReceipt (
     ReceiptId INT AUTO_INCREMENT,
-    LoanCode CHAR(13),
+    LoanCode CHAR(10),
     ReceiptType CHAR(1),
     ReceiptAmount INT,
     ReceiptDate DATE,
@@ -194,7 +194,7 @@ SELECT GetBranchName(1);
 --Version 2.0 (Modified: CenterCode instead of CenterId)
 DELIMITER //
 DROP PROCEDURE IF EXISTS `AddGroupCenter`//
-CREATE PROCEDURE AddGroupCenter(OUT pCenterCode CHAR(6), pCenterName VARCHAR(40), pBranchId INT, OUT pStatusCode INT)
+CREATE PROCEDURE AddGroupCenter(OUT pCenterCode CHAR(4), pCenterName VARCHAR(40), pBranchId INT, OUT pStatusCode INT)
 BEGIN
 	DECLARE vCheck INT;
 	DECLARE vCenterId INT;
@@ -208,7 +208,7 @@ BEGIN
 	ELSE
 		SET vCenterId := vCenterId + 1;
 	END IF;
-	SET pCenterCode := CONCAT(LPAD(pBranchId,3,'0'),LPAD(vCenterId,3,'0'));
+	SET pCenterCode := CONCAT(LPAD(pBranchId,2,'0'),LPAD(vCenterId,2,'0'));
 	INSERT INTO GroupCenter(CenterCode, CenterId, CenterName, BranchId) VALUES(pCenterCode, vCenterId, pCenterName, pBranchId);
 	IF vCheck=0 THEN
 		SELECT COUNT(*) INTO vCheck FROM GroupCenter WHERE CenterName=pCenterName;
@@ -226,7 +226,7 @@ DELIMITER //
 DROP PROCEDURE IF EXISTS `GetAllGroupCenters`//
 CREATE PROCEDURE GetAllGroupCenters(pBranchId INT)
 BEGIN
-	SELECT CenterCode, CenterId, CenterName FROM GroupCenter WHERE BranchId = pBranchId ORDER BY CenterName;
+	SELECT CenterCode, CenterId, CenterName FROM GroupCenter WHERE BranchId = pBranchId ORDER BY CenterCode;
 END//
 --Test
 CALL GetAllCenters(1);
@@ -235,18 +235,18 @@ CALL GetAllCenters(1);
 --Version 2.0 (Modified: CenterCode instead of CenterId)
 DELIMITER //
 DROP PROCEDURE IF EXISTS `GetGroupCenter`//
-CREATE PROCEDURE GetGroupCenter(pCenterCode CHAR(6))
+CREATE PROCEDURE GetGroupCenter(pCenterCode CHAR(4))
 BEGIN
 	SELECT CenterCode, CenterId, CenterName FROM GroupCenter WHERE CenterCode = pCenterCode;
 END//
 --Test
-CALL GetGroupCenter('001001');
+CALL GetGroupCenter('0101');
 
 --EditGroupCenter
 --Version 2.0 (Modified: CenterCode instead of CenterId)
 DELIMITER //
 DROP PROCEDURE IF EXISTS `EditGroupCenter`//
-CREATE PROCEDURE EditGroupCenter(pCenterCode CHAR(6), pCenterName VARCHAR(40), OUT pStatusCode INT)
+CREATE PROCEDURE EditGroupCenter(pCenterCode CHAR(4), pCenterName VARCHAR(40), OUT pStatusCode INT)
 BEGIN
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION SET pStatusCode=0;
 	UPDATE GroupCenter SET CenterName=pCenterName WHERE CenterCode = pCenterCode;
@@ -269,7 +269,7 @@ CALL GetAllGroupCentersByPattern('nag');
 --Version 2.0 (Modified: CenterCode instead of CenterId, GroupCode instead of GroupId)
 DELIMITER //
 DROP PROCEDURE IF EXISTS `AddMemberGroup`//
-CREATE PROCEDURE AddMemberGroup(OUT pGroupCode CHAR(9), pGroupName VARCHAR(40), pCenterCode CHAR(6), OUT pStatusCode INT)
+CREATE PROCEDURE AddMemberGroup(OUT pGroupCode CHAR(6), pGroupName VARCHAR(40), pCenterCode CHAR(4), OUT pStatusCode INT)
 BEGIN
 	DECLARE vCheck INT;
 	DECLARE vGroupId INT;
@@ -283,7 +283,7 @@ BEGIN
 	ELSE
 		SET vGroupId := vGroupId + 1;
 	END IF;
-	SET pGroupCode := CONCAT(pCenterCode, LPAD(vGroupId,3,'0'));
+	SET pGroupCode := CONCAT(pCenterCode, LPAD(vGroupId,2,'0'));
 	INSERT INTO MemberGroup(GroupCode, GroupId, GroupName, CenterCode) VALUES(pGroupCode, vGroupId, pGroupName, pCenterCode);
 	IF vCheck=0 THEN
 		SELECT COUNT(*) INTO vCheck FROM MemberGroup WHERE GroupName=pGroupName;
@@ -299,12 +299,12 @@ END;//
 --Version 2.0 (Modified: CenterCode instead of CenterId, GroupCode instead of GroupId)
 DELIMITER //
 DROP PROCEDURE IF EXISTS `GetMemberGroup`//
-CREATE PROCEDURE GetMemberGroup(pGroupCode CHAR(9))
+CREATE PROCEDURE GetMemberGroup(pGroupCode CHAR(6))
 BEGIN
 	SELECT MG.GroupId, MG.GroupCode, MG.GroupName, MG.CenterCode, GC.CenterName FROM  MemberGroup MG INNER JOIN GroupCenter GC ON MG.CenterCode = GC.CenterCode  WHERE MG.GroupCode = pGroupCode;
 END//
 --Test
-CALL GetMemberGroup(1);
+CALL GetMemberGroup('010101');
 
 --GetAllMemberGroups
 --Version 2.0 (Modified: CenterCode instead of CenterId, GroupCode instead of GroupId)
@@ -321,7 +321,7 @@ CALL GetAllMemberGroups(1);
 --Version 2.0 (Modified: CenterCode instead of CenterId, GroupCode instead of GroupId)
 DELIMITER //
 DROP PROCEDURE IF EXISTS `EditMemberGroup`//
-CREATE PROCEDURE EditMemberGroup(pGroupCode CHAR(9), pGroupName VARCHAR(40), pCenterCode CHAR(6), OUT pStatusCode INT)
+CREATE PROCEDURE EditMemberGroup(pGroupCode CHAR(6), pGroupName VARCHAR(40), pCenterCode CHAR(4), OUT pStatusCode INT)
 BEGIN
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION SET pStatusCode=0;
 	UPDATE MemberGroup SET GroupName=pGroupName WHERE GroupCode = pGroupCode;
@@ -346,8 +346,8 @@ CALL GetAllMemberGroupsByPattern('mah');
 --Version 2.0 (Modified: GroupCode instead of GroupId, MemberCode instead of MemberId)
 DELIMITER //
 DROP PROCEDURE IF EXISTS `AddMember`//
-CREATE PROCEDURE AddMember(OUT pMemberCode CHAR(11), 
-							pGroupCode CHAR(9), 
+CREATE PROCEDURE AddMember(OUT pMemberCode CHAR(8), 
+							pGroupCode CHAR(6), 
 							pMemberType INT, 
 							pMemberName VARCHAR(50),
 							pGender INT,
@@ -423,16 +423,16 @@ AddMember: BEGIN
 END//
 
 
-IFNULL((SELECT LoanId FROM Loan L WHERE L.MemberID = M.MemberId),0) AS CurrentLoanId,
+
 --GetAllMembers
 --Version 2.0 (Modified: GroupCode instead of GroupId, MemberCode instead of MemberId)
 DELIMITER //
 DROP PROCEDURE IF EXISTS `GetAllMembers`//
-CREATE PROCEDURE GetAllMembers(pGroupCode CHAR(9))
+CREATE PROCEDURE GetAllMembers(pGroupCode CHAR(6))
 BEGIN
 	SELECT M.MemberCode, M.MemberId, M.GroupCode, MG.GroupName, GC.CenterName, GC.CenterCode, GC.BranchId,  
 		IFNULL((SELECT MemberName FROM Member InnerM WHERE InnerM.GroupCode=MG.GroupCode AND InnerM.MemberType=1),'NA') AS LeaderName,
-		
+		IFNULL((SELECT LoanCode FROM Loan L WHERE L.MemberCode = M.MemberCode),0) AS CurrentLoanCode,
 		M.MemberName, M.MemberType, M.Gender, M.DOB, M.MaritalStatus, M.Religion, M.FName, M.HName, M.Occupation, M.OccupationType, 
 		M.AddressLine1, M.AddressLine2, M.AddressLine3, M.AddressLine4, M.Taluk, M.Panchayat, M.City, M.Pincode, 
 		M.NoOfYears, M.HouseType, M.PropertyOwnership, M.Phone, 
@@ -444,16 +444,16 @@ END//
 --Test
 CALL GetAllMembers(1)
 
-IFNULL((SELECT LoanId FROM Loan L WHERE L.MemberID = M.MemberId),0) AS CurrentLoanId,
+
 --GetMember
 --Version 2.0 (Modified: GroupCode instead of GroupId, MemberCode instead of MemberId)
 DELIMITER //
 DROP PROCEDURE IF EXISTS `GetMember`//
-CREATE PROCEDURE GetMember(pMemberCode CHAR(11))
+CREATE PROCEDURE GetMember(pMemberCode CHAR(8))
 BEGIN
 	SELECT M.MemberCode, M.MemberId, M.GroupCode, MG.GroupName, GC.CenterName, GC.CenterCode, GC.BranchId,  
 		IFNULL((SELECT MemberName FROM Member InnerM WHERE InnerM.GroupCode=MG.GroupCode AND InnerM.MemberType=1),'NA') AS LeaderName,
-		
+		IFNULL((SELECT LoanCode FROM Loan L WHERE L.MemberCode = M.MemberCode),0) AS CurrentLoanCode,
 		M.MemberName, M.MemberType, M.Gender, M.DOB, M.MaritalStatus, M.Religion, M.FName, M.HName, M.Occupation, M.OccupationType, 
 		M.AddressLine1, M.AddressLine2, M.AddressLine3, M.AddressLine4, M.Taluk, M.Panchayat, M.City, M.Pincode, 
 		M.NoOfYears, M.HouseType, M.PropertyOwnership, M.Phone, 
@@ -470,8 +470,8 @@ CALL GetMember(1)
 --Version 2.0 (Modified: GroupCode instead of GroupId, MemberCode instead of MemberId)
 DELIMITER //
 DROP PROCEDURE IF EXISTS `EditMember`//
-CREATE PROCEDURE EditMember(pMemberCode CHAR(11), 
-							pGroupCode CHAR(9), 
+CREATE PROCEDURE EditMember(pMemberCode CHAR(8), 
+							pGroupCode CHAR(6), 
 							pMemberType INT, 
 							pMemberName VARCHAR(50),
 							pGender INT,
@@ -542,7 +542,7 @@ END;//
 --Version 2.0 (Modified:MemberCode instead of MemberId)
 DELIMITER //
 DROP PROCEDURE IF EXISTS `GetFamilyMembers`//
-CREATE PROCEDURE GetFamilyMembers(pMemberCode CHAR(11))
+CREATE PROCEDURE GetFamilyMembers(pMemberCode CHAR(8))
 BEGIN
 	SELECT SNo, FamilyMemberName, Relationship, OccupationType, MonthlyIncome, Qualification 
 		FROM FamilyMember WHERE MemberCode = pMemberCode ORDER BY SNo;
@@ -554,7 +554,7 @@ CALL GetFamilyMembers(1)
 --Version 2.0 (Modified:MemberCode instead of MemberId)
 DELIMITER //
 DROP PROCEDURE IF EXISTS `GetFamilyMember`//
-CREATE PROCEDURE GetFamilyMember(pMemberCode CHAR(11), pSNo INT)
+CREATE PROCEDURE GetFamilyMember(pMemberCode CHAR(8), pSNo INT)
 BEGIN
 	SELECT SNo, FamilyMemberName, Relationship, OccupationType, MonthlyIncome, Qualification 
 		FROM FamilyMember WHERE MemberCode = pMemberCode AND SNo=pSNo;
@@ -566,7 +566,7 @@ CALL GetFamilyMember(1,1)
 --Version 2.0 (Modified:MemberCode instead of MemberId)
 DELIMITER //
 DROP PROCEDURE IF EXISTS `AddFamilyMember`//
-CREATE PROCEDURE AddFamilyMember(pMemberCode CHAR(11), 
+CREATE PROCEDURE AddFamilyMember(pMemberCode CHAR(8), 
 							OUT pSNo INT, 
 							pFamilyMemberName VARCHAR(50),
 							pRelationship VARCHAR(30),
@@ -592,7 +592,7 @@ END//
 --Version 2.0 (Modified:MemberCode instead of MemberId)
 DELIMITER //
 DROP PROCEDURE IF EXISTS `EditFamilyMember`//
-CREATE PROCEDURE EditFamilyMember(pMemberCode CHAR(11), 
+CREATE PROCEDURE EditFamilyMember(pMemberCode CHAR(8), 
 							pSNo INT, 
 							pFamilyMemberName VARCHAR(50),
 							pRelationship VARCHAR(30),
@@ -640,7 +640,7 @@ END//
 --Version 2.0 (Modified: MemberCode instead of MemerId)
 DELIMITER //
 DROP FUNCTION IF EXISTS `CheckMember`//
-CREATE FUNCTION CheckMember(pMemberCode CHAR(11)) RETURNS CHAR(50)
+CREATE FUNCTION CheckMember(pMemberCode CHAR(8)) RETURNS CHAR(50)
 READS SQL DATA
 BEGIN
 	DECLARE vCheck INT;
@@ -664,7 +664,7 @@ SELECT CheckMember(1);
 --Version 2.0 (Modified: GroupCode instead of GroupId)
 DELIMITER //
 DROP FUNCTION IF EXISTS `CheckGroup`//
-CREATE FUNCTION CheckGroup(pGroupCode CHAR(9)) RETURNS CHAR(50)
+CREATE FUNCTION CheckGroup(pGroupCode CHAR(6)) RETURNS CHAR(50)
 READS SQL DATA
 BEGIN
 	DECLARE vCheck INT;
@@ -690,27 +690,27 @@ SELECT CheckGroup(1);
 --Version 2.0 (Modified: GroupCode instead of GroupId)
 DELIMITER //
 DROP FUNCTION IF EXISTS `GetGroupCode`//
-CREATE FUNCTION GetGroupCode(pMemberCode CHAR(11)) RETURNS CHAR(9)
+CREATE FUNCTION GetGroupCode(pMemberCode CHAR(8)) RETURNS CHAR(6)
 READS SQL DATA
 BEGIN
-	DECLARE vGroupCode CHAR(9);
+	DECLARE vGroupCode CHAR(6);
 	SELECT GroupCode INTO vGroupCode FROM Member WHERE MemberCode = pMemberCode;
 	RETURN vGroupCode;
 END//
 --Test
-SELECT GetGroupCode(15);
+SELECT GetGroupCode('01010101');
 
 --AddLoan
 --Version 2.0 (Modified: GroupCode instead of GroupId)
 DELIMITER //
 DROP PROCEDURE IF EXISTS `AddLoan`//
-CREATE PROCEDURE AddLoan(OUT pLoanCode CHAR(13), pMemberCode CHAR(11), pBranchId INT, pLoanPurpose VARCHAR(40), 
+CREATE PROCEDURE AddLoan(OUT pLoanCode CHAR(10), pMemberCode CHAR(8), pBranchId INT, pLoanPurpose VARCHAR(40), 
 						pLoanAmount INT, pLoanDate DATE, pLoanDisposalDate DATE, pProcessingFeeRate INT, pProcessingFee INT, 
 						pInsuranceRate INT, pInsurance INT, pTenure INT, pInterestRate INT, pEWI INT, OUT pStatus INT)
 AddLoan:BEGIN
 	DECLARE vCheck VARCHAR(50);
 	DECLARE vLoanCycle INT;
-	DECLARE vLoanCode CHAR(13);
+	DECLARE vLoanCode CHAR(10);
 	DECLARE vNewLoanCode INT;
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION SET pStatus=-1;
 	SET vCheck:=CheckMember(pMemberCode);
@@ -721,13 +721,13 @@ AddLoan:BEGIN
 	ELSE
 		SET pStatus:=1;
 	END IF;
-	SELECT MAX(LoanCode) INTO vLoanCode FROM LOAN WHERE LoanCode LIKE CONCAT(SUBSTR(pMemberCode,1,9),'A*');
+	SELECT MAX(LoanCode) INTO vLoanCode FROM LOAN WHERE LoanCode LIKE CONCAT(SUBSTR(pMemberCode,1,6),'A*');
 	IF vLoanCode IS NULL THEN
 		SET vNewLoanCode := 1;
 	ELSE
-		SET vNewLoanCode = CAST(SUBSTR(vLoanCode,11,3) AS UNSIGNED) + 1;	
+		SET vNewLoanCode = CAST(SUBSTR(vLoanCode,8,3) AS UNSIGNED) + 1;	
 	END IF;
-	SET pLoanCode := CONCAT(CONCAT(SUBSTR(pMemberCode,1,9),'A'),LPAD(vNewLoanCode,3,'0'));
+	SET pLoanCode := CONCAT(CONCAT(SUBSTR(pMemberCode,1,6),'A'),LPAD(vNewLoanCode,3,'0'));
 	SELECT COUNT(*) INTO vLoanCycle FROM Loan WHERE MemberCode=pMemberCode;
 	SET vLoanCycle := vLoanCycle + 1;
 	
@@ -742,14 +742,14 @@ END;//
 --Version 2.0 (Modified: GroupCode instead of GroupId)
 DELIMITER //
 DROP PROCEDURE IF EXISTS `AddGroupLoan`//
-CREATE PROCEDURE AddGroupLoan(pGroupCode VARCHAR(9), pBranchId INT, pLoanPurpose VARCHAR(40), pLoanAmount INT, pLoanDate DATE, 
+CREATE PROCEDURE AddGroupLoan(pGroupCode VARCHAR(6), pBranchId INT, pLoanPurpose VARCHAR(40), pLoanAmount INT, pLoanDate DATE, 
 							pLoanDisposalDate DATE, pProcessingFeeRate INT, pProcessingFee INT, pInsuranceRate INT, pInsurance INT, 
 							pTenure INT, pInterestRate INT, pEWI INT, OUT pStatus INT)
 AddGroupLoan:BEGIN
 	DECLARE vCheck VARCHAR(50);
-	DECLARE vLoanCode CHAR(13);
+	DECLARE vLoanCode CHAR(10);
 	DECLARE vNewLoanCode INT;
-	DECLARE vMemberCode CHAR(11);
+	DECLARE vMemberCode CHAR(8);
 	DECLARE vCompleted INT;
 	DECLARE vLoanCycle INT;
 	DECLARE cMember CURSOR FOR SELECT MemberCode FROM Member WHERE GroupCode = pGroupCode;
@@ -767,7 +767,7 @@ AddGroupLoan:BEGIN
 	IF vLoanCode IS NULL THEN
 		SET vNewLoanCode := 0;
 	ELSE
-		SET vNewLoanCode = CAST(SUBSTR(vLoanCode,11,3) AS UNSIGNED);	
+		SET vNewLoanCode = CAST(SUBSTR(vLoanCode,8,3) AS UNSIGNED);	
 	END IF;
 	
 	SET vCompleted:=1;
@@ -794,7 +794,7 @@ END;//
 --Version 2.0 (Modified: GroupCode instead of GroupId)
 DELIMITER // 
 DROP PROCEDURE IF EXISTS `GetAllLoans`//
-CREATE PROCEDURE GetAllLoans(pBranchId INT, pGroupCode CHAR(9))
+CREATE PROCEDURE GetAllLoans(pBranchId INT, pGroupCode CHAR(6))
 BEGIN
 	SELECT L.LoanCode, L.MemberCode, M.MemberName, L.BranchId, L.LoanPurpose, L.LoanAmount, L.ProcessingFeeRate, L.ProcessingFee, 
 		   L.InsuranceRate, L.Insurance, L.Tenure, L.InterestRate, L.EWI, L.LoanStatus, L.StatusRemarks, L.LoanCycle
@@ -838,7 +838,7 @@ CALL GetGlobalMemberLoans(1)
 --Version 2.0 (Modified: GroupCode instead of GroupId)
 DELIMITER //
 DROP PROCEDURE IF EXISTS `GetLoan`//
-CREATE PROCEDURE GetLoan(pLoanCode CHAR(13))
+CREATE PROCEDURE GetLoan(pLoanCode CHAR(10))
 BEGIN
 	SELECT L.LoanCode, L.MemberCode, M.MemberName, L.BranchId, L.LoanPurpose, L.LoanAmount, L.ProcessingFeeRate, L.ProcessingFee, 
 		   L.InsuranceRate, L.Insurance, L.Tenure, L.InterestRate, L.EWI, L.LoanStatus, L.StatusRemarks, L.LoanDate, L.LoanDisposalDate,
@@ -852,7 +852,7 @@ CALL GetLoan(1)
 --Version 2.0 (Modified: GroupCode instead of GroupId)
 DELIMITER //
 DROP PROCEDURE IF EXISTS `EditLoan`//
-CREATE PROCEDURE EditLoan(pLoanCode CHAR(13), pMemberCode CHAR(11), pBranchId INT, pLoanPurpose VARCHAR(40), pLoanAmount INT,pLoanDate DATE, 
+CREATE PROCEDURE EditLoan(pLoanCode CHAR(10), pMemberCode CHAR(8), pBranchId INT, pLoanPurpose VARCHAR(40), pLoanAmount INT,pLoanDate DATE, 
 						pLoanDisposalDate DATE, pProcessingFeeRate INT, pProcessingFee INT, pInsuranceRate INT, pInsurance INT, 
 						pTenure INT, pInterestRate INT, pEWI INT, OUT pStatusCode INT)
 BEGIN
@@ -884,7 +884,7 @@ CALL GetAllPendingLoans(1)
 --Version 2.0 (Modified: LoanCode instead of LoanId)
 DELIMITER //
 DROP PROCEDURE IF EXISTS `ApproveLoan`//
-CREATE PROCEDURE ApproveLoan(pLoanCode CHAR(13))
+CREATE PROCEDURE ApproveLoan(pLoanCode CHAR(10))
 BEGIN
 	UPDATE Loan SET LoanStatus='A' WHERE LoanCode=pLoanCode;
 END//
@@ -894,7 +894,7 @@ END//
 --Version 2.0 (Modified: LoanCode instead of LoanId)
 DELIMITER //
 DROP PROCEDURE IF EXISTS `UpdateLoanStatus`//
-CREATE PROCEDURE UpdateLoanStatus(pLoanCode CHAR(13), pLoanStatus CHAR(1), pStatusRemarks VARCHAR(50))
+CREATE PROCEDURE UpdateLoanStatus(pLoanCode CHAR(10), pLoanStatus CHAR(1), pStatusRemarks VARCHAR(50))
 BEGIN
 	UPDATE Loan SET LoanStatus=pLoanStatus, StatusRemarks=pStatusRemarks WHERE LoanCode=pLoanCode;
 END//
@@ -903,7 +903,7 @@ END//
 --Version 2.0 (Modified: LoanCode instead of LoanId)
 DELIMITER //
 DROP PROCEDURE IF EXISTS `GetLoanStatus`//
-CREATE PROCEDURE GetLoanStatus(pLoanCode CHAR(13), OUT pLoanStatus VARCHAR(1), OUT pMemberCode CHAR(11), OUT pMemberName VARCHAR(50)
+CREATE PROCEDURE GetLoanStatus(pLoanCode CHAR(10), OUT pLoanStatus VARCHAR(1), OUT pMemberCode CHAR(8), OUT pMemberName VARCHAR(50)
 							, OUT pProcessingFee INT, OUT pInsurance INT, OUT pEwi INT, OUT pNoOfInstalments INT
 							, OUT pFromDate DATE, OUT pToDate DATE)
 GetLoanStatus:BEGIN
@@ -948,7 +948,7 @@ END//
 --Version 2.0 (Modified: LoanCode instead of LoanId)
 DELIMITER //
 DROP PROCEDURE IF EXISTS `GeneratePFReceipt`//
-CREATE PROCEDURE GeneratePFReceipt(pLoanCode CHAR(13), pActualReceiptDate DATE, pUserId VARCHAR(20), OUT pReceiptId INT)
+CREATE PROCEDURE GeneratePFReceipt(pLoanCode CHAR(10), pActualReceiptDate DATE, pUserId VARCHAR(20), OUT pReceiptId INT)
 BEGIN
 	DECLARE vAmount INT;
 	SELECT ProcessingFee + Insurance INTO vAmount FROM Loan WHERE LoanCode = pLoanCode;
@@ -964,7 +964,7 @@ END//
 --Version 2.0 (Modified: LoanCode instead of LoanId)
 DELIMITER //
 DROP PROCEDURE IF EXISTS `GenerateInstalmentReceipt`//
-CREATE PROCEDURE GenerateInstalmentReceipt(pLoanCode VARCHAR(13), pNoOfInstalments INT, pActualReceiptDate DATE, pUserId VARCHAR(20), OUT pReceiptId INT)
+CREATE PROCEDURE GenerateInstalmentReceipt(pLoanCode VARCHAR(10), pNoOfInstalments INT, pActualReceiptDate DATE, pUserId VARCHAR(20), OUT pReceiptId INT)
 BEGIN
 	DECLARE vAmount INT;
 	DECLARE vDescription VARCHAR(50);
@@ -1352,7 +1352,7 @@ END;//
 --Version 2.0 (GroupId to GroupCode)
 DELIMITER //
 DROP PROCEDURE IF EXISTS `GetGroupPFStatus`//
-CREATE PROCEDURE GetGroupPFStatus(pGroupCode CHAR(9), OUT pProcessingFee INT, OUT pInsurance INT, OUT pStatusCode INT)
+CREATE PROCEDURE GetGroupPFStatus(pGroupCode CHAR(6), OUT pProcessingFee INT, OUT pInsurance INT, OUT pStatusCode INT)
 BEGIN
 	DECLARE vMemberCount INT;
 	DECLARE vApprovedCount INT;
@@ -1394,7 +1394,7 @@ END;//
 --Version 2.0
 DELIMITER //
 DROP PROCEDURE IF EXISTS `GetGroupMembersLoan`//
-CREATE PROCEDURE GetGroupMembersLoan(pGroupCode CHAR(9))
+CREATE PROCEDURE GetGroupMembersLoan(pGroupCode CHAR(6))
 BEGIN
 	SELECT 
 		M.MemberCode, M.MemberName, L.LoanCode, L.LoanAmount, L.ProcessingFee, L.Insurance
@@ -1415,7 +1415,7 @@ CALL GetGroupMembersLoan(5);
 --Version 2.0
 DELIMITER //
 DROP PROCEDURE IF EXISTS `GetLoanInfo`//
-CREATE PROCEDURE GetLoanInfo(pLoanCode CHAR(13), OUT pEwi INT, OUT pNoOfInstalments INT)
+CREATE PROCEDURE GetLoanInfo(pLoanCode CHAR(10), OUT pEwi INT, OUT pNoOfInstalments INT)
 BEGIN
 	DECLARE vTenure INT;
 	DECLARE vLoanDisposalDate DATE;
@@ -1441,7 +1441,7 @@ END//
 -- Version 2.0
 DELIMITER //
 DROP PROCEDURE IF EXISTS `GetGroupMembersOngoingLoan`//
-CREATE PROCEDURE GetGroupMembersOngoingLoan(pGroupCode CHAR(9))
+CREATE PROCEDURE GetGroupMembersOngoingLoan(pGroupCode CHAR(6))
 BEGIN
 	SELECT 
 		M.MemberCode, M.MemberName, L.LoanCode, L.LoanAmount, L.ProcessingFee, L.Insurance
@@ -1461,7 +1461,7 @@ CALL GetGroupMembersOngoingLoan(5);
 -- Version 2.0
 DELIMITER //
 DROP PROCEDURE IF EXISTS `GetGroupInstalmentStatus`//
-CREATE PROCEDURE GetGroupInstalmentStatus(pGroupCode CHAR(9), OUT pNoOfInstalments INT, OUT pEWI INT, OUT pStatusCode INT)
+CREATE PROCEDURE GetGroupInstalmentStatus(pGroupCode CHAR(6), OUT pNoOfInstalments INT, OUT pEWI INT, OUT pStatusCode INT)
 GetGroupInstalmentStatus:BEGIN
 	DECLARE vCompleted INT;
 	DECLARE vEwi INT;
@@ -1522,15 +1522,6 @@ BEGIN
 			INNER JOIN Member M ON L.MemberId=M.MemberId 
 			WHERE ReceiptDate BETWEEN pFromDate AND pToDate ORDER BY R.ReceiptId;
 END//
-
-
---Patch 15-Oct-2019
-UPDATE member set Relationship=NULL WHERE MemberId > 0
-ALTER TABLE member MODIFY COLUMN Relationship INT
-UPDATE member set Relationship=1 WHERE MemberId > 0
---Procedure AddMember updated
---Procedure EditMember updated
-
 
 
 DELIMITER //
