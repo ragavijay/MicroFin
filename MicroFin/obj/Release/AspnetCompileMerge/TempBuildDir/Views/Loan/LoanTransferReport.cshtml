@@ -5,7 +5,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Loans</h2>
+<h2>Loan Transfer Report </h2>
+@Html.ActionLink("Downolad","ExportTransferReport",new { id=ViewBag.GroupId})
 <div id="print">
     <table class="table">
         <tr>

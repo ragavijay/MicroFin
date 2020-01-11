@@ -10,13 +10,13 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.GroupId)
+            @Html.DisplayNameFor(model => model.GroupCode)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.GroupName)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.CenterId)
+            @Html.DisplayNameFor(model => model.CenterCode)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.CenterName)
@@ -30,31 +30,31 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.GroupId)
+            @Html.DisplayFor(modelItem => item.GroupCode)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.GroupName)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.CenterId)
+            @Html.DisplayFor(modelItem => item.CenterCode)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.CenterName)
         </td>
         <td>
-            @Html.ActionLink("Members", "ViewMembers", "Member", new { id = item.GroupId },null)
+            @Html.ActionLink("Members", "ViewMembers", "Member", new { id = item.GroupCode },null)
         </td>
         <td>
-            @Html.ActionLink("Loans", "ViewLoans", "Loan", new { id = item.GroupId }, null)
+            @Html.ActionLink("Loans", "ViewLoans", "Loan", new { id = item.GroupCode }, null)
         </td>
         <td>
-            @Html.ActionLink("TrasferReport", "LoanTransferReport", "Loan", new { id = item.GroupId }, null)
+            @Html.ActionLink("TrasferReport", "LoanTransferReport", "Loan", new { id = item.GroupCode }, null)
         </td>
         <td>
-            @Html.ActionLink("LoanStatus", "LoanRepaymentStatus", "Loan", new { id = item.GroupId }, null)
+            @Html.ActionLink("LoanStatus", "LoanRepaymentStatus", "Loan", new { id = item.GroupCode }, null)
         </td>
         <td>
-            @Html.ActionLink("Edit", "MemberGroupForm", new { id=item.GroupId })
+            @Html.ActionLink("Edit", "MemberGroupForm", new { id=item.GroupCode })
         </td>
     </tr>
 }

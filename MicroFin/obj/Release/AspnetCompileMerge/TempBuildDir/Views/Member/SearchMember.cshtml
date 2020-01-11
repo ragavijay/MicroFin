@@ -77,8 +77,8 @@
                } else {
                     var resultString = "";
                     for (var i = 0; i < response.length; i++) {
-                        resultString += response[i].MemberName + "<space> <a href='/Member/ViewMember/" + response[i].MemberId + "'>View</a> <space/>"
-                                        + "<a href='/Member/MemberForm/" + response[i].MemberId + "'>Edit</a><br/>";
+                        resultString += response[i].MemberName + "<space> <a href='/Member/ViewMember/" + response[i].MemberCode + "'>View</a> <space/>"
+                                        + "<a href='/Member/MemberForm/" + response[i].MemberCode + "'>Edit</a><br/>";
                     }
                     result.innerHTML = resultString;
                 }

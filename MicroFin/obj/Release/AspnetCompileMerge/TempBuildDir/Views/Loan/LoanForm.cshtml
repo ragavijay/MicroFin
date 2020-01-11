@@ -40,7 +40,7 @@
                         <div class="name">Loan Id</div>
                         <div class="value">
                             <div class="input-group">
-                                @Html.TextBoxFor(m => m.LoanId, new { @id="LoanId", @class = "input--style-5", @placeholder = "auto-generated", @readonly = "true", @autocomplete="off" })
+                                @Html.TextBoxFor(m => m.LoanCode, new { @id="LoanId", @class = "input--style-5", @placeholder = "auto-generated", @readonly = "true", @autocomplete="off" })
                             </div>
                         </div>
                     </div>
@@ -54,13 +54,13 @@
                                     <div class="input-group-desc">
                                         @if(@Model==null)
                                         {
-                                            @Html.TextBoxFor(m => m.MemberId, new { id = "MemberId", @class = "input--style-5", @autocomplete = "off", @placeholder = "enter member id", @required = "true", @tabindex = "1" })
+                                            @Html.TextBoxFor(m => m.MemberCode, new { id = "MemberCode", @class = "input--style-5", @autocomplete = "off", @placeholder = "enter member id", @required = "true", @tabindex = "1" })
                                         }
                                         else
                                         {
-                                            @Html.TextBoxFor(m => m.MemberId, new { id = "MemberId", @class = "input--style-5", @autocomplete = "off", @onkeydown = "event.preventDefault()", @tabindex = "1" })
+                                            @Html.TextBoxFor(m => m.MemberCode, new { id = "MemberCode", @class = "input--style-5", @autocomplete = "off", @onkeydown = "event.preventDefault()", @tabindex = "1" })
                                         }
-                                        <p id="errMemberId" style='color:red;'> </p>
+                                        <p id="errMemberCode" style='color:red;'> </p>
                                     </div>
                                 </div>
                                 <div class="col-2">
@@ -128,7 +128,24 @@
                             </div>
                         </div>
 
-
+                        <!--Loan Date -->
+                        <div class="form-row">
+                            <div class="name">Loan Disposal Date</div>
+                            <div class="value">
+                                <div class="input-group">
+                                    @Html.TextBoxFor(m => m.LoanDisposalDate, new
+                               {
+                                   @class = "input--style-5 js-datepicker",
+                                   @required = "true",
+                                   @Value = (Model == null || Model.LoanDisposalDate == null) ? "" : Model.LoanDisposalDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture),
+                                   @autocomplete = "off",
+                                   @tabindex = "5",
+                                   @pattern = @"^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[13-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$"
+                               })
+                                    <p id="errLoanDisposalDate" style='color:red;'> </p>
+                                </div>
+                            </div>
+                        </div>
 
                         <!--ProcessingFeeRate and ProcessingFee -->
                         <div class="form-row m-b-55">
@@ -247,8 +264,8 @@
     </div>
 </div>
 <script>
-    document.getElementById("MemberId").addEventListener("keydown", function (e) {
-        if (document.getElementById("LoanId").value == "") {
+    document.getElementById("MemberCode").addEventListener("keydown", function (e) {
+        if (document.getElementById("LoanCode").value == "") {
             document.getElementById("loanInfo").style.display = 'none';
         }
     });
@@ -271,22 +288,22 @@
     });
    
     function checkMember() {
-	    if (document.getElementById('MemberId').value == '') {
-	        document.getElementById("errMemberId").innerHTML = "Enter Member Id";
+	    if (document.getElementById('MemberCode').value == '') {
+	        document.getElementById("errMemberCode").innerHTML = "Enter Member Id";
 	        document.getElementById("loanInfo").style.display = 'none';
 		    return;
 	    }
 	
 	    var xhttp = new XMLHttpRequest();
-	    document.getElementById("errMemberId").innerHTML=""
+	    document.getElementById("errMemberCode").innerHTML=""
 	    xhttp.onreadystatechange = function() {
 	        if (this.readyState == 4 && this.status == 200) {
 	            var memberName = this.responseText;
 	            if (memberName == 'Not found') {
-	                document.getElementById("errMemberId").innerHTML = "Not found";
+	                document.getElementById("errMemberCode").innerHTML = "Not found";
 	                document.getElementById("loanInfo").style.display = 'none';
 	            } else if (memberName == 'Loan exists') {
-	                document.getElementById("errMemberId").innerHTML = 'Loan exists';
+	                document.getElementById("errMemberCode").innerHTML = 'Loan exists';
 	                document.getElementById("loanInfo").style.display = 'none';
 	            } else {
 	                document.getElementById("MemberName").value = this.responseText;
@@ -296,7 +313,7 @@
 		    }
 	    };
 	    xhttp.open("GET", "../api/CheckMember/"
-			    + document.getElementById('MemberId').value, true);
+			    + document.getElementById('MemberCode').value, true);
 	    xhttp.send();
     }
 

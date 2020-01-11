@@ -28,7 +28,7 @@
                                 </div>
                                 <div class="col-2">
                                     <div class="input-group-desc">
-                                        @Html.TextBoxFor(m => m.GroupId, new { id = "GroupId", @class = "input--style-5", @onkeydown = "event.preventDefault()", @required = "true", @autocomplete = "off" })
+                                        @Html.TextBoxFor(m => m.GroupCode, new { id = "GroupCode", @class = "input--style-5", @onkeydown = "event.preventDefault()", @required = "true", @autocomplete = "off" })
                                         <label class="label--desc">Group Id</label>
                                     </div>
                                 </div>
@@ -101,6 +101,27 @@
                             </div>
                         </div>
 
+                        <!--Loan Disposal Date -->
+                        <div class="form-row">
+                            <div class="name">Loan Disposal Date</div>
+                            <div class="value">
+                                <div class="input-group">
+                                    @Html.TextBoxFor(m => m.LoanDisposalDate, new
+                               {
+                                   @class = "input--style-5 js-datepicker",
+                                   @required = "true",
+                                   @Value = (Model == null || Model.LoanDisposalDate == null) ? "" : Model.LoanDisposalDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture),
+                                   @autocomplete = "off",
+                                   @tabindex = "5",
+                                   @pattern = @"^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[13-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$"
+                               })
+                                    <p id="errLoanDisposalDate" style='color:red;'> </p>
+                                </div>
+                            </div>
+                        </div>
+
+
+
                         <!--ProcessingFeeRate and ProcessingFee -->
                         <div class="form-row m-b-55">
                             <div class="name">Processing Fee</div>
@@ -166,7 +187,7 @@
                                     </div>
                                     <div class="col-2">
                                         <div class="input-group-desc">
-                                            <button class="btn btn--blue" type="button" onclick="" style="display:none">Calculate</button>
+                                            <button class="btn btn--blue" type="button" onclick="calculateInterestRate();">Calculate</button>
                                         </div>
                                     </div>
                                 </div>
@@ -208,9 +229,9 @@
     </div>
 </div>
 <script>
-    createAutoComplete3('http://' + window.location.host + '/api/GetGroupList', 'GroupId', 'CenterName', 'LeaderName', 'GroupName');
+    createAutoComplete3('http://' + window.location.host + '/api/GetGroupList', 'GroupCode', 'CenterName', 'LeaderName', 'GroupName');
     document.getElementById("GroupName").addEventListener("keydown", function (e) {
-        if (document.getElementById("GroupId").value == "") {
+        if (document.getElementById("GroupCode").value == "") {
             document.getElementById("loanInfo").style.display = 'none';
         }
     });
@@ -233,7 +254,7 @@
     });
 
     function checkGroup() {
-	    if (document.getElementById('GroupId').value == '') {
+	    if (document.getElementById('GroupCode').value == '') {
 	        document.getElementById("errGroupName").innerHTML = "Select a valid group";
 	        document.getElementById("loanInfo").style.display = 'none';
 		    return;
@@ -257,7 +278,7 @@
 		    }
 	    };
 	    xhttp.open("GET", "../api/CheckGroup/"
-			    + document.getElementById('GroupId').value, true);
+			    + document.getElementById('GroupCode').value, true);
 	    xhttp.send();
     }
 
@@ -303,6 +324,29 @@
 				    * Number(document.getElementById("LoanAmount").value) / 100;
         } catch (e) { }
         
+    }
+
+    function calculateInterestRate() {
+        try {
+            var loanAmount = Number(document.getElementById("LoanAmount").value);
+            var tenure = Number(document.getElementById("Tenure").value);
+            var ewi = prompt("Enter Target Due amount", "");
+            ewi = Number(ewi);
+            var interestRate = 40.0;
+            var currentEwi = 0.0;
+            var currentInterestRate = 0.0;
+            var factor = 0.0;
+            do {
+                interestRate = interestRate + 0.01;
+                currentInterestRate = interestRate / 5200;
+                factor = Math.pow(1 + currentInterestRate, tenure);
+                currentEwi = loanAmount * currentInterestRate * factor / (factor - 1);
+            } while (currentEwi < ewi);
+
+            var repaymentAmount = ewi * tenure;
+            document.getElementById("InterestRate").value = Math.round(interestRate * 100) / 100.0;
+            updateEwi();
+        } catch (e) { }
     }
     
     function validateOnSubmit() {

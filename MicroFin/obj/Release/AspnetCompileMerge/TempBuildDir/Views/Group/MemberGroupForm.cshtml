@@ -13,12 +13,13 @@
                 @using (Html.BeginForm("MemberGroup", "Group", FormMethod.Post))
                 {
                     @Html.AntiForgeryToken()
-                    <!--Group Id -->
+                    <!--Group Code -->
                     <div class="form-row">
-                        <div class="name">Group Id</div>
+                        <div class="name">Group Code</div>
                         <div class="value">
                             <div class="input-group">
-                                @Html.TextBoxFor(m => m.GroupId, new { @class = "input--style-5", @placeholder = "auto-generated", @readonly = "true", @autocomplete = "off"})
+                                @Html.TextBoxFor(m => m.GroupCode, new { @class = "input--style-5", @placeholder = "auto-generated", @readonly = "true", @autocomplete = "off"})
+                                @Html.HiddenFor(m => m.GroupId)
                             </div>
                         </div>
                     </div>
@@ -32,7 +33,7 @@
                             </div>
                         </div>
                     </div>
-                    <!--CenterName and CenterId -->
+                    <!--CenterName and CenterCode -->
                     <div class="form-row m-b-55">
                         <div class="name">Center</div>
                         <div class="value">
@@ -45,8 +46,8 @@
                                 </div>
                                 <div class="col-2">
                                     <div class="input-group-desc">
-                                        @Html.TextBoxFor(m => m.CenterId, new { id = "CenterId", @class = "input--style-5", @onkeydown = "event.preventDefault()", @autocomplete = "off", @required = "true" })
-                                        <label class="label--desc">Center Id</label>
+                                        @Html.TextBoxFor(m => m.CenterCode, new { id = "CenterCode", @class = "input--style-5", @onkeydown = "event.preventDefault()", @autocomplete = "off", @required = "true" })
+                                        <label class="label--desc">Center Code</label>
                                     </div>
                                 </div>
                             </div>
@@ -62,5 +63,5 @@
     </div>
 </div>
 <script>
-    createAutoComplete('http://' + window.location.host + '/api/GetCenterList', 'CenterId', 'CenterName');
+    createAutoComplete('http://' + window.location.host + '/api/GetCenterList', 'CenterCode', 'CenterName');
 </script>

@@ -19,9 +19,9 @@
                     @Html.AntiForgeryToken()
 
                     <table class="tg">
-                        <tr> <td> <b>Center Name</b> </td> <td> @Model.member.CenterName </td> <td> <b>Loan Id</b> </td><td> @Model.loan.LoanId </td> </tr>
+                        <tr> <td> <b>Center Name</b> </td> <td> @Model.member.CenterName </td> <td> <b>Loan Id</b> </td><td> @Model.loan.LoanCode </td> </tr>
                         <tr> <td> <b>Group Name</b> </td> <td> @Model.member.GroupName </td> <td> <b>Leader Name</b> </td> <td> @Model.member.LeaderName </td> </tr>
-                        <tr> <td> <b>Member Id </b> </td> <td> @Model.member.MemberId </td> <td> <b>Member Name </b> </td> <td> @Model.member.MemberName </td>  </tr>
+                        <tr> <td> <b>Member Code </b> </td> <td> @Model.member.MemberCode </td> <td> <b>Member Name </b> </td> <td> @Model.member.MemberName </td>  </tr>
                         <tr> <td> <b>Member Name </b> </td> <td> @Model.member.MemberName </td> <td> <b>Member Type</b> </td> <td> @Model.member.MemberType </td>  </tr>
                         <tr> <td> <b>Loan Amount (Rs.)</b> </td> <td> @Model.loan.LoanAmount </td> <td> <b>Purpose</b> </td> <td> @Model.loan.LoanPurpose</td></tr>
                         <tr> <td> <b>Processing Fee (%)</b> </td> <td> @Model.loan.ProcessingFeeRate </td> <td> <b>Processing Fee (Rs.)</b> </td> <td> @Model.loan.ProcessingFee</td></tr>
@@ -31,8 +31,8 @@
                     </table>
                     <br/>
                     <!-- Loan Id -->
-                    <input type="hidden" name="LoanId" value="@Model.loan.LoanId"/>
-                    <input type="hidden" name="MemberId" value="@Model.loan.MemberId" />
+                    <input type="hidden" name="LoanCode" value="@Model.loan.LoanCode"/>
+                    <input type="hidden" name="MemberCode" value="@Model.loan.MemberCode" />
 
                     <!-- Loan Status -->
                     <div class="form-row">

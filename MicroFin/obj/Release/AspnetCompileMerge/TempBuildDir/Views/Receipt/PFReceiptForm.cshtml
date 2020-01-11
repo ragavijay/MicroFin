@@ -14,14 +14,14 @@
                 @using (Html.BeginForm("PFReceipt", "Receipt", FormMethod.Post))
                 {
                     @Html.AntiForgeryToken()
-                    <!--LoanId -->
+                    <!--LoanCode -->
                     <div class="form-row m-b-55">
-                        <div class="name">Loan Id</div>
+                        <div class="name">Loan Code</div>
                         <div class="value">
                             <div class="row row-space">
                                 <div class="col-2">
                                     <div class="input-group-desc">
-                                        @Html.TextBoxFor(m => m.LoanId, new { id = "LoanId", @class = "input--style-5", @placeholder = "enter loan id", @required = "true", @tabindex="1"})
+                                        @Html.TextBoxFor(m => m.LoanCode, new { id = "LoanCode", @class = "input--style-5", @placeholder = "enter loan code", @required = "true", @tabindex="1"})
                                         <p id="errLoanId" style='color:red;'> </p>
                                     </div>
                                 </div>
@@ -41,8 +41,8 @@
                                 <div class="row row-space">
                                     <div class="col-2">
                                         <div class="input-group-desc">
-                                            @Html.TextBoxFor(m => m.MemberId, new { id = "MemberId", @class = "input--style-5", @onkeydown = "event.preventDefault()", @required = "true" })
-                                            <label class="label--desc">Id</label>
+                                            @Html.TextBoxFor(m => m.MemberCode, new { id = "MemberCode", @class = "input--style-5", @onkeydown = "event.preventDefault()", @required = "true" })
+                                            <label class="label--desc">Code</label>
                                         </div>
                                     </div>
                                     <div class="col-2">
@@ -117,7 +117,7 @@
 </div>
 <script>
     function getLoanStatus() {
-        var loanId = document.getElementById('LoanId').value;
+        var loanId = document.getElementById('LoanCode').value;
         if (loanId == '')
             return;
         var xhttp = new XMLHttpRequest();
@@ -125,7 +125,7 @@
             if (this.readyState == 4 && this.status == 200) {
                 var pfReceipt = JSON.parse(this.responseText);
                 if (pfReceipt.LoanStatus == 'A') {
-                    document.getElementById("MemberId").value = pfReceipt.MemberId;
+                    document.getElementById("MemberCode").value = pfReceipt.MemberCode;
                     document.getElementById("MemberName").value = pfReceipt.MemberName;
                     document.getElementById("ProcessingFee").value = pfReceipt.ProcessingFee;
                     document.getElementById("Insurance").value = pfReceipt.Insurance;

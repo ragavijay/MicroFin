@@ -14,7 +14,7 @@
                 @using (Html.BeginForm("GroupPFReceipt", "Receipt", FormMethod.Post))
                 {
                     @Html.AntiForgeryToken()
-                    <!--GroupName and GroupId -->
+                    <!--GroupName and GroupCode -->
                     <div class="form-row m-b-55">
                         <div class="name">Group</div>
                         <div class="value">
@@ -27,8 +27,8 @@
                                 </div>
                                 <div class="col-2">
                                     <div class="input-group-desc">
-                                        @Html.TextBoxFor(m => m.GroupId, new { id = "GroupId", @class = "input--style-5", @onkeydown = "event.preventDefault()", @required = "true", @autocomplete = "off" })
-                                        <label class="label--desc">Group Id</label>
+                                        @Html.TextBoxFor(m => m.GroupCode, new { id = "GroupCode", @class = "input--style-5", @onkeydown = "event.preventDefault()", @required = "true", @autocomplete = "off" })
+                                        <label class="label--desc">Group Code</label>
                                     </div>
                                 </div>
                             </div>
@@ -116,15 +116,15 @@
     </div>
 </div>
 <script>
-    createAutoComplete3('http://' + window.location.host + '/api/GetGroupList', 'GroupId', 'CenterName', 'LeaderName', 'GroupName');
+    createAutoComplete3('http://' + window.location.host + '/api/GetGroupList', 'GroupCode', 'CenterName', 'LeaderName', 'GroupName');
     document.getElementById("GroupName").addEventListener("keydown", function (e) {
-        if (document.getElementById("GroupId").value == "") {
+        if (document.getElementById("GroupCode").value == "") {
             document.getElementById("pfReceiptFormData").style.display = 'none';
         }
     });
 
     function checkGroup() {
-        if (document.getElementById('GroupId').value == '') {
+        if (document.getElementById('GroupCode').value == '') {
             document.getElementById("errGroupName").innerHTML = "Select a valid group";
             document.getElementById("pfReceiptFormData").style.display = 'none';
             return;
@@ -148,7 +148,7 @@
             }
         };
         xhttp.open("GET", "../api/GetGroupPFReceipt/"
-			    + document.getElementById('GroupId').value, true);
+			    + document.getElementById('GroupCode').value, true);
         xhttp.send();
     }
 

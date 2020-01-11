@@ -6,11 +6,11 @@
 }
 
 <h2>Members</h2>
-
+@Html.ActionLink("Downolad", "ExportMembers", new { id = ViewBag.GroupCode })
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.MemberId)
+            @Html.DisplayNameFor(model => model.MemberCode)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.MemberName)
@@ -34,7 +34,7 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.MemberId)
+            @Html.DisplayFor(modelItem => item.MemberCode)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.MemberName)
@@ -49,13 +49,13 @@
             @Html.DisplayFor(modelItem => item.LeaderName)
         </td>
         <td>
-            @Html.ActionLink("Edit", "ViewFamilyMembers", new { id = item.MemberId })
+            @Html.ActionLink("Edit", "ViewFamilyMembers", new { id = item.MemberCode })
         </td>
         <td>
-            @Html.ActionLink("View", "ViewMember", new { id = item.MemberId })
+            @Html.ActionLink("View", "ViewMember", new { id = item.MemberCode })
         </td>
         <td>
-            @Html.ActionLink("Edit", "MemberForm", new { id=item.MemberId })
+            @Html.ActionLink("Edit", "MemberForm", new { id=item.MemberCode })
         </td>
     </tr>
 }

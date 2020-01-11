@@ -8,7 +8,7 @@
 <h2>Family members of @ViewBag.MemberName </h2>
 
 <p>
-    @Html.ActionLink("Add Family Member", "FamilyMemberForm" , new { id = @ViewBag.MemberId })
+    @Html.ActionLink("Add Family Member", "FamilyMemberForm" , new { id = @ViewBag.MemberCode })
 </p>
 <table class="table">
     <tr>
@@ -48,7 +48,7 @@
             @Html.DisplayFor(modelItem => item.Qualification)
         </td>
         <td>
-            @Html.ActionLink("Edit", "FamilyMemberForm", new { id=item.MemberId + " " + item.SNo }) |
+            @Html.ActionLink("Edit", "FamilyMemberForm", new { id=item.MemberCode + " " + item.SNo })
         </td>
     </tr>
 }

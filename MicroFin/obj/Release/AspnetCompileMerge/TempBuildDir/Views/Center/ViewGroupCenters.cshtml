@@ -10,7 +10,7 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.CenterId)
+            @Html.DisplayNameFor(model => model.CenterCode)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.CenterName)
@@ -21,13 +21,13 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.CenterId)
+            @Html.DisplayFor(modelItem => item.CenterCode)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.CenterName)
         </td>
         <td>
-            @Html.ActionLink("Edit", "GroupCenterForm", new { id=item.CenterId })
+            @Html.ActionLink("Edit", "GroupCenterForm", new { id=item.CenterCode })
         </td>
     </tr>
 }
