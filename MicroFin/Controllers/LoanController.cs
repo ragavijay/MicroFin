@@ -165,7 +165,7 @@ namespace MicroFin.Controllers
         public ActionResult LoanRepaymentStatus(string id)
         {
             string groupCode = id;
-            LoanRepaymentStatus loanRepaymentStatus = LoanDBService.GetLoanRepaymentStatus(1);
+            LoanRepaymentStatus loanRepaymentStatus = LoanDBService.GetLoanRepaymentStatus(groupCode);
             return View(loanRepaymentStatus);
         }
 

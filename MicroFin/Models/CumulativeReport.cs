@@ -7,7 +7,7 @@ namespace MicroFin.Models
 {
     public class CumulativeReport
     {
-        public int GroupId { get; set; }
+        public string GroupCode { get; set; }
         public string GroupName { get; set; }
         public string LeaderName{ get; set; }
         public string EwiDay { get; set; }

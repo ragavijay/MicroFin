@@ -445,7 +445,7 @@ namespace MicroFin.DAO
             }
         }
 
-        public static LoanRepaymentStatus GetLoanRepaymentStatus(int groupId)
+        public static LoanRepaymentStatus GetLoanRepaymentStatus(string groupCode)
         {
             LoanRepaymentStatus loanStatus = null;
             using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
@@ -454,14 +454,14 @@ namespace MicroFin.DAO
                 using (MySqlCommand cmd = new MySqlCommand("GetRepaymentStatusGroupInfo", con))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@pGroupId", MySqlDbType.Int32);
-                    cmd.Parameters["@pGroupId"].Value = groupId;
+                    cmd.Parameters.Add("@pGroupCode", MySqlDbType.VarChar,6);
+                    cmd.Parameters["@pGroupCode"].Value = groupCode;
                     using (MySqlDataReader rdr = cmd.ExecuteReader())
                     {
                         if (rdr.Read())
                         {
                             loanStatus = new LoanRepaymentStatus();
-                            loanStatus.GroupId = groupId;
+                            loanStatus.GroupCode = groupCode;
                             loanStatus.GroupName = rdr["GroupName"].ToString();
                             loanStatus.LeaderName = rdr["LeaderName"].ToString();
                             loanStatus.LoanAmount = Convert.ToInt32(rdr["LoanAmount"].ToString());
@@ -484,8 +484,8 @@ namespace MicroFin.DAO
                 using (MySqlCommand cmd = new MySqlCommand("GetRepaymentStatusMemberCount", con))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@pGroupId", MySqlDbType.Int32);
-                    cmd.Parameters["@pGroupId"].Value = groupId;
+                    cmd.Parameters.Add("@pGroupCode", MySqlDbType.VarChar,6);
+                    cmd.Parameters["@pGroupCode"].Value = groupCode;
                     using (MySqlDataReader rdr = cmd.ExecuteReader())
                     {
                         if (rdr.Read())
@@ -495,9 +495,9 @@ namespace MicroFin.DAO
                     }
                 }
             }
-            loanStatus.MemberId = new int[loanStatus.MemberCount];
+            loanStatus.MemberCode = new string[loanStatus.MemberCount];
             loanStatus.MemberName = new string[loanStatus.MemberCount];
-            loanStatus.LoanId = new int[loanStatus.MemberCount];
+            loanStatus.LoanCode = new string[loanStatus.MemberCount];
             loanStatus.ActualDate = new DateTime[loanStatus.Tenure];
             loanStatus.Amount = new int[loanStatus.Tenure, loanStatus.MemberCount];
             loanStatus.ColTotal = new int[loanStatus.Tenure];
@@ -510,16 +510,16 @@ namespace MicroFin.DAO
                 using (MySqlCommand cmd = new MySqlCommand("GetRepaymentStatusMemberInfo", con))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@pGroupId", MySqlDbType.Int32);
-                    cmd.Parameters["@pGroupId"].Value = groupId;
+                    cmd.Parameters.Add("@pGroupCode", MySqlDbType.Int32);
+                    cmd.Parameters["@pGroupCode"].Value = groupCode;
                     using (MySqlDataReader rdr = cmd.ExecuteReader())
                     {
                         int i = 0;
                         while (rdr.Read())
                         {
-                            loanStatus.MemberId[i] = Convert.ToInt32(rdr["MemberId"].ToString());
+                            loanStatus.MemberCode[i] = rdr["MemberCode"].ToString();
                             loanStatus.MemberName[i] = rdr["MemberName"].ToString();
-                            loanStatus.LoanId[i] = Convert.ToInt32(rdr["LoanId"].ToString());
+                            loanStatus.LoanCode[i] = rdr["LoanCode"].ToString();
                             i++;
                         }
                     }
@@ -534,8 +534,8 @@ namespace MicroFin.DAO
                     using (MySqlCommand cmd = new MySqlCommand("GetPaymentDates", con))
                     {
                         cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@pLoanId", MySqlDbType.Int32);
-                        cmd.Parameters["@pLoanId"].Value = loanStatus.LoanId[i];
+                        cmd.Parameters.Add("@pLoanCode", MySqlDbType.VarChar,10);
+                        cmd.Parameters["@pLoanCode"].Value = loanStatus.LoanCode[i];
 
                         using (MySqlDataReader rdr = cmd.ExecuteReader())
                         {
@@ -586,7 +586,7 @@ namespace MicroFin.DAO
                         while (rdr.Read())
                         {
                             cumulativeReport = new CumulativeReport();
-                            cumulativeReport.GroupId = Convert.ToInt32(rdr["GroupId"].ToString());
+                            cumulativeReport.GroupCode = rdr["GroupCode"].ToString();
                             cumulativeReport.GroupName = rdr["GroupName"].ToString();
                             cumulativeReport.LeaderName = rdr["LeaderName"].ToString();
                             cumulativeReport.EwiDay = rdr["EwiDay"].ToString();
@@ -624,7 +624,7 @@ namespace MicroFin.DAO
                         {
                             memberLoan = new MemberLoan();
                             loan = new Loan();
-                            loan.LoanId = Convert.ToInt32(rdr["LoanId"].ToString());
+                            loan.LoanCode = rdr["LoanCode"].ToString();
                             loan.LoanDate = Convert.ToDateTime(rdr["LoanDate"].ToString());
                             loan.LoanStatus = rdr["LoanStatus"].ToString();
                             loan.LoanPurpose = rdr["LoanPurpose"].ToString();
@@ -643,7 +643,7 @@ namespace MicroFin.DAO
                             loan.Tenure = Convert.ToInt32(rdr["Tenure"].ToString());
                             loan.Ewi = Convert.ToInt32(rdr["EWI"].ToString());
                             member = new Member();
-                            member.MemberId = loan.MemberId;
+                            member.MemberCode = loan.MemberCode;
                             member.MemberName = loan.MemberName;
                             member.AccountNumber = rdr["AccountNumber"].ToString();
                             member.IFSC = rdr["IFSC"].ToString();

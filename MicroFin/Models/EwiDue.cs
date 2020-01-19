@@ -7,9 +7,9 @@ namespace MicroFin.Models
 {
     public class EWIDue
     {
-        public int LoanId { get; set; }
+        public string LoanCode { get; set; }
         public int BranchId { get; set; }
-        public int MemberId { get; set; }
+        public string MemberCode { get; set; }
         public string MemberName{ get; set; }
         public string Phone { get; set; }
         public int NoOfInstalments{ get; set; }

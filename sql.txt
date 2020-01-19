@@ -453,7 +453,7 @@ CREATE PROCEDURE GetMember(pMemberCode CHAR(8))
 BEGIN
 	SELECT M.MemberCode, M.MemberId, M.GroupCode, MG.GroupName, GC.CenterName, GC.CenterCode, GC.BranchId,  
 		IFNULL((SELECT MemberName FROM Member InnerM WHERE InnerM.GroupCode=MG.GroupCode AND InnerM.MemberType=1),'NA') AS LeaderName,
-		IFNULL((SELECT LoanCode FROM Loan L WHERE L.MemberCode = M.MemberCode),0) AS CurrentLoanCode,
+		IFNULL((SELECT LoanCode FROM Loan L WHERE L.MemberCode = M.MemberCode),'0') AS CurrentLoanCode,
 		M.MemberName, M.MemberType, M.Gender, M.DOB, M.MaritalStatus, M.Religion, M.FName, M.HName, M.Occupation, M.OccupationType, 
 		M.AddressLine1, M.AddressLine2, M.AddressLine3, M.AddressLine4, M.Taluk, M.Panchayat, M.City, M.Pincode, 
 		M.NoOfYears, M.HouseType, M.PropertyOwnership, M.Phone, 
@@ -1015,19 +1015,20 @@ END//
 
 
 --GetEWIDue
+--Version 2.0
 DELIMITER //
 DROP PROCEDURE IF EXISTS `GetEWIDue`//
 CREATE PROCEDURE GetEWIDue(pBranchId INT) 
 BEGIN
-	DECLARE vLoanId INT;
+	DECLARE vLoanCode CHAR(10);
 	DECLARE vBranchId INT;
-	DECLARE vMemberId INT;
+	DECLARE vMemberCode CHAR(8);
 	DECLARE vMemberName VARCHAR(50);
 	DECLARE vPhone VARCHAR(10);
 	DECLARE vLoanAmount INT;
 	DECLARE vTenure INT;
 	DECLARE vEwi INT;
-	DECLARE vLoanDate DATE;
+	DECLARE vLoanDisposalDate DATE;
 	DECLARE vWeeksCompleted INT;
 	DECLARE vWeeksPaid INT;
 	DECLARE vAmountPaid INT;
@@ -1036,36 +1037,36 @@ BEGIN
 	DECLARE vToDate DATE;
 	DECLARE vDueDate VARCHAR(25);
 	DECLARE vCompleted INT;
-	DECLARE EWIDueCursor CURSOR FOR SELECT L.LoanId, L.BranchId, L.MemberId, M.MemberName, M.Phone, L.LoanAmount, L.Tenure, L.EWI, L.LoanDate FROM Loan L INNER JOIN Member M ON L.MemberId = M.MemberId WHERE L.LoanStatus='O' AND BranchId = pBranchId;
+	DECLARE EWIDueCursor CURSOR FOR SELECT L.LoanCode, L.BranchId, L.MemberCode, M.MemberName, M.Phone, L.LoanAmount, L.Tenure, L.EWI, L.LoanDisposalDate FROM Loan L INNER JOIN Member M ON L.MemberCode = M.MemberCode WHERE L.LoanStatus='O' AND BranchId = pBranchId;
 	DECLARE CONTINUE HANDLER FOR NOT FOUND SET vCompleted=0;
-	CREATE TEMPORARY TABLE EwiDueRows(LoanId INT, BranchId INT, MemberId INT, MemberName VARCHAR(50), Phone VARCHAR(10), NoOfInstalments INT, EWI INT, DueDate VARCHAR(25));
+	CREATE TEMPORARY TABLE EwiDueRows(LoanCode CHAR(10), BranchId INT, MemberCode CHAR(8), MemberName VARCHAR(50), Phone VARCHAR(10), NoOfInstalments INT, EWI INT, DueDate VARCHAR(25));
 	OPEN EWIDueCursor;
 	SET vCompleted:=1;
 	CursorLoop:LOOP
-		FETCH EWIDueCursor INTO vLoanId, vBranchId, vMemberId, vMemberName, vPhone, vLoanAmount, vTenure, vEwi, vLoanDate;
+		FETCH EWIDueCursor INTO vLoanCode, vBranchId, vMemberCode, vMemberName, vPhone, vLoanAmount, vTenure, vEwi, vLoanDisposalDate;
 		IF vCompleted=0 THEN
 			LEAVE CursorLoop;
 		END IF;
-		SET vWeeksCompleted := FLOOR(DATEDIFF(SYSDATE(), vLoanDate)/7);
+		SET vWeeksCompleted := FLOOR(DATEDIFF(SYSDATE(), vLoanDisposalDate)/7);
 		IF vWeeksCompleted > vTenure THEN
 			SET vWeeksCompleted := vTenure;
 		END IF;
-		SELECT SUM(ReceiptAmount) INTO vAmountPaid FROM CashReceipt WHERE LoanId = vLoanId AND ReceiptType='I';
+		SELECT SUM(ReceiptAmount) INTO vAmountPaid FROM CashReceipt WHERE LoanCode = vLoanCode AND ReceiptType='I';
 		IF vAmountPaid IS NULL THEN
 			SET vAmountPaid := 0;
 		END IF;
 		SET vWeeksPaid := vAmountPaid/vEWI;
 		SET vNoOfInstalments := vWeeksCompleted - vWeeksPaid;
 		IF vNoOfInstalments >= 1 THEN
-			SET vFromDate := DATE_ADD(vLoanDate, INTERVAL (vWeeksPaid + 1)*7 DAY);
+			SET vFromDate := DATE_ADD(vLoanDisposalDate, INTERVAL (vWeeksPaid + 1)*7 DAY);
 			SET vDueDate := DATE_FORMAT(vFromDate,'%d-%m-%Y');
 		END IF;
 		IF vNoOfInstalments > 1 THEN
-			SET vToDate := DATE_ADD(vLoanDate, INTERVAL (vWeeksPaid + vNoOfInstalments)*7 DAY);
+			SET vToDate := DATE_ADD(vLoanDisposalDate, INTERVAL (vWeeksPaid + vNoOfInstalments)*7 DAY);
 			SET vDueDate := CONCAT(DATE_FORMAT(vFromDate,'%d-%m-%Y'), ' to ', DATE_FORMAT(vToDate,'%d-%m-%Y'));
 		END IF;
 		IF vNoOfInstalments >= 1 THEN
-			INSERT INTO EwiDueRows VALUES(vLoanId, vBranchId, vMemberId, vMemberName, vPhone,vNoOfInstalments, vEWI, vDueDate);
+			INSERT INTO EwiDueRows VALUES(vLoanCode, vBranchId, vMemberCode, vMemberName, vPhone,vNoOfInstalments, vEWI, vDueDate);
 		END IF;
 	END LOOP;
 	SELECT * FROM EwiDueRows;
@@ -1077,19 +1078,20 @@ END;//
 
 
 --GetRepaymentStatusGroupInfo
+--Version 2.0
 DELIMITER //
 DROP PROCEDURE IF EXISTS `GetRepaymentStatusGroupInfo`//
-CREATE PROCEDURE GetRepaymentStatusGroupInfo(pGroupId INT) 
+CREATE PROCEDURE GetRepaymentStatusGroupInfo(pGroupCode CHAR(6)) 
 BEGIN
 	SELECT 
-		MG.GroupId,
+		MG.GroupCode,
 		MG.GroupName,
 		IFNULL((SELECT 
 						MemberName
 					FROM
 						Member M
 					WHERE
-						M.GroupID = MG.GroupId
+						M.GroupCode = MG.GroupCode
 							AND M.MemberType = 1),
 				'NA') AS LeaderName,
 		L.LoanAmount,
@@ -1099,53 +1101,56 @@ BEGIN
 	FROM
 		MemberGroup MG
 			INNER JOIN
-		Member M ON MG.GroupID = M.GroupId
+		Member M ON MG.GroupCode = M.GroupCode
 			INNER JOIN
-		Loan L ON M.MemberId = L.MemberId
+		Loan L ON M.MemberCode = L.MemberCode
 	WHERE
-		MG.GroupId = pGroupId
+		MG.GroupCode = pGroupCode
 			AND L.LoanStatus <> 'C' 
 	LIMIT 1;
 END;//
 
 --GetRepaymentStatusMemberCount
+--Version 2.0
 DELIMITER //
 DROP PROCEDURE IF EXISTS `GetRepaymentStatusMemberCount`//
-CREATE PROCEDURE GetRepaymentStatusMemberCount(pGroupId INT) 
+CREATE PROCEDURE GetRepaymentStatusMemberCount(pGroupCode CHAR(6)) 
 BEGIN
 	SELECT 
 		COUNT(*) AS MemberCount
 	FROM
 		Member M
 			INNER JOIN
-		Loan L ON M.MemberId = L.MemberId
+		Loan L ON M.MemberCode = L.MemberCode
 	WHERE
-		M.GroupId = pGroupId
+		M.GroupCode = pGroupCode
 			AND L.LoanStatus <> 'C';
 END;//
 
 --GetRepaymentStatusMemberInfo
+--Version 2.0
 DELIMITER //
 DROP PROCEDURE IF EXISTS `GetRepaymentStatusMemberInfo`//
-CREATE PROCEDURE GetRepaymentStatusMemberInfo(pGroupId INT) 
+CREATE PROCEDURE GetRepaymentStatusMemberInfo(pGroupCode CHAR(6)) 
 BEGIN
 	SELECT 
-		M.MemberId,
+		M.MemberCode,
 		M.MemberName,
-		L.LoanId
+		L.LoanCode
 	FROM
 		Member M
 			INNER JOIN
-		Loan L ON M.MemberId = L.MemberId
+		Loan L ON M.MemberCode = L.MemberCode
 	WHERE
-		M.GroupId = pGroupId
+		M.GroupCode = pGroupCode
 			AND L.LoanStatus <> 'C';
 END;//
 
 --GetPaymentDates
+--Version 2.0
 DELIMITER //
 DROP PROCEDURE IF EXISTS `GetPaymentDates`//
-CREATE PROCEDURE GetPaymentDates(pLoanId INT) 
+CREATE PROCEDURE GetPaymentDates(pLoanCode CHAR(10)) 
 BEGIN
 	SELECT 
 		ActualReceiptDate,
@@ -1153,28 +1158,29 @@ BEGIN
 	FROM
 		CashReceipt
 	WHERE
-		LoanId = pLoanId
+		LoanCode = pLoanCode
 			AND ReceiptType <> 'P'
 	ORDER BY ReceiptId;
 END;//
 
---GetEWIDay 
+--GetEWIDay
+--Version 2.0
 DELIMITER //
 DROP FUNCTION IF EXISTS `GetEWIDay`//
-CREATE FUNCTION GetEWIDay(pGroupId INT) RETURNS VARCHAR(15)
+CREATE FUNCTION GetEWIDay(pGroupCode CHAR(6)) RETURNS VARCHAR(15)
 READS SQL DATA
 BEGIN
 	DECLARE vEWIDay VARCHAR(15);
 	SELECT 
-		DAYNAME(L.LoanDate) INTO vEWIDay
+		DAYNAME(L.LoanDisposalDate) INTO vEWIDay
 	FROM
 		MemberGroup MG
 			INNER JOIN
-		Member M ON MG.GroupID = M.GroupId
+		Member M ON MG.GroupCode = M.GroupCode
 			INNER JOIN
-		Loan L ON M.MemberId = L.MemberId
+		Loan L ON M.MemberCode = L.MemberCode
 	WHERE
-		MG.GroupId = pGroupId
+		MG.GroupCode = pGroupCode
 			AND L.LoanStatus <> 'C' 
 	LIMIT 1;
 	RETURN vEWIDay;
@@ -1182,10 +1188,11 @@ END//
 --Test
 SELECT GetEWIDay(1);
 
---GetEWI 
+--GetEWI
+--Version 2.0 
 DELIMITER //
 DROP FUNCTION IF EXISTS `GetEWI`//
-CREATE FUNCTION GetEWI(pGroupId INT) RETURNS INT
+CREATE FUNCTION GetEWI(pGroupCode CHAR(6)) RETURNS INT
 READS SQL DATA
 BEGIN
 	DECLARE vEWI INT;
@@ -1194,11 +1201,11 @@ BEGIN
 	FROM
 		MemberGroup MG
 			INNER JOIN
-		Member M ON MG.GroupID = M.GroupId
+		Member M ON MG.GroupCode = M.GroupCode
 			INNER JOIN
-		Loan L ON M.MemberId = L.MemberId
+		Loan L ON M.MemberCode = L.MemberCode
 	WHERE
-		MG.GroupId = pGroupId
+		MG.GroupCode = pGroupCode
 			AND L.LoanStatus <> 'C'
 	LIMIT 1;
 	RETURN vEWI;
@@ -1207,9 +1214,10 @@ END//
 SELECT GetEWI(1);
 
 --GetTotalEWI 
+--Version 2.0
 DELIMITER //
 DROP FUNCTION IF EXISTS `GetTotalEWI`//
-CREATE FUNCTION GetTotalEWI(pGroupId INT) RETURNS INT
+CREATE FUNCTION GetTotalEWI(pGroupCode CHAR(6)) RETURNS INT
 READS SQL DATA
 BEGIN
 	DECLARE vTotalEWI INT;
@@ -1218,21 +1226,22 @@ BEGIN
 	FROM
 		MemberGroup MG
 			INNER JOIN
-		Member M ON MG.GroupID = M.GroupId
+		Member M ON MG.GroupCode = M.GroupCode
 			INNER JOIN
-		Loan L ON M.MemberId = L.MemberId
+		Loan L ON M.MemberCode = L.MemberCode
 	WHERE
-		MG.GroupId = pGroupId
+		MG.GroupCode = pGroupCode
 			AND L.LoanStatus <> 'C'; 
 	RETURN vTotalEWI;
 END//
 --Test
 SELECT GetTotalEWI(1);
 
---GetTenure 
+--GetTenure
+--Version 2.0 
 DELIMITER //
 DROP FUNCTION IF EXISTS `GetTenure`//
-CREATE FUNCTION GetTenure(pGroupId INT) RETURNS INT
+CREATE FUNCTION GetTenure(pGroupCode CHAR(6)) RETURNS INT
 READS SQL DATA
 BEGIN
 	DECLARE vTenure INT;
@@ -1241,11 +1250,11 @@ BEGIN
 	FROM
 		MemberGroup MG
 			INNER JOIN
-		Member M ON MG.GroupID = M.GroupId
+		Member M ON MG.GroupCode = M.GroupCode
 			INNER JOIN
-		Loan L ON M.MemberId = L.MemberId
+		Loan L ON M.MemberCode = L.MemberCode
 	WHERE
-		MG.GroupId = pGroupId
+		MG.GroupCode = pGroupCode
 			AND L.LoanStatus <> 'C'
 	LIMIT 1;
 	RETURN vTenure;
@@ -1254,9 +1263,10 @@ END//
 SELECT GetTenure(1);
 
 --GetTotalMembers
+--Version 2.0
 DELIMITER //
 DROP FUNCTION IF EXISTS `GetTotalMembers`//
-CREATE FUNCTION GetTotalMembers(pGroupId INT) RETURNS INT
+CREATE FUNCTION GetTotalMembers(pGroupCode CHAR(6)) RETURNS INT
 READS SQL DATA
 BEGIN
 	DECLARE vTotalMembers INT;
@@ -1265,9 +1275,9 @@ BEGIN
 	FROM
 		Member M
 			INNER JOIN
-		Loan L ON M.MemberId = L.MemberId
+		Loan L ON M.MemberCode = L.MemberCode
 	WHERE
-		M.GroupId = pGroupId
+		M.GroupCode = pGroupCode
 			AND L.LoanStatus <> 'C';
 	RETURN vTotalMembers;
 END//
@@ -1276,9 +1286,10 @@ SELECT GetTotalMembers(1);
 
 
 --GetTotalEWIReceived
+--Version 2.0
 DELIMITER //
 DROP FUNCTION IF EXISTS `GetTotalEWIReceived`//
-CREATE FUNCTION GetTotalEWIReceived(pGroupId INT) RETURNS INT
+CREATE FUNCTION GetTotalEWIReceived(pGroupCode CHAR(6)) RETURNS INT
 READS SQL DATA
 BEGIN
 	DECLARE vTotalEWIReceived INT;
@@ -1287,11 +1298,11 @@ BEGIN
 	FROM
 		Member M
 			INNER JOIN
-		Loan L ON M.MemberId = L.MemberId
+		Loan L ON M.MemberCode = L.MemberCode
 			INNER JOIN
-		CashReceipt CR ON CR.LoanId = L.LoanId
+		CashReceipt CR ON CR.LoanCode = L.LoanCode
 	WHERE
-		M.GroupId = pGroupId
+		M.GroupCode = pGroupCode
 			AND L.LoanStatus <> 'C' AND CR.ReceiptType='I';
 	IF vTotalEWIReceived IS NULL THEN
 		SET vTotalEWIReceived:=0;
@@ -1301,10 +1312,11 @@ END//
 --Test
 SELECT GetTotalEWIReceived(1);
 
---GetLeaderName 
+--GetLeaderName
+--Version 2.0
 DELIMITER //
 DROP FUNCTION IF EXISTS `GetLeaderName`//
-CREATE FUNCTION GetLeaderName(pGroupId INT) RETURNS VARCHAR(50)
+CREATE FUNCTION GetLeaderName(pGroupCode CHAR(6)) RETURNS VARCHAR(50)
 READS SQL DATA
 BEGIN
 	DECLARE vLeaderName VARCHAR(50);
@@ -1313,9 +1325,9 @@ BEGIN
 	FROM
 		MemberGroup MG
 			INNER JOIN
-		Member M ON MG.GroupId = M.GroupId
+		Member M ON MG.GroupCode = M.GroupCode
 	WHERE
-		M.MemberType = 1 AND MG.GroupID=pGroupId;
+		M.MemberType = 1 AND MG.GroupCode = pGroupCode;
 	IF vLeaderName IS NULL THEN
 		SET vLeaderName:= 'NA';
 	END IF;
@@ -1326,23 +1338,24 @@ SELECT GetLeaderName(1);
 
 
 --GetCumulativeReport
+--Version 2.0
 DELIMITER //
 DROP PROCEDURE IF EXISTS `GetCumulativeReport`//
 CREATE PROCEDURE GetCumulativeReport() 
 BEGIN
 	SELECT * FROM (
-	SELECT 
-		GroupId,
-		GroupName,
-		GetLeaderName(GroupId) AS LeaderName,
-		GetEWIDay(GroupId) AS EWIDay,
-		GetTotalEWI(GroupId) AS TotalEWI,
-		GetTotalMembers(GroupId) AS TotalMembers,
-		GetEWI(GroupId) AS EWI,
-		GetTenure(GroupId) AS Tenure,
-		GetTotalEWIReceived(GroupId) AS TotalEWIReceived
-	FROM
-		MemberGroup) AS MG
+		SELECT 
+			GroupCode,
+			GroupName,
+			GetLeaderName(GroupCode) AS LeaderName,
+			GetEWIDay(GroupCode) AS EWIDay,
+			GetTotalEWI(GroupCode) AS TotalEWI,
+			GetTotalMembers(GroupCode) AS TotalMembers,
+			GetEWI(GroupCode) AS EWI,
+			GetTenure(GroupCode) AS Tenure,
+			GetTotalEWIReceived(GroupCode) AS TotalEWIReceived
+		FROM MemberGroup) 
+		AS MG
 	WHERE 
 		MG.EwiDay IS NOT NULL;
 END;//
@@ -1506,23 +1519,27 @@ END;//
 
 
 --GetCashReceiptStatement ()
+--Version 2.0
 DELIMITER //
 DROP PROCEDURE IF EXISTS `GetCashReceiptStatement`//
 CREATE PROCEDURE GetCashReceiptStatement(pFromDate DATE, pToDate DATE)
 BEGIN
 	SELECT 
 		R.ReceiptId,
-		L.MemberId,
+		L.MemberCode,
 		M.MemberName,
-		L.LoanId,
+		L.LoanCode,
 		R.Description,
 		R.ReceiptAmount AS Amount
 	FROM 
-		CashReceipt R INNER JOIN Loan L ON R.LoanId=L.LoanId 
-			INNER JOIN Member M ON L.MemberId=M.MemberId 
+		CashReceipt R INNER JOIN Loan L ON R.LoanCode=L.LoanCode 
+			INNER JOIN Member M ON L.MemberCode=M.MemberCode 
 			WHERE ReceiptDate BETWEEN pFromDate AND pToDate ORDER BY R.ReceiptId;
 END//
 
+
+getmember
+getallmembers
 
 DELIMITER //
 DROP PROCEDURE IF EXISTS `debug_msg`//

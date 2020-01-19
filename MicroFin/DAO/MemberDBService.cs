@@ -199,7 +199,7 @@ namespace MicroFin.DAO
                             member.Relationship = (ERelationship)Convert.ToInt32(rdr["Relationship"].ToString());
                             member.NomineeAadharNumber = rdr["NomineeAadharNumber"].ToString();
                             member.NomineeDOB = DateTime.Parse(rdr["NomineeDOB"].ToString());
-                            //member.CurrentLoanId = Convert.ToInt32(rdr["CurrentLoanId"].ToString());
+                            member.CurrentLoanCode = rdr["CurrentLoanCode"].ToString();
                             members.Add(member);
                         }
                     }
@@ -266,7 +266,7 @@ namespace MicroFin.DAO
                             member.Relationship = (ERelationship)Convert.ToInt32(rdr["Relationship"].ToString());
                             member.NomineeAadharNumber = rdr["NomineeAadharNumber"].ToString();
                             member.NomineeDOB = DateTime.Parse(rdr["NomineeDOB"].ToString());
-                            //member.CurrentLoanId = Convert.ToInt32(rdr["CurrentLoanId"].ToString());
+                            member.CurrentLoanCode = rdr["CurrentLoanCode"].ToString();
                         }
                     }
                 }

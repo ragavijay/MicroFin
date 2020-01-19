@@ -11,10 +11,10 @@
     <table class="table">
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.loan.LoanId)
+                @Html.DisplayNameFor(model => model.loan.LoanCode)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.member.MemberId)
+                @Html.DisplayNameFor(model => model.member.MemberCode)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.member.MemberName)
@@ -37,10 +37,10 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.loan.LoanId)
+                    @Html.DisplayFor(modelItem => item.loan.LoanCode)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.member.MemberId)
+                    @Html.DisplayFor(modelItem => item.member.MemberCode)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.member.MemberName)

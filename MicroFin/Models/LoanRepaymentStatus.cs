@@ -7,7 +7,7 @@ namespace MicroFin.Models
 {
     public class LoanRepaymentStatus
     {
-        public int GroupId { get; set; }
+        public string GroupCode { get; set; }
         public string GroupName { get; set; }
         public string LeaderName { get; set; }
         public int LoanAmount { get; set; }
@@ -19,8 +19,8 @@ namespace MicroFin.Models
         public string CollectionDay { get; set; }
         public int MemberCount { get; set; }
         public string[] MemberName { get; set; }
-        public int[] MemberId { get; set; }
-        public int[] LoanId { get; set; }
+        public string[] MemberCode { get; set; }
+        public string[] LoanCode { get; set; }
         public DateTime[] ActualDate { get; set; }
         public int[,] Amount { get; set; }
         public int[] ColTotal { get; set; }

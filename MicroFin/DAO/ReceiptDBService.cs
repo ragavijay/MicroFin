@@ -309,9 +309,9 @@ namespace MicroFin.DAO
                         while (rdr.Read())
                         {
                             ewiDue = new EWIDue();
-                            ewiDue.LoanId = Convert.ToInt32(rdr["LoanId"].ToString());
+                            ewiDue.LoanCode = rdr["LoanId"].ToString();
                             ewiDue.BranchId = Convert.ToInt32(rdr["BranchId"].ToString());
-                            ewiDue.MemberId = Convert.ToInt32(rdr["MemberId"].ToString());
+                            ewiDue.MemberCode = rdr["MemberId"].ToString();
                             ewiDue.MemberName = rdr["MemberName"].ToString();
                             ewiDue.Phone = rdr["Phone"].ToString();
                             ewiDue.NoOfInstalments = Convert.ToInt32(rdr["NoOfInstalments"].ToString());
@@ -404,9 +404,9 @@ namespace MicroFin.DAO
                             statementRow = new CashReceiptStatement();
                             statementRow.SNo = ++i;
                             statementRow.ReceiptId = Convert.ToInt32(rdr["ReceiptId"].ToString());
-                            statementRow.MemberId = Convert.ToInt32(rdr["MemberId"].ToString());
+                            statementRow.MemberCode = rdr["MemberCode"].ToString();
                             statementRow.MemberName = rdr["MemberName"].ToString();
-                            statementRow.LoanId = Convert.ToInt32(rdr["LoanId"].ToString());
+                            statementRow.LoanCode = rdr["LoanCode"].ToString();
                             statementRow.Description = rdr["Description"].ToString();
                             statementRow.Amount = Convert.ToInt32(rdr["Amount"].ToString());
                             statementList.Add(statementRow);
