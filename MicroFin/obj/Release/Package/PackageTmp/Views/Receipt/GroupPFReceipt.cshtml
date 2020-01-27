@@ -1,0 +1,64 @@
+﻿@model IEnumerable<MicroFin.Models.GroupPFReceiptInfo>
+
+@{
+    ViewBag.Title = "GroupPFReceipt";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Group Processing Fee Receipt</h2>
+
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.ReceiptId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MemberCode)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MemberName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LoanCode)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ProcessingFee)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Insurance)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TotalFee)
+        </th>
+       
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.ReceiptId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.MemberCode)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.MemberName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.LoanCode)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ProcessingFee)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Insurance)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.TotalFee)
+        </td>
+       
+    </tr>
+}
+
+</table>

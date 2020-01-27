@@ -1,0 +1,67 @@
+﻿@model MicroFin.Models.MemberGroup
+@{
+    ViewBag.Title = "Add/Edit Group";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="page-wrapper bg-gra-03 p-t-45 p-b-50">
+    <div class="wrapper wrapper--w790">
+        <div class="card card-5">
+            <div class="card-heading">
+                <h2 class="title">Add/Edit Group</h2>
+            </div>
+            <div class="card-body">
+                @using (Html.BeginForm("MemberGroup", "Group", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <!--Group Code -->
+                    <div class="form-row">
+                        <div class="name">Group Code</div>
+                        <div class="value">
+                            <div class="input-group">
+                                @Html.TextBoxFor(m => m.GroupCode, new { @class = "input--style-5", @placeholder = "auto-generated", @readonly = "true", @autocomplete = "off"})
+                                @Html.HiddenFor(m => m.GroupId)
+                            </div>
+                        </div>
+                    </div>
+                    <!--Group Name-->
+                    <div class="form-row">
+                        <div class="name">Group Name</div>
+                        <div class="value">
+                            <div class="input-group">
+                                @Html.TextBoxFor(m => m.GroupName, new { @class = "input--style-5", @placeholder = "enter group name", @required = "true", @autocomplete = "off", @maxlength="40", @tabindex="1"})
+                                <p style='color:red;'> @ViewBag.ErrGroupName </p>
+                            </div>
+                        </div>
+                    </div>
+                    <!--CenterName and CenterCode -->
+                    <div class="form-row m-b-55">
+                        <div class="name">Center</div>
+                        <div class="value">
+                            <div class="row row-space">
+                                <div class="col-2">
+                                    <div class="input-group-desc">
+                                        @Html.TextBoxFor(m => m.CenterName, new {id="CenterName", @autocomplete = "off", @class = "input--style-5", @placeholder = "select center", @required = "true", @tabindex="2"})
+                                        <label class="label--desc">Center Name</label>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="input-group-desc">
+                                        @Html.TextBoxFor(m => m.CenterCode, new { id = "CenterCode", @class = "input--style-5", @onkeydown = "event.preventDefault()", @autocomplete = "off", @required = "true" })
+                                        <label class="label--desc">Center Code</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--Save-->
+                    <div>
+                        <button class="btn btn--radius-2 btn--red" type="submit" tabindex="3">Save</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    createAutoComplete('http://' + window.location.host + '/api/GetCenterList', 'CenterCode', 'CenterName');
+</script>

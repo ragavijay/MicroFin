@@ -83,10 +83,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/18/2019 18:25:36</publishTime>
     </File>
     <File Include="bin/App_global.asax.compiled">
-      <publishTime>01/11/2020 04:44:50</publishTime>
+      <publishTime>01/19/2020 12:43:05</publishTime>
     </File>
     <File Include="bin/App_global.asax.dll">
-      <publishTime>01/11/2020 04:44:49</publishTime>
+      <publishTime>01/19/2020 12:43:04</publishTime>
     </File>
     <File Include="bin/Content/bootstrap.css">
       <publishTime>04/18/2019 18:25:12</publishTime>
@@ -95,7 +95,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>12/21/2017 20:23:44</publishTime>
     </File>
     <File Include="bin/MicroFin.dll">
-      <publishTime>01/11/2020 04:44:06</publishTime>
+      <publishTime>01/19/2020 08:57:15</publishTime>
     </File>
     <File Include="bin/Microsoft.AI.Agent.Intercept.dll">
       <publishTime>12/07/2015 19:04:38</publishTime>
@@ -296,7 +296,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>10/13/2019 21:24:54</publishTime>
     </File>
     <File Include="PrecompiledApp.config">
-      <publishTime>01/11/2020 04:44:42</publishTime>
+      <publishTime>01/19/2020 12:42:55</publishTime>
     </File>
     <File Include="Scripts/ai.0.22.9-build00167.js">
       <publishTime>04/18/2019 18:25:37</publishTime>
@@ -374,7 +374,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>12/23/2019 07:06:52</publishTime>
     </File>
     <File Include="Views/Loan/CumulativeReport.cshtml">
-      <publishTime>06/08/2019 08:23:59</publishTime>
+      <publishTime>01/19/2020 08:50:35</publishTime>
     </File>
     <File Include="Views/Loan/GroupLoanForm.cshtml">
       <publishTime>01/07/2020 06:04:15</publishTime>
@@ -386,13 +386,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>01/06/2020 04:15:04</publishTime>
     </File>
     <File Include="Views/Loan/LoanRepaymentStatus.cshtml">
-      <publishTime>10/10/2019 17:54:26</publishTime>
+      <publishTime>01/19/2020 08:51:29</publishTime>
     </File>
     <File Include="Views/Loan/LoanStatusForm.cshtml">
       <publishTime>01/08/2020 06:40:49</publishTime>
     </File>
     <File Include="Views/Loan/LoanTransferReport.cshtml">
-      <publishTime>10/16/2019 19:33:10</publishTime>
+      <publishTime>01/19/2020 08:51:58</publishTime>
     </File>
     <File Include="Views/Loan/ViewLoan.cshtml">
       <publishTime>01/06/2020 03:58:22</publishTime>
@@ -401,7 +401,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>01/06/2020 03:57:11</publishTime>
     </File>
     <File Include="Views/Loan/ViewPendingLoans.cshtml">
-      <publishTime>05/21/2019 18:44:13</publishTime>
+      <publishTime>01/19/2020 08:52:20</publishTime>
     </File>
     <File Include="Views/Member/FamilyMemberForm.cshtml">
       <publishTime>12/26/2019 07:21:09</publishTime>
@@ -425,7 +425,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>12/25/2019 07:14:14</publishTime>
     </File>
     <File Include="Views/Receipt/CashReceiptStatement.cshtml">
-      <publishTime>07/14/2019 10:27:20</publishTime>
+      <publishTime>01/19/2020 08:53:22</publishTime>
     </File>
     <File Include="Views/Receipt/CashReceiptStatementForm.cshtml">
       <publishTime>06/25/2019 06:18:11</publishTime>
@@ -458,7 +458,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/25/2019 06:14:57</publishTime>
     </File>
     <File Include="Views/Receipt/ViewEwiDueList.cshtml">
-      <publishTime>07/14/2019 19:10:30</publishTime>
+      <publishTime>01/19/2020 08:54:14</publishTime>
     </File>
     <File Include="Views/Shared/Error.cshtml">
       <publishTime>04/18/2019 18:45:11</publishTime>
@@ -473,7 +473,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/03/2019 06:52:36</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>01/11/2020 04:44:40</publishTime>
+      <publishTime>01/19/2020 12:42:51</publishTime>
     </File>
   </ItemGroup>
 </Project>

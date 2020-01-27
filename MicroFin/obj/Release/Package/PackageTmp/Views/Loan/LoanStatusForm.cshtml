@@ -1,0 +1,80 @@
+﻿@model MicroFin.Models.MemberLoan
+
+@{
+    ViewBag.Title = "ViewLoan";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div id="LoanForm" class="page-wrapper bg-gra-03 p-t-45 p-b-50">
+    <div class="wrapper wrapper--w790">
+        <div class="card card-5">
+            <div class="card-heading">
+                <h2 class="title">Loan Status</h2>
+            </div>
+
+            <div class="card-body">
+                @using (Html.BeginForm("LoanStatus", "Loan", FormMethod.Post))
+                 {
+                    @Html.AntiForgeryToken()
+
+                    <table class="tg">
+                        <tr> <td> <b>Center Name</b> </td> <td> @Model.member.CenterName </td> <td> <b>Loan Id</b> </td><td> @Model.loan.LoanCode </td> </tr>
+                        <tr> <td> <b>Group Name</b> </td> <td> @Model.member.GroupName </td> <td> <b>Leader Name</b> </td> <td> @Model.member.LeaderName </td> </tr>
+                        <tr> <td> <b>Member Code </b> </td> <td> @Model.member.MemberCode </td> <td> <b>Member Name </b> </td> <td> @Model.member.MemberName </td>  </tr>
+                        <tr> <td> <b>Member Name </b> </td> <td> @Model.member.MemberName </td> <td> <b>Member Type</b> </td> <td> @Model.member.MemberType </td>  </tr>
+                        <tr> <td> <b>Loan Amount (Rs.)</b> </td> <td> @Model.loan.LoanAmount </td> <td> <b>Purpose</b> </td> <td> @Model.loan.LoanPurpose</td></tr>
+                        <tr> <td> <b>Processing Fee (%)</b> </td> <td> @Model.loan.ProcessingFeeRate </td> <td> <b>Processing Fee (Rs.)</b> </td> <td> @Model.loan.ProcessingFee</td></tr>
+                        <tr> <td> <b>Insurance (%)</b> </td> <td> @Model.loan.InsuranceRate </td> <td> <b>Insurance (Rs.)</b> </td> <td> @Model.loan.Insurance</td></tr>
+                        <tr> <td> <b>Tenure (weeks)</b> </td> <td> @Model.loan.Tenure </td> <td> <b>Interest Rate (%)</b> </td> <td> @Model.loan.InterestRate</td></tr>
+                        <tr> <td> <b>Weekly Due (Rs.)</b> </td> <td> @Model.loan.Ewi</td> <td> <b>Repayment Amount(Rs.)</b> </td> <td> @Model.loan.RepaymentAmount</td></tr>
+                    </table>
+                    <br/>
+                    <!-- Loan Id -->
+                    <input type="hidden" name="LoanCode" value="@Model.loan.LoanCode"/>
+                    <input type="hidden" name="MemberCode" value="@Model.loan.MemberCode" />
+
+                    <!-- Loan Status -->
+                    <div class="form-row">
+                        <div class="name">Loan Status</div>
+                        <div class="value">
+                            <div class="input-group">
+                                <div class="rs-select2 js-select-simple select--no-search">
+                                    <select id="LoanStatus" name="LoanStatus">
+                                        <option value='P'>Pending</option>
+                                        <option value='A'>Approved</option>
+                                    </select>
+                                    <div class="select-dropdown"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+            <!--Status Remarks-->
+                    <div class="form-row">
+                        <div class="name">Remarks</div>
+                        <div class="value">
+                            <div class="input-group">
+                                <input class="input--style-5" type="text" id="StatusRemarks" name="StatusRemarks" maxlength="50">
+                            </div>
+                        </div>
+                    </div>
+
+            <!--Save-->
+                    <div>
+                        <button class="btn btn--radius-2 btn--red" type="submit">Save</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    var loanStatus = document.getElementById("LoanStatus");
+    var statusRemarks = document.getElementById("StatusRemarks");
+    loanStatus.value = '@Model.loan.LoanStatus';
+    statusRemarks.value = '@Model.loan.StatusRemarks';
+    
+</script>

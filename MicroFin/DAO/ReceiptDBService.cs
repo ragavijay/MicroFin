@@ -309,9 +309,9 @@ namespace MicroFin.DAO
                         while (rdr.Read())
                         {
                             ewiDue = new EWIDue();
-                            ewiDue.LoanCode = rdr["LoanId"].ToString();
+                            ewiDue.LoanCode = rdr["LoanCode"].ToString();
                             ewiDue.BranchId = Convert.ToInt32(rdr["BranchId"].ToString());
-                            ewiDue.MemberCode = rdr["MemberId"].ToString();
+                            ewiDue.MemberCode = rdr["MemberCode"].ToString();
                             ewiDue.MemberName = rdr["MemberName"].ToString();
                             ewiDue.Phone = rdr["Phone"].ToString();
                             ewiDue.NoOfInstalments = Convert.ToInt32(rdr["NoOfInstalments"].ToString());

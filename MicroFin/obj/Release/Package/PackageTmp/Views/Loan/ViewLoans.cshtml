@@ -1,0 +1,61 @@
+﻿@model IEnumerable<MicroFin.Models.Loan>
+
+@{
+    ViewBag.Title = "ViewLoans";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Loans</h2>
+@Html.ActionLink("Downolad", "ExportLoans")
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.LoanCode)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MemberCode)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MemberName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LoanAmount)
+        </th>
+        <th></th>
+        <th></th>
+        <th> </th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.LoanCode)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.MemberCode)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.MemberName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.LoanAmount)
+        </td>
+        <td>
+            @Html.ActionLink("View", "ViewLoan", new { id = item.LoanCode })
+        </td>
+        <td>
+            @if(item.LoanStatus=="P" || item.LoanStatus=="A")
+            {
+                @Html.ActionLink("Edit", "LoanForm", new { id=item.LoanCode })
+            }
+        </td>
+        <td>
+            @if (item.LoanStatus == "P" || item.LoanStatus == "A")
+            {
+                @Html.ActionLink("Approve", "LoanStatusForm", new { id = item.LoanCode })
+            }
+        </td>
+    </tr>
+}
+
+</table>
