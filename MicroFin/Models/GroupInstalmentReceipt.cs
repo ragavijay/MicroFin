@@ -17,5 +17,6 @@ namespace MicroFin.Models
         public int Ewi{ get; set; }
         public int TotalDue { get; set; }
         public string UserId { get; set; }
+       
     }
 }

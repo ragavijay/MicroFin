@@ -71,7 +71,33 @@ namespace MicroFin.DAO
                             group.GroupName = rdr["GroupName"].ToString();
                             group.CenterCode = rdr["CenterCode"].ToString();
                             group.CenterName = rdr["CenterName"].ToString();
+                            group.isLoanRunning = false;
                             groups.Add(group);
+                        }
+                    }
+                }
+            }
+            
+            foreach (MemberGroup currGroup in groups)
+            {
+                using (MySqlConnection con = new MySqlConnection(WebApiApplication.conStr))
+                {
+                    con.Open();
+                    using (MySqlCommand cmd = new MySqlCommand("GetRepaymentStatusMemberCount", con))
+                    {
+                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@pGroupCode", MySqlDbType.VarChar, 6);
+                        cmd.Parameters["@pGroupCode"].Value = currGroup.GroupCode;
+                        using (MySqlDataReader rdr = cmd.ExecuteReader())
+                        {
+                            if (rdr.Read())
+                            {
+                                int count = Convert.ToInt32(rdr["MemberCount"].ToString());
+                                if (count > 0)
+                                {
+                                    currGroup.isLoanRunning = true;
+                                }
+                            }
                         }
                     }
                 }

@@ -16,11 +16,13 @@ namespace MicroFin.Models
         public DateTime EndingDate { get; set; }
         public int Tenure { get; set; }
         public int EWI { get; set; }
+        public string EWIs { get; set; }
         public string CollectionDay { get; set; }
         public int MemberCount { get; set; }
         public string[] MemberName { get; set; }
         public string[] MemberCode { get; set; }
         public string[] LoanCode { get; set; }
+        public int[] MemberEWI { get; set; }
         public DateTime[] ActualDate { get; set; }
         public int[,] Amount { get; set; }
         public int[] ColTotal { get; set; }

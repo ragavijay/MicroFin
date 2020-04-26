@@ -13,6 +13,7 @@ namespace MicroFin.Models
         public string CenterCode { get; set; }
         public string CenterName { get; set; }
         public string LeaderName { get; set; }
+        public bool isLoanRunning { get; set; } 
       
     }
 }

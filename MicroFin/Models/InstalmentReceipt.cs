@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
@@ -17,5 +18,7 @@ namespace MicroFin.Models
         public int Ewi{ get; set; }
         public int TotalDue { get; set; }
         public string UserId { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}")]
+        public DateTime NextDueDate { get; set; }
     }
 }

@@ -31,7 +31,9 @@
         <th>
             @Html.DisplayNameFor(model => model.TotalDue)
         </th>
-       
+        <th>
+            @Html.DisplayNameFor(model => model.NextDueDate)
+        </th>
     </tr>
 
 @foreach (var item in Model) {
@@ -57,7 +59,9 @@
         <td>
             @Html.DisplayFor(modelItem => item.TotalDue)
         </td>
-       
+        <td>
+            @Html.DisplayFor(modelItem => item.NextDueDate)
+        </td>
     </tr>
 }
 

@@ -228,8 +228,19 @@ namespace MicroFin.DAO
                     cmd.Parameters.Add("@pReceiptId", MySqlDbType.Int32);
                     cmd.Parameters["@pReceiptId"].Direction = ParameterDirection.Output;
 
+                    cmd.Parameters.Add("@pNextDueDate", MySqlDbType.Date);
+                    cmd.Parameters["@pNextDueDate"].Direction = ParameterDirection.Output;
+
                     cmd.ExecuteNonQuery();
                     instalmentReceipt.ReceiptId = Convert.ToInt32(cmd.Parameters["@pReceiptId"].Value.ToString());
+                    if (cmd.Parameters["@pNextDueDate"].Value == DBNull.Value)
+                    {
+                        instalmentReceipt.NextDueDate = new DateTime(2000,1,1);
+                    }
+                    else
+                    {
+                        instalmentReceipt.NextDueDate = Convert.ToDateTime(cmd.Parameters["@pNextDueDate"].Value.ToString());
+                    }
                 }
             }
         }
@@ -284,8 +295,19 @@ namespace MicroFin.DAO
                         cmd.Parameters.Add("@pReceiptId", MySqlDbType.Int32);
                         cmd.Parameters["@pReceiptId"].Direction = ParameterDirection.Output;
 
+                        cmd.Parameters.Add("@pNextDueDate", MySqlDbType.Date);
+                        cmd.Parameters["@pNextDueDate"].Direction = ParameterDirection.Output;
+
                         cmd.ExecuteNonQuery();
                         groupInstalmentReceiptInfo.ReceiptId = Convert.ToInt32(cmd.Parameters["@pReceiptId"].Value.ToString());
+                        if (cmd.Parameters["@pNextDueDate"].Value == DBNull.Value)
+                        {
+                            groupInstalmentReceiptInfo.NextDueDate = new DateTime(2000, 1, 1);
+                        }
+                        else
+                        {
+                            groupInstalmentReceiptInfo.NextDueDate = Convert.ToDateTime(cmd.Parameters["@pNextDueDate"].Value.ToString());
+                        }
                     }
                 }
             }
@@ -409,6 +431,7 @@ namespace MicroFin.DAO
                             statementRow.LoanCode = rdr["LoanCode"].ToString();
                             statementRow.Description = rdr["Description"].ToString();
                             statementRow.Amount = Convert.ToInt32(rdr["Amount"].ToString());
+                            statementRow.ActualReceiptDate = Convert.ToDateTime(rdr["ActualReceiptDate"].ToString());
                             statementList.Add(statementRow);
                         }
                     }

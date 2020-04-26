@@ -51,7 +51,8 @@
             @Html.ActionLink("TrasferReport", "LoanTransferReport", "Loan", new { id = item.GroupCode }, null)
         </td>
         <td>
-            @Html.ActionLink("LoanStatus", "LoanRepaymentStatus", "Loan", new { id = item.GroupCode }, null)
+            @if (item.isLoanRunning)
+            { @Html.ActionLink("LoanStatus", "LoanRepaymentStatus", "Loan", new { id = item.GroupCode }, null) }
         </td>
         <td>
             @Html.ActionLink("Edit", "MemberGroupForm", new { id=item.GroupCode })

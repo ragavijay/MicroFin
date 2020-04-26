@@ -151,11 +151,15 @@ CREATE TABLE CashReceipt (
 	ActualReceiptDate DATE,
     CONSTRAINT pKey_CR_ReceiptId PRIMARY KEY (ReceiptId),
     CONSTRAINT fKey_CR_LoanCode FOREIGN KEY (LoanCode)
-        REFERENCES Loan (LoanCode),
+        REFERENCES Loan (LoanCode) ON UPDATE CASCADE,
     CONSTRAINT fKey_CR_UserId FOREIGN KEY (UserId)
         REFERENCES AppUser (UserId)
 ); 
 --ProcessingFee: ReceiptType='P'; EWI: ReceiptType='I'  
+
+--Patch 26 Apr 2020
+alter table cashreceipt drop FOREIGN KEY fKey_CR_LoanCode
+alter table cashreceipt add constraint fKey_CR_LoanCode FOREIGN KEY (LoanCode) REFERENCES Loan (LoanCode) ON UPDATE CASCADE
 
 --GetUserType
 --Version 2.0 (No Change)
@@ -432,7 +436,7 @@ CREATE PROCEDURE GetAllMembers(pGroupCode CHAR(6))
 BEGIN
 	SELECT M.MemberCode, M.MemberId, M.GroupCode, MG.GroupName, GC.CenterName, GC.CenterCode, GC.BranchId,  
 		IFNULL((SELECT MemberName FROM Member InnerM WHERE InnerM.GroupCode=MG.GroupCode AND InnerM.MemberType=1),'NA') AS LeaderName,
-		IFNULL((SELECT LoanCode FROM Loan L WHERE L.MemberCode = M.MemberCode),0) AS CurrentLoanCode,
+		IFNULL((SELECT MAX(LoanCode) FROM Loan L WHERE L.MemberCode = M.MemberCode),'0') AS CurrentLoanCode,
 		M.MemberName, M.MemberType, M.Gender, M.DOB, M.MaritalStatus, M.Religion, M.FName, M.HName, M.Occupation, M.OccupationType, 
 		M.AddressLine1, M.AddressLine2, M.AddressLine3, M.AddressLine4, M.Taluk, M.Panchayat, M.City, M.Pincode, 
 		M.NoOfYears, M.HouseType, M.PropertyOwnership, M.Phone, 
@@ -442,7 +446,7 @@ BEGIN
 	WHERE M.GroupCode = pGroupCode;
 END//
 --Test
-CALL GetAllMembers(1)
+CALL GetAllMembers('010101')
 
 
 --GetMember
@@ -453,7 +457,7 @@ CREATE PROCEDURE GetMember(pMemberCode CHAR(8))
 BEGIN
 	SELECT M.MemberCode, M.MemberId, M.GroupCode, MG.GroupName, GC.CenterName, GC.CenterCode, GC.BranchId,  
 		IFNULL((SELECT MemberName FROM Member InnerM WHERE InnerM.GroupCode=MG.GroupCode AND InnerM.MemberType=1),'NA') AS LeaderName,
-		IFNULL((SELECT LoanCode FROM Loan L WHERE L.MemberCode = M.MemberCode),'0') AS CurrentLoanCode,
+		IFNULL((SELECT MAX(LoanCode) FROM Loan L WHERE L.MemberCode = M.MemberCode),'0') AS CurrentLoanCode,
 		M.MemberName, M.MemberType, M.Gender, M.DOB, M.MaritalStatus, M.Religion, M.FName, M.HName, M.Occupation, M.OccupationType, 
 		M.AddressLine1, M.AddressLine2, M.AddressLine3, M.AddressLine4, M.Taluk, M.Panchayat, M.City, M.Pincode, 
 		M.NoOfYears, M.HouseType, M.PropertyOwnership, M.Phone, 
@@ -701,7 +705,7 @@ END//
 SELECT GetGroupCode('01010101');
 
 --AddLoan
---Version 2.0 (Modified: GroupCode instead of GroupId)
+--Version 3.0 (Modified: LoanCode format changed)
 DELIMITER //
 DROP PROCEDURE IF EXISTS `AddLoan`//
 CREATE PROCEDURE AddLoan(OUT pLoanCode CHAR(10), pMemberCode CHAR(8), pBranchId INT, pLoanPurpose VARCHAR(40), 
@@ -721,13 +725,13 @@ AddLoan:BEGIN
 	ELSE
 		SET pStatus:=1;
 	END IF;
-	SELECT MAX(LoanCode) INTO vLoanCode FROM LOAN WHERE LoanCode LIKE CONCAT(SUBSTR(pMemberCode,1,6),'A*');
+	SELECT MAX(LoanCode) INTO vLoanCode FROM LOAN;
 	IF vLoanCode IS NULL THEN
 		SET vNewLoanCode := 1;
 	ELSE
-		SET vNewLoanCode = CAST(SUBSTR(vLoanCode,8,3) AS UNSIGNED) + 1;	
+		SET vNewLoanCode = CAST(SUBSTR(vLoanCode,5,5) AS UNSIGNED) + 1;	
 	END IF;
-	SET pLoanCode := CONCAT(CONCAT(SUBSTR(pMemberCode,1,6),'A'),LPAD(vNewLoanCode,3,'0'));
+	SET pLoanCode := CONCAT('001A',LPAD(vNewLoanCode,5,'0'));
 	SELECT COUNT(*) INTO vLoanCycle FROM Loan WHERE MemberCode=pMemberCode;
 	SET vLoanCycle := vLoanCycle + 1;
 	
@@ -739,7 +743,7 @@ END;//
 
 
 --AddGroupLoan
---Version 2.0 (Modified: GroupCode instead of GroupId)
+--Version 3.0 (Modified: LoanCode format changed)
 DELIMITER //
 DROP PROCEDURE IF EXISTS `AddGroupLoan`//
 CREATE PROCEDURE AddGroupLoan(pGroupCode VARCHAR(6), pBranchId INT, pLoanPurpose VARCHAR(40), pLoanAmount INT, pLoanDate DATE, 
@@ -763,11 +767,11 @@ AddGroupLoan:BEGIN
 		SET pStatus:=1;
 	END IF;
 	
-	SELECT MAX(LoanCode) INTO vLoanCode FROM LOAN WHERE LoanCode LIKE CONCAT(pGroupCode,'A*');
+	SELECT MAX(LoanCode) INTO vLoanCode FROM LOAN;
 	IF vLoanCode IS NULL THEN
 		SET vNewLoanCode := 0;
 	ELSE
-		SET vNewLoanCode = CAST(SUBSTR(vLoanCode,8,3) AS UNSIGNED);	
+		SET vNewLoanCode = CAST(SUBSTR(vLoanCode,5,5) AS UNSIGNED);	
 	END IF;
 	
 	SET vCompleted:=1;
@@ -778,7 +782,7 @@ AddGroupLoan:BEGIN
 			LEAVE CursorLoop;
 		END IF;
 		SET vNewLoanCode := vNewLoanCode + 1; 
-		SET vLoanCode := CONCAT(CONCAT(pGroupCode,'A'),LPAD(vNewLoanCode,3,'0'));
+		SET vLoanCode := CONCAT('001A',LPAD(vNewLoanCode,5,'0'));
 		SELECT COUNT(*) INTO vLoanCycle FROM Loan WHERE MemberCode=vMemberCode;
 		SET vLoanCycle := vLoanCycle + 1;
 		
@@ -964,7 +968,7 @@ END//
 --Version 2.0 (Modified: LoanCode instead of LoanId)
 DELIMITER //
 DROP PROCEDURE IF EXISTS `GenerateInstalmentReceipt`//
-CREATE PROCEDURE GenerateInstalmentReceipt(pLoanCode VARCHAR(10), pNoOfInstalments INT, pActualReceiptDate DATE, pUserId VARCHAR(20), OUT pReceiptId INT)
+CREATE PROCEDURE GenerateInstalmentReceipt(pLoanCode VARCHAR(10), pNoOfInstalments INT, pActualReceiptDate DATE, pUserId VARCHAR(20), OUT pReceiptId INT, OUT pNextDueDate DATE)
 BEGIN
 	DECLARE vAmount INT;
 	DECLARE vDescription VARCHAR(50);
@@ -977,6 +981,7 @@ BEGIN
 	SELECT EWI INTO vAmount FROM Loan WHERE LoanCode = pLoanCode;
 	SELECT Tenure, LoanDisposalDate, EWI INTO vTenure, vLoanDisposalDate, vEWI FROM Loan WHERE LoanCode = pLoanCode;
 	SET vAmount := vEWI * pNoOfInstalments;
+	SET pNextDueDate := NULL;
 	SELECT SUM(ReceiptAmount) INTO vAmountPaid FROM CashReceipt WHERE LoanCode = pLoanCode AND ReceiptType='I';
 	IF vAmountPaid IS NULL THEN
 		SET vAmountPaid := 0;
@@ -1008,11 +1013,15 @@ BEGIN
 		VALUES(pLoanCode, 'I', vAmount, SYSDATE(), vDescription, pActualReceiptDate, pUserId);
 	IF vWeeksPaid + pNoOfInstalments = vTenure THEN
 		UPDATE Loan SET LoanStatus='C' WHERE LoanCode = pLoanCode;
+	ELSE
+		SET pNextDueDate := DATE_ADD(vLoanDisposalDate, INTERVAL (vWeeksPaid + pNoOfInstalments + 1)*7 DAY);
+		IF pNextDueDate < SYSDATE() THEN
+			SET pNextDueDate := SYSDATE();
+		END IF;
 	END IF;
     SET pReceiptId:= LAST_INSERT_ID();
 	COMMIT;
 END//
-
 
 --GetEWIDue
 --Version 2.0
@@ -1128,7 +1137,7 @@ BEGIN
 END;//
 
 --GetRepaymentStatusMemberInfo
---Version 2.0
+--Version 2.0 (Updated 23 Jan 2020)
 DELIMITER //
 DROP PROCEDURE IF EXISTS `GetRepaymentStatusMemberInfo`//
 CREATE PROCEDURE GetRepaymentStatusMemberInfo(pGroupCode CHAR(6)) 
@@ -1136,7 +1145,8 @@ BEGIN
 	SELECT 
 		M.MemberCode,
 		M.MemberName,
-		L.LoanCode
+		L.LoanCode,
+		L.EWI
 	FROM
 		Member M
 			INNER JOIN
@@ -1530,11 +1540,12 @@ BEGIN
 		M.MemberName,
 		L.LoanCode,
 		R.Description,
+		R.ActualReceiptDate,
 		R.ReceiptAmount AS Amount
 	FROM 
 		CashReceipt R INNER JOIN Loan L ON R.LoanCode=L.LoanCode 
 			INNER JOIN Member M ON L.MemberCode=M.MemberCode 
-			WHERE ReceiptDate BETWEEN pFromDate AND pToDate ORDER BY R.ReceiptId;
+			WHERE ActualReceiptDate BETWEEN pFromDate AND pToDate ORDER BY R.ReceiptId;
 END//
 
 
@@ -1547,3 +1558,21 @@ CREATE PROCEDURE debug_msg(msg VARCHAR(255))
 BEGIN
   select concat('** ', msg) AS '** DEBUG:';
 END //
+
+
+
+Pending items
+-----------------------------------------------
+1. Branch menu
+2. Report in menu 
+3. Insurance in menu
+4. Cumulative export
+5. Annual report
+6. Member history detailed
+7. Financial year new receipt number
+9. Amount balance in loan report
+10. Display format
+11. Sms alert
+12. Over due defaulter list
+13. No two leaders for a group
+--------------------------------------------------

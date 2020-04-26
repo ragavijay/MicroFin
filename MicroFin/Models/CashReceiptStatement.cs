@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
@@ -15,5 +16,7 @@ namespace MicroFin.Models
         public string LoanCode { get; set; }
         public string Description { get; set; }
         public int Amount { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}")]
+        public DateTime ActualReceiptDate { get; set; }
     }
 }
